@@ -1,5 +1,6 @@
 package mffs
 
+import com.builtbroken.mc.lib.mod.AbstractProxy
 import com.mojang.authlib.GameProfile
 import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.network.IGuiHandler
@@ -13,8 +14,6 @@ import mffs.security.{ContainerBiometricIdentifier, TileBiometricIdentifier}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.world.World
-import resonantengine.lib.mod.AbstractProxy
-import resonantengine.lib.transform.vector.Vector3
 
 class CommonProxy extends AbstractProxy with IGuiHandler
 {

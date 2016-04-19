@@ -1,5 +1,6 @@
 package mffs.field
 
+import com.builtbroken.mc.prefab.tile.Tile
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import io.netty.buffer.ByteBuf
 import mffs.security.MFFSPermissions
@@ -28,7 +29,7 @@ import resonantengine.prefab.network.TPacketReceiver
 
 import scala.collection.convert.wrapAll._
 
-class TileForceField extends ResonantTile(Material.glass) with TPacketReceiver with IForceField
+class TileForceField extends Tile(Material.glass) with TPacketReceiver with IForceField
 {
   private var camoStack: ItemStack = null
   private var projector: Vector3 = null

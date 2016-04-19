@@ -1,7 +1,8 @@
 package mffs.base
 
-import resonantengine.lib.prefab.item.ItemTooltip
+import net.minecraft.item.Item
 
-class ItemMFFS extends ItemTooltip
+class ItemMFFS extends Item
 {
+  //TODO add tooltip back
 }
