@@ -1,16 +1,14 @@
 package mffs.base
 
+import com.builtbroken.jlib.data.science.units.UnitDisplay
+import com.builtbroken.mc.core.network.packet.PacketTile
+import com.builtbroken.mc.prefab.gui.GuiContainerBase
 import mffs.ModularForceFieldSystem
 import mffs.render.button.GuiIcon
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.init.Blocks
 import net.minecraft.inventory.Container
 import net.minecraft.item.ItemStack
-import resonantengine.core.network.discriminator.PacketTile
-import resonantengine.lib.prefab.gui.GuiContainerBase
-import resonantengine.lib.render.EnumColor
-import resonantengine.lib.utility.science.UnitDisplay
-import resonantengine.lib.wrapper.CollectionWrapper._
 
 class GuiMFFS(container: Container, tile: TileMFFS) extends GuiContainerBase(container)
 {

@@ -2,6 +2,7 @@ package mffs.base
 
 import java.util.{Set => JSet}
 
+import com.builtbroken.mc.lib.access.Permission
 import com.mojang.authlib.GameProfile
 import mffs.Reference
 import mffs.item.card.ItemCardFrequency
@@ -12,8 +13,6 @@ import net.minecraft.util.ChatComponentText
 import resonantengine.api.mffs.card.ICoordLink
 import resonantengine.api.mffs.fortron.FrequencyGridRegistry
 import resonantengine.api.tile.IBlockFrequency
-import resonantengine.lib.access.Permission
-import resonantengine.lib.transform.vector.Vector3
 
 import scala.collection.convert.wrapAll._
 

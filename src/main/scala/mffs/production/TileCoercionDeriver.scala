@@ -43,7 +43,7 @@ object TileCoercionDeriver
   val power = 5000000
 }
 
-class TileCoercionDeriver extends TileModuleAcceptor with TTEBridge
+class TileCoercionDeriver extends TileModuleAcceptor
 {
   var processTime: Int = 0
   var isInversed = false

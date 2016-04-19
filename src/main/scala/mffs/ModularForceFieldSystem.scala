@@ -2,6 +2,8 @@ package mffs
 
 import java.util.UUID
 
+import com.builtbroken.mc.lib.mod.config.ConfigHandler
+import com.builtbroken.mc.lib.mod.loadable.LoadableHandler
 import com.mojang.authlib.GameProfile
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
@@ -22,7 +24,6 @@ import resonantengine.lib.mod.loadable.LoadableHandler
 import resonantengine.lib.prefab.damage.CustomDamageSource
 
 @Mod(modid = Reference.id, name = Reference.name, version = Reference.version, dependencies = "required-after:ResonantEngine", modLanguage = "scala", guiFactory = "mffs.MFFSGuiFactory")
-@ModstatInfo(prefix = "mffs")
 object ModularForceFieldSystem
 {
   /**
@@ -30,7 +31,6 @@ object ModularForceFieldSystem
    */
   val damageFieldShock = new CustomDamageSource("fieldShock").setDamageBypassesArmor
   val fakeProfile = new GameProfile(UUID.randomUUID, "mffs")
-  val packetHandler = new PacketManager(Reference.channel)
   val loadables = new LoadableHandler
   @SidedProxy(clientSide = "mffs.ClientProxy", serverSide = "mffs.CommonProxy")
   var proxy: CommonProxy = _
@@ -43,12 +43,10 @@ object ModularForceFieldSystem
     /**
      * Registration
      */
-    Modstats.instance.getReporter.registerMod(this)
+    //Modstats.instance.getReporter.registerMod(this)
     NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy)
     MinecraftForge.EVENT_BUS.register(SubscribeEventHandler)
     MinecraftForge.EVENT_BUS.register(Settings)
-
-    ConfigHandler.sync(Settings, Settings.config)
 
     loadables.applyModule(proxy)
     loadables.applyModule(packetHandler)

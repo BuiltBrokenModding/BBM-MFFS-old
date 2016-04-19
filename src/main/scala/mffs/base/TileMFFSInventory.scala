@@ -1,5 +1,6 @@
 package mffs.base
 
+import com.builtbroken.mc.prefab.tile.traits.TInventory
 import io.netty.buffer.ByteBuf
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound

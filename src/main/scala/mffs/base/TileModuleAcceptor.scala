@@ -2,6 +2,8 @@ package mffs.base
 
 import java.util.{Set => JSet}
 
+import com.builtbroken.mc.api.modules.IModule
+import com.builtbroken.mc.core.network.packet.PacketType
 import io.netty.buffer.ByteBuf
 import mffs.Content
 import mffs.util.TCache

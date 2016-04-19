@@ -1,5 +1,12 @@
 package mffs.base
 
+import com.builtbroken.mc.api.tile.{IRemovable, IPlayerUsing}
+import com.builtbroken.mc.core.Engine
+import com.builtbroken.mc.core.network.{IPacketIDReceiver, IPacketReceiver}
+import com.builtbroken.mc.core.network.netty.PacketManager
+import com.builtbroken.mc.core.network.packet.PacketType
+import com.builtbroken.mc.lib.transform.vector.Pos
+import com.builtbroken.mc.prefab.tile.Tile
 import io.netty.buffer.ByteBuf
 import mffs.ModularForceFieldSystem
 import mffs.item.card.ItemCardLink
@@ -10,151 +17,121 @@ import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.Packet
-import resonantengine.api.mffs.machine.IActivatable
-import resonantengine.api.tile.{ICamouflageMaterial, IPlayerUsing}
-import resonantengine.core.network.discriminator.PacketType
-import resonantengine.core.network.netty.PacketManager
-import resonantengine.lib.modcontent.block.ResonantTile
-import resonantengine.lib.transform.vector.Vector3
-import resonantengine.lib.utility.inventory.InventoryUtility
-import resonantengine.lib.wrapper.ByteBufWrapper._
-import resonantengine.prefab.block.impl.TRotatable
-import resonantengine.prefab.network.{TPacketReceiver, TPacketSender}
+import resonant.api.mffs.machine.IActivatable
+import resonant.api.tile.ICamouflageMaterial
 
 import scala.collection.convert.wrapAll._
 
 /**
- * A base tile class for all MFFS blocks to inherit.
- * @author Calclavia
- */
-abstract class TileMFFS extends ResonantTile(Material.iron) with ICamouflageMaterial with TPacketReceiver with TPacketSender with IActivatable with IPlayerUsing
-{
+  * A base tile class for all MFFS blocks to inherit.
+  *
+  * @author Calclavia
+  */
+abstract class TileMFFS(name: String) extends Tile(name, Material.iron) with ICamouflageMaterial with IPacketIDReceiver with IActivatable with IPlayerUsing with IRemovable.ISneakPickup {
   /**
-   * Used for client side animations.
-   */
+    * Used for client side animations.
+    */
   var animation = 0f
   /**
-   * Is this machine switched on internally via GUI?
-   */
+    * Is this machine switched on internally via GUI?
+    */
   var isRedstoneActive = false
   /**
-   * Is the machine active and working?
-   */
+    * Is the machine active and working?
+    */
   private var active = false
 
   /**
-   * Constructor
-   */
-  blockHardness = Float.MaxValue
-  blockResistance = 100f
+    * Constructor
+    */
+  hardness = Float.MaxValue
+  resistance = 100f
   stepSound = Block.soundTypeMetal
   textureName = "machine"
-  isOpaqueCube = false
-  normalRender = false
+  isOpaque = false;
+  renderNormalBlock = false;
 
-  override def onNeighborChanged(block: Block)
-  {
-    if (!world.isRemote)
-    {
-      if (world.isBlockIndirectlyGettingPowered(xi, yi, zi))
-      {
+  override def onNeighborChanged(block: Block) {
+    if (!world.isRemote) {
+      if (world.isBlockIndirectlyGettingPowered(xi, yi, zi)) {
         powerOn()
       }
-      else
-      {
+      else {
         powerOff()
       }
     }
   }
 
-  def powerOn()
-  {
+  def powerOn() {
     this.setActive(true)
   }
 
-  def powerOff()
-  {
-    if (!this.isRedstoneActive && !this.worldObj.isRemote)
-    {
+  def powerOff() {
+    if (!this.isRedstoneActive && !this.worldObj.isRemote) {
       this.setActive(false)
     }
   }
 
   override def getExplosionResistance(entity: Entity): Float = 100
 
-  override def update()
-  {
+  override def update() {
     super.update()
 
-    if (!world.isRemote && ticks % 3 == 0 && playersUsing.size > 0)
-    {
-      playersUsing foreach (player => ModularForceFieldSystem.packetHandler.sendToPlayer(getDescPacket, player.asInstanceOf[EntityPlayerMP]))
+    if (!world.isRemote && ticks % 3 == 0 && playersUsing.size > 0) {
+      playersUsing foreach (player => Engine.instance.packetHandler.sendToPlayer(getDescPacket, player.asInstanceOf[EntityPlayerMP]))
     }
   }
 
-  override def getDescriptionPacket: Packet =
-  {
-    return ModularForceFieldSystem.packetHandler.toMCPacket(getDescPacket)
-  }
+  //override def getDescPacket: PacketType = PacketManager.request(this, TilePacketType.description.id)
 
-  override def getDescPacket: PacketType = PacketManager.request(this, TilePacketType.description.id)
-
-  override def read(buf: ByteBuf, id: Int, packetType: PacketType)
-  {
-    if (id == TilePacketType.description.id)
-    {
+  override def read(buf: ByteBuf, id: Int, entityplayer: EntityPlayer, packetType: PacketType): Boolean = {
+    if (id == TilePacketType.description.id) {
       val prevActive = active
       active = buf.readBoolean()
       isRedstoneActive = buf.readBoolean()
 
-      if (prevActive != this.active)
-      {
+      if (prevActive != this.active) {
         markRender()
       }
+      return true
     }
-    else if (id == TilePacketType.toggleActivation.id)
-    {
+    else if (id == TilePacketType.toggleActivation.id) {
       isRedstoneActive = !isRedstoneActive
 
-      if (isRedstoneActive)
-      {
+      if (isRedstoneActive) {
         setActive(true)
       }
-      else
-      {
+      else {
         setActive(false)
       }
+      return true
     }
+    return false
   }
 
-  def setActive(flag: Boolean)
-  {
+  def setActive(flag: Boolean) {
     active = flag
     worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord)
   }
 
-  override def write(buf: ByteBuf, id: Int)
-  {
-    super.write(buf, id)
+  def write(buf: ByteBuf, id: Int) {
 
-    if (id == TilePacketType.description.id)
-    {
-      buf <<< active
-      buf <<< isRedstoneActive
+    if (id == TilePacketType.description.id) {
+      buf.writeBoolean(active)
+      buf.writeBoolean(isRedstoneActive)
+      //TODO replace with state system to save on network(eg two boolean == two bytes, could be one byte with 8 states instead)
     }
   }
 
   def isPoweredByRedstone: Boolean = world.isBlockIndirectlyGettingPowered(xi, yi, zi)
 
-  override def readFromNBT(nbt: NBTTagCompound)
-  {
+  override def readFromNBT(nbt: NBTTagCompound) {
     super.readFromNBT(nbt)
     this.active = nbt.getBoolean("isActive")
     this.isRedstoneActive = nbt.getBoolean("isRedstoneActive")
   }
 
-  override def writeToNBT(nbt: NBTTagCompound)
-  {
+  override def writeToNBT(nbt: NBTTagCompound) {
     super.writeToNBT(nbt)
     nbt.setBoolean("isActive", this.active)
     nbt.setBoolean("isRedstoneActive", this.isRedstoneActive)
@@ -162,77 +139,17 @@ abstract class TileMFFS extends ResonantTile(Material.iron) with ICamouflageMate
 
   def isActive: Boolean = active
 
-  override protected def use(player: EntityPlayer, side: Int, hit: Vector3): Boolean =
-  {
-    if (!world.isRemote)
-    {
-      if (player.getCurrentEquippedItem != null)
-      {
-        if (player.getCurrentEquippedItem().getItem().isInstanceOf[ItemCardLink])
-        {
+  override protected def onPlayerActivated(player: EntityPlayer, side: Int, hit: Pos): Boolean = {
+
+    if (!world.isRemote) {
+      if (player.getCurrentEquippedItem != null) {
+        if (player.getCurrentEquippedItem().getItem().isInstanceOf[ItemCardLink]) {
           return false
         }
       }
 
       player.openGui(ModularForceFieldSystem, 0, world, xi, yi, zi)
     }
-    return true
+    return super.onPlayerActivated(player, side, hit)
   }
-
-  override protected def configure(player: EntityPlayer, side: Int, hit: Vector3): Boolean =
-  {
-    if (player.isSneaking)
-    {
-      if (!world.isRemote)
-      {
-        InventoryUtility.dropBlockAsItem(world, toVector3)
-        world.setBlock(xi, yi, zi, Blocks.air)
-        return true
-      }
-      return false
-    }
-
-    if (this.isInstanceOf[TRotatable])
-      return this.asInstanceOf[TRotatable].rotate(side, hit)
-
-    return false
-  }
-
-  /**
-   * ComputerCraft
-
-  def getType: String =
-  {
-    return this.getInvName
-  }
-
-  def getMethodNames: Array[String] =
-  {
-    return Array[String]("isActivate", "setActivate")
-  }
-
-  def callMethod(computer: Nothing, context: Nothing, method: Int, arguments: Array[AnyRef]): Array[AnyRef] =
-  {
-    method match
-    {
-      case 0 =>
-      {
-        return Array[AnyRef](this.isActive)
-      }
-      case 1 =>
-      {
-        this.setActive(arguments(0).asInstanceOf[Boolean])
-        return null
-      }
-    }
-    throw new Exception("Invalid method.")
-  }
-
-  def attach(computer: Nothing)
-  {
-  }
-
-  def detach(computer: Nothing)
-  {
-  }*/
 }
