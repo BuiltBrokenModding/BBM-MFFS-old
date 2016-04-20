@@ -18,14 +18,6 @@ import net.minecraft.network.Packet
 import net.minecraft.potion.{Potion, PotionEffect}
 import net.minecraft.util.{IIcon, MovingObjectPosition}
 import net.minecraft.world.IBlockAccess
-import resonantengine.api.mffs.machine.{IForceField, IProjector}
-import resonantengine.api.mffs.modules.IModule
-import resonantengine.core.network.discriminator.{PacketTile, PacketType}
-import resonantengine.lib.modcontent.block.ResonantTile
-import resonantengine.lib.transform.region.Cuboid
-import resonantengine.lib.transform.vector.Vector3
-import resonantengine.lib.wrapper.ByteBufWrapper._
-import resonantengine.prefab.network.TPacketReceiver
 
 import scala.collection.convert.wrapAll._
 

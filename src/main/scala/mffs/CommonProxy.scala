@@ -1,6 +1,7 @@
 package mffs
 
 import com.builtbroken.mc.lib.mod.AbstractProxy
+import com.builtbroken.mc.lib.transform.vector.Pos
 import com.mojang.authlib.GameProfile
 import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.network.IGuiHandler
@@ -59,23 +60,23 @@ class CommonProxy extends AbstractProxy with IGuiHandler
     return false
   }
 
-  def renderBeam(world: World, position: Vector3, target: Vector3, color: (Float, Float, Float), age: Int)
+  def renderBeam(world: World, position: Pos, target: Pos, color: (Float, Float, Float), age: Int)
   {
   }
 
-  def renderHologram(world: World, position: Vector3, color: (Float, Float, Float), age: Int, targetPosition: Vector3)
+  def renderHologram(world: World, position: Pos, color: (Float, Float, Float), age: Int, targetPosition: Pos)
   {
   }
 
-  def renderHologramMoving(world: World, position: Vector3, color: (Float, Float, Float), age: Int)
+  def renderHologramMoving(world: World, position: Pos, color: (Float, Float, Float), age: Int)
   {
   }
 
-  def renderHologramOrbit(world: World, orbitCenter: Vector3, color: (Float, Float, Float), age: Int, maxSpeed: Float)
+  def renderHologramOrbit(world: World, orbitCenter: Pos, color: (Float, Float, Float), age: Int, maxSpeed: Float)
   {
   }
 
-  def renderHologramOrbit(owner: IEffectController, world: World, orbitCenter: Vector3, position: Vector3, color: (Float, Float, Float), age: Int, maxSpeed: Float)
+  def renderHologramOrbit(owner: IEffectController, world: World, orbitCenter: Pos, position: Pos, color: (Float, Float, Float), age: Int, maxSpeed: Float)
   {
   }
 }

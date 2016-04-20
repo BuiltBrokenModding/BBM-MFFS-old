@@ -7,9 +7,6 @@ import net.minecraft.client.particle.EntityFX
 import net.minecraft.client.renderer.{OpenGlHelper, RenderBlocks, Tessellator}
 import net.minecraft.world.World
 import org.lwjgl.opengl.GL11
-import resonantengine.lib.render.RenderUtility
-import resonantengine.lib.transform.rotation.EulerAngle
-import resonantengine.lib.transform.vector.Vector3
 
 /**
  * @author Calclavia

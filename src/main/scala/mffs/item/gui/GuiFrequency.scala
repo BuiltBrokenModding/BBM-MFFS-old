@@ -5,9 +5,6 @@ import mffs.{ModularForceFieldSystem, Settings}
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import resonantengine.core.network.discriminator.PacketPlayerItem
-import resonantengine.lib.utility.LanguageUtility
-import resonantengine.lib.wrapper.CollectionWrapper._
 
 import scala.util.Random
 

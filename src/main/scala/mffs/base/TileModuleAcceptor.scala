@@ -5,14 +5,12 @@ import java.util.{Set => JSet}
 import com.builtbroken.mc.api.modules.IModule
 import com.builtbroken.mc.core.network.packet.PacketType
 import io.netty.buffer.ByteBuf
-import mffs.Content
+import mffs.ModularForceFieldSystem
 import mffs.util.TCache
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.fluids.FluidContainerRegistry
-import resonantengine.api.mffs.modules.{IModule, IModuleProvider}
-import resonantengine.core.network.discriminator.PacketType
-import resonantengine.lib.wrapper.ByteBufWrapper._
+import resonant.api.mffs.modules.IModuleProvider
 
 import scala.collection.convert.wrapAll._
 
@@ -75,7 +73,7 @@ abstract class TileModuleAcceptor extends TileFortron with IModuleProvider with 
 	override def start()
 	{
 		super.start()
-		fortronTank.setCapacity((this.getModuleCount(Content.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME)
+		fortronTank.setCapacity((this.getModuleCount(ModularForceFieldSystem.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME)
 	}
 
 	def consumeCost()
@@ -124,7 +122,7 @@ abstract class TileModuleAcceptor extends TileFortron with IModuleProvider with 
 	override def markDirty()
 	{
 		super.markDirty()
-		this.fortronTank.setCapacity((this.getModuleCount(Content.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME)
+		this.fortronTank.setCapacity((this.getModuleCount(ModularForceFieldSystem.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME)
 		clearCache()
 	}
 

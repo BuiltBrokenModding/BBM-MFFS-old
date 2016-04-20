@@ -4,6 +4,7 @@ import java.io.File
 import java.util
 import java.util.{Set => JSet}
 
+import com.builtbroken.mc.lib.transform.vector.Pos
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import mffs.field.module.ItemModuleArray
 import mffs.util.TCache
@@ -18,11 +19,7 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.ChatComponentText
 import net.minecraft.world.World
 import net.minecraftforge.common.util.ForgeDirection
-import resonantengine.api.mffs.machine.{IFieldMatrix, IProjector}
-import resonantengine.lib.transform.vector.Vector3
-import resonantengine.lib.utility.LanguageUtility
-import resonantengine.lib.utility.nbt.NBTUtility
-import resonantengine.lib.wrapper.CollectionWrapper._
+import resonant.api.mffs.machine.IFieldMatrix
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -185,7 +182,7 @@ class ItemModeCustom extends ItemMode with TCache
     return true
   }
 
-  def getFieldBlockMap(projector: IFieldMatrix, itemStack: ItemStack): mutable.Map[Vector3, (Block, Int)] =
+  def getFieldBlockMap(projector: IFieldMatrix, itemStack: ItemStack): util.HashMap[Pos, Pair[Block, Int]] =
   {
     val cacheID = "itemStack_" + itemStack.hashCode
 

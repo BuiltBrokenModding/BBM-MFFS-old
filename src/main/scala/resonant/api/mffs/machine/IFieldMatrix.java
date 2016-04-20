@@ -1,11 +1,11 @@
 package resonant.api.mffs.machine;
 
+import com.builtbroken.mc.lib.transform.vector.Pos;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import resonant.api.mffs.modules.IModule;
 import resonant.api.mffs.modules.IModuleProvider;
 import resonant.api.mffs.modules.IProjectorMode;
-import resonant.lib.transform.vector.Vector3;
 
 import java.util.Set;
 
@@ -39,11 +39,11 @@ public interface IFieldMatrix extends IModuleProvider, IActivatable, IPermission
 	 * Transformation information functions. Returns CACHED information unless the cache is cleared.
 	 * Note that these are all RELATIVE to the projector's position.
 	 */
-	public Vector3 getTranslation();
+	public Pos getTranslation();
 
-	public Vector3 getPositiveScale();
+	public Pos getPositiveScale();
 
-	public Vector3 getNegativeScale();
+	public Pos getNegativeScale();
 
 	public int getRotationYaw();
 
@@ -52,14 +52,14 @@ public interface IFieldMatrix extends IModuleProvider, IActivatable, IPermission
 	/**
 	 * @return Gets all the absolute block coordinates that are occupying the force field. Note that this is a copy of the actual field set.
 	 */
-	public Set<Vector3> getCalculatedField();
+	public Set<Pos> getCalculatedField();
 
 	/**
 	 * Gets the absolute interior points of the projector. This might cause lag so call sparingly.
 	 *
 	 * @return
 	 */
-	public Set<Vector3> getInteriorPoints();
+	public Set<Pos> getInteriorPoints();
 
 	/**
 	 * @return Gets the facing direction. Always returns the front side of the block.

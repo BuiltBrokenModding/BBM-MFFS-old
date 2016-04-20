@@ -1,7 +1,6 @@
 package resonant.api.tile.node;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import resonant.api.tile.node.INode;
 
 import java.util.Map;
 import java.util.Set;

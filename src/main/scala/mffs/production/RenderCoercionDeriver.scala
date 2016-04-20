@@ -6,7 +6,6 @@ import mffs.Reference
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.model.AdvancedModelLoader
 import org.lwjgl.opengl.GL11._
-import resonantengine.lib.render.RenderUtility
 
 @SideOnly(Side.CLIENT)
 final object RenderCoercionDeriver

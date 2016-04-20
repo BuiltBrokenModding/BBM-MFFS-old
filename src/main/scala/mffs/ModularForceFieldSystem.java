@@ -50,7 +50,10 @@ public class ModularForceFieldSystem extends AbstractMod
     public final GameProfile fakeProfile = new GameProfile(UUID.randomUUID(), "mffs");
 
     @SidedProxy(clientSide = "mffs.ClientProxy", serverSide = "mffs.CommonProxy")
-    public CommonProxy proxy;
+    public static CommonProxy proxy;
+
+    @Mod.Instance(Reference.domain)
+    public static ModularForceFieldSystem instance;
 
     //TODO once update is done prefix all item objects with item, ex itemItemName or itemSomeItem
     /**
@@ -121,7 +124,7 @@ public class ModularForceFieldSystem extends AbstractMod
     @Override
     public void loadHandlers(LoadableHandler loader)
     {
-        MinecraftForge.EVENT_BUS.register(SubscribeEventHandler);
+        MinecraftForge.EVENT_BUS.register(new SubscribeEventHandler());
         MinecraftForge.EVENT_BUS.register(remoteController);
     }
 

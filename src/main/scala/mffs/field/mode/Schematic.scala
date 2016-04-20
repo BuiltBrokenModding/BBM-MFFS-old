@@ -1,7 +1,6 @@
 package mffs.field.mode
 
 import net.minecraft.nbt.NBTTagCompound
-import resonantengine.lib.transform.vector.Vector3
 
 /**
  * @author Calclavia

@@ -1,10 +1,6 @@
 package mffs.field.gui
 
 import mffs.base.{GuiMFFS, TileFieldMatrix}
-import resonantengine.lib.prefab.gui.GuiContainerBase.SlotType
-import resonantengine.lib.utility.LanguageUtility
-import resonantengine.lib.transform.region.Rectangle
-import resonantengine.lib.transform.vector.Vector2
 
 /**
  * Anything that has a field matrix within it.

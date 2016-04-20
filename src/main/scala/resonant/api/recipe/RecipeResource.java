@@ -4,8 +4,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.List;
-
 public abstract class RecipeResource
 {
 	public final boolean hasChance;

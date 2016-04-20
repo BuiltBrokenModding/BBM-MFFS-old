@@ -8,10 +8,6 @@ import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
 import net.minecraftforge.fluids.BlockFluidBase
-import resonantengine.api.mffs.machine.IProjector
-import resonantengine.lib.transform.vector.Vector3
-
-import scala.collection.JavaConversions._
 
 class ItemModuleSponge extends ItemModule
 {

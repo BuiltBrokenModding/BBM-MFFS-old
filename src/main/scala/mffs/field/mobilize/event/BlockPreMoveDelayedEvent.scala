@@ -4,9 +4,6 @@ import mffs.field.mobilize.TileForceMobilizer
 import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.common.MinecraftForge
-import resonantengine.api.mffs.event.EventForceMobilize
-import resonantengine.lib.utility.MovementUtility
-import resonantengine.lib.transform.vector.VectorWorld
 
 /**
  * Removes the TileEntity

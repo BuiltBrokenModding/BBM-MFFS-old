@@ -4,7 +4,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import resonant.api.TriggerCause;
-import resonant.lib.type.Pair;
 import resonant.lib.world.edit.IWorldChangeAction;
 
 import java.util.List;

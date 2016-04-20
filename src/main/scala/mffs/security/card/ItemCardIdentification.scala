@@ -9,13 +9,6 @@ import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
-import resonantengine.api.network.IPacketReceiver
-import resonantengine.core.network.discriminator.PacketType
-import resonantengine.lib.access.{AccessUser, Permissions}
-import resonantengine.lib.utility.LanguageUtility
-import resonantengine.lib.utility.nbt.NBTUtility
-import resonantengine.lib.wrapper.ByteBufWrapper._
-import resonantengine.lib.wrapper.CollectionWrapper._
 
 class ItemCardIdentification extends ItemCardAccess with IPacketReceiver
 {

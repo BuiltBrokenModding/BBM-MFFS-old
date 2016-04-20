@@ -145,11 +145,14 @@ public class SubscribeEventHandler
         Set<TileElectromagneticProjector> relevantProjectors = MFFSUtility.getRelevantProjectors(evt.entityPlayer.worldObj, position);
 
         //Check if we can sync this block (activate). If not, we cancel the event.
-        if (!relevantProjectors.forall(x = > x.isAccessGranted(evt.entityPlayer.worldObj, new Vector3(evt.x, evt.y, evt.z), evt.entityPlayer, evt.action)))
+        for(TileElectromagneticProjector projector : relevantProjectors)
         {
-            //Check if player has permission
-            evt.entityPlayer.addChatMessage(new ChatComponentText("[" + Reference.name + "] You have no permission to do that!"));
-            evt.setCanceled(true);
+            if (!projector.isAccessGranted(evt.entityPlayer.worldObj, new Pos(evt.x, evt.y, evt.z), evt.entityPlayer, evt.action))
+            {
+                //Check if player has permission
+                evt.entityPlayer.addChatMessage(new ChatComponentText("[" + Reference.name + "] You have no permission to do that!")); //TODO add translation
+                evt.setCanceled(true);
+            }
         }
     }
 
@@ -157,19 +160,20 @@ public class SubscribeEventHandler
      * When a block breaks, mark force field projectors for an update.
      */
     @SubscribeEvent
-    public void chunkModifyEvent(ChunkSetBlockEvent evt)
+    public void chunkModifyEvent(ChunkSetBlockEvent event)
     {
-        if (!evt.world.isRemote && evt.block == Blocks.air)
+        if (!event.world.isRemote && event.block == Blocks.air)
         {
-            Pos vec = new Pos(evt.x, evt.y, evt.z);
+            Pos vec = new Pos(event.x, event.y, event.z);
 
-            FrequencyGridRegistry.instance.getNodes(TileElectromagneticProjector.class)
-                    .view
-                    .filter(_.getWorldObj == evt.world)
-                    .filter(_.getCalculatedField != null)
-                    .filter(_.getCalculatedField.contains(vec))
-                    .force
-                    .foreach(_.markFieldUpdate = true)
+            Set<TileElectromagneticProjector> projectorSet = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class);
+            for(TileElectromagneticProjector projector : projectorSet)
+            {
+                if(projector.world() == event.world && projector.getCalculatedField() != null && projector.getCalculatedField().contains(vec))
+                {
+                    projector.markFieldUpdate();
+                }
+            }
         }
     }
 

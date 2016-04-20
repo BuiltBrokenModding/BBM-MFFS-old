@@ -4,8 +4,6 @@ import java.util.{Set => JSet}
 
 import mffs.item.card.ItemCard
 import net.minecraft.item.ItemStack
-import resonantengine.api.mffs.card.IAccessCard
-import resonantengine.lib.access.AbstractAccess
 
 /**
  * @author Calclavia

@@ -5,8 +5,6 @@ import java.util.List
 import mffs.base.ItemModule
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import resonantengine.lib.utility.LanguageUtility
-import resonantengine.lib.wrapper.CollectionWrapper._
 
 class ItemModuleDefense extends ItemModule
 {

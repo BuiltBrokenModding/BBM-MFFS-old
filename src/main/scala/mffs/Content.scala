@@ -1,24 +1,8 @@
 package mffs
 
-import mffs.base.{ItemMFFS, ItemModule}
-import mffs.field.mobilize.TileForceMobilizer
-import mffs.field.mode._
-import mffs.field.module._
-import mffs.field.{TileElectromagneticProjector, TileForceField}
-import mffs.item.ItemRemoteController
-import mffs.item.card.{ItemCard, ItemCardFrequency, ItemCardLink}
-import mffs.item.fortron.ItemCardInfinite
-import mffs.production.{TileCoercionDeriver, TileFortronCapacitor}
-import mffs.security.TileBiometricIdentifier
-import mffs.security.card.ItemCardIdentification
-import mffs.security.module._
-import net.minecraft.block.Block
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.ItemStack
 import net.minecraftforge.oredict.OreDictionary
-import resonantengine.lib.modcontent.ExplicitContentName
-import resonantengine.lib.utility.recipe.UniversalRecipe
-import resonantengine.prefab.modcontent.ContentHolder
 
 /**
  * The main content of MFFS

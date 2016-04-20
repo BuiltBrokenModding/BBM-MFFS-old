@@ -2,8 +2,11 @@ package mffs.base
 
 import java.util.{Set => JSet}
 
+import com.builtbroken.mc.core.network.packet.PacketType
+import com.builtbroken.mc.lib.helper.RotationUtility
+import com.builtbroken.mc.lib.transform.vector.Pos
 import io.netty.buffer.ByteBuf
-import mffs.Content
+import mffs.ModularForceFieldSystem
 import mffs.field.mobilize.event.{DelayedEvent, IDelayedEventHandler}
 import mffs.field.module.ItemModuleArray
 import mffs.item.card.ItemCard
@@ -11,14 +14,8 @@ import mffs.util.TCache
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.common.util.ForgeDirection
-import resonantengine.api.mffs.machine.{IFieldMatrix, IPermissionProvider}
-import resonantengine.api.mffs.modules.{IModule, IProjectorMode}
-import resonantengine.core.network.discriminator.PacketType
-import resonantengine.lib.transform.rotation.EulerAngle
-import resonantengine.lib.transform.vector.Vector3
-import resonantengine.lib.utility.RotationUtility
-import resonantengine.lib.wrapper.ByteBufWrapper._
-import resonantengine.prefab.block.impl.TRotatable
+import resonant.api.mffs.machine.{IPermissionProvider, IFieldMatrix}
+import resonant.api.mffs.modules.{IProjectorMode, IModule}
 
 import scala.collection.convert.wrapAll._
 import scala.collection.mutable
@@ -35,7 +32,7 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
    * Are the directions on the GUI absolute values?
    */
   var absoluteDirection = false
-  protected var calculatedField: mutable.Set[Vector3] = null
+  protected var calculatedField: mutable.Set[Pos] = null
   protected var isCalculating = false
 
   override def update()
@@ -105,11 +102,11 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
     return actualDirs.foldLeft(0)((b, a) => b + getModuleCount(module, getDirectionSlots(a): _*))
   }
 
-  def getPositiveScale: Vector3 =
+  def getPositiveScale: Pos =
   {
     val cacheID = "getPositiveScale"
 
-    if (hasCache(classOf[Vector3], cacheID)) return getCache(classOf[Vector3], cacheID)
+    if (hasCache(classOf[Pos], cacheID)) return getCache(classOf[Pos], cacheID)
 
     var zScalePos = 0
     var xScalePos = 0
@@ -117,37 +114,37 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
 
     if (absoluteDirection)
     {
-      zScalePos = getModuleCount(Content.moduleScale, getDirectionSlots(ForgeDirection.SOUTH): _*)
-      xScalePos = getModuleCount(Content.moduleScale, getDirectionSlots(ForgeDirection.EAST): _*)
-      yScalePos = getModuleCount(Content.moduleScale, getDirectionSlots(ForgeDirection.UP): _*)
+      zScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.SOUTH): _*)
+      xScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.EAST): _*)
+      yScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.UP): _*)
     }
     else
     {
       val direction = getDirection
 
-      zScalePos = getModuleCount(Content.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)): _*)
-      xScalePos = getModuleCount(Content.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)): _*)
-      yScalePos = getModuleCount(Content.moduleScale, getDirectionSlots(ForgeDirection.UP): _*)
+      zScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)): _*)
+      xScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)): _*)
+      yScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.UP): _*)
     }
 
-    val omnidirectionalScale = getModuleCount(Content.moduleScale, getModuleSlots: _*)
+    val omnidirectionalScale = getModuleCount(ModularForceFieldSystem.moduleScale, getModuleSlots: _*)
 
     zScalePos += omnidirectionalScale
     xScalePos += omnidirectionalScale
     yScalePos += omnidirectionalScale
 
-    val positiveScale = new Vector3(xScalePos, yScalePos, zScalePos)
+    val positiveScale = new Pos(xScalePos, yScalePos, zScalePos)
 
     cache(cacheID, positiveScale)
 
     return positiveScale
   }
 
-  def getNegativeScale: Vector3 =
+  def getNegativeScale: Pos =
   {
     val cacheID = "getNegativeScale"
 
-    if (hasCache(classOf[Vector3], cacheID)) return getCache(classOf[Vector3], cacheID)
+    if (hasCache(classOf[Pos], cacheID)) return getCache(classOf[Pos], cacheID)
 
     var zScaleNeg = 0
     var xScaleNeg = 0
@@ -157,23 +154,23 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
 
     if (absoluteDirection)
     {
-      zScaleNeg = getModuleCount(Content.moduleScale, getDirectionSlots(ForgeDirection.NORTH): _*)
-      xScaleNeg = getModuleCount(Content.moduleScale, getDirectionSlots(ForgeDirection.WEST): _*)
-      yScaleNeg = getModuleCount(Content.moduleScale, getDirectionSlots(ForgeDirection.DOWN): _*)
+      zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.NORTH): _*)
+      xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.WEST): _*)
+      yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN): _*)
     }
     else
     {
-      zScaleNeg = getModuleCount(Content.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*)
-      xScaleNeg = getModuleCount(Content.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*)
-      yScaleNeg = getModuleCount(Content.moduleScale, getDirectionSlots(ForgeDirection.DOWN): _*)
+      zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*)
+      xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*)
+      yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN): _*)
     }
 
-    val omnidirectionalScale = this.getModuleCount(Content.moduleScale, getModuleSlots: _*)
+    val omnidirectionalScale = this.getModuleCount(ModularForceFieldSystem.moduleScale, getModuleSlots: _*)
     zScaleNeg += omnidirectionalScale
     xScaleNeg += omnidirectionalScale
     yScaleNeg += omnidirectionalScale
 
-    val negativeScale = new Vector3(xScaleNeg, yScaleNeg, zScaleNeg)
+    val negativeScale = new Pos(xScaleNeg, yScaleNeg, zScaleNeg)
 
     cache(cacheID, negativeScale)
 
@@ -203,11 +200,11 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
     }
   }
 
-  def getInteriorPoints: JSet[Vector3] =
+  def getInteriorPoints: JSet[Pos] =
   {
     val cacheID = "getInteriorPoints"
 
-    if (hasCache(classOf[Set[Vector3]], cacheID)) return getCache(classOf[Set[Vector3]], cacheID)
+    if (hasCache(classOf[Set[Pos]], cacheID)) return getCache(classOf[Set[Pos]], cacheID)
 
     if (getModeStack != null && getModeStack.getItem.isInstanceOf[TCache])
     {
@@ -216,9 +213,9 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
 
     val newField = getMode.getInteriorPoints(this)
 
-    if (getModuleCount(Content.moduleArray) > 0)
+    if (getModuleCount(ModularForceFieldSystem.moduleArray) > 0)
     {
-      Content.moduleArray.asInstanceOf[ItemModuleArray].onPreCalculateInterior(this, getMode.getExteriorPoints(this), newField)
+      ModularForceFieldSystem.moduleArray.asInstanceOf[ItemModuleArray].onPreCalculateInterior(this, getMode.getExteriorPoints(this), newField)
     }
 
     val translation = getTranslation
@@ -227,15 +224,15 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
     val rotation = new EulerAngle(rotationYaw, rotationPitch, 0)
     val maxHeight = world.getHeight
 
-    val field = mutable.Set((newField.view.par map (pos => (pos.transform(rotation) + toVector3 + translation).round) filter (position => position.yi <= maxHeight && position.yi >= 0)).seq.toSeq: _ *)
+    val field = mutable.Set((newField.view.par map (pos => (pos.transform(rotation) + toPos + translation).round) filter (position => position.yi <= maxHeight && position.yi >= 0)).seq.toSeq: _ *)
 
     cache(cacheID, field)
     return field
   }
 
-  def getCalculatedField: JSet[Vector3] =
+  def getCalculatedField: JSet[Pos] =
   {
-    return if (calculatedField != null) calculatedField else mutable.Set.empty[Vector3]
+    return if (calculatedField != null) calculatedField else mutable.Set.empty[Pos]
   }
 
   def queueEvent(evt: DelayedEvent)
@@ -260,7 +257,8 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
 
   /**
    * Calculates the force field
-   * @param callBack - Optional callback
+    *
+    * @param callBack - Optional callback
    */
   protected def calculateField(callBack: () => Unit = null)
   {
@@ -302,11 +300,11 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
   /**
    * Gets the exterior points of the field based on the matrix.
    */
-  protected def getExteriorPoints: mutable.Set[Vector3] =
+  protected def getExteriorPoints: mutable.Set[Pos] =
   {
-    var field = mutable.Set.empty[Vector3]
+    var field = mutable.Set.empty[Pos]
 
-    if (getModuleCount(Content.moduleInvert) > 0)
+    if (getModuleCount(ModularForceFieldSystem.moduleInvert) > 0)
       field = getMode.getInteriorPoints(this)
     else
       field = getMode.getExteriorPoints(this)
@@ -321,7 +319,7 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
 
     val maxHeight = world.getHeight
 
-    field = mutable.Set((field.view.par map (pos => (pos.transform(rotation) + toVector3 + translation).round) filter (position => position.yi <= maxHeight && position.yi >= 0)).seq.toSeq: _ *)
+    field = mutable.Set((field.view.par map (pos => (pos.transform(rotation) + toPos + translation).round) filter (position => position.yi <= maxHeight && position.yi >= 0)).seq.toSeq: _ *)
 
     getModules() foreach (_.onPostCalculate(this, field))
 
@@ -349,11 +347,11 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
     return null
   }
 
-  def getTranslation: Vector3 =
+  def getTranslation: Pos =
   {
     val cacheID = "getTranslation"
 
-    if (hasCache(classOf[Vector3], cacheID)) return getCache(classOf[Vector3], cacheID)
+    if (hasCache(classOf[Pos], cacheID)) return getCache(classOf[Pos], cacheID)
 
     val direction = getDirection
 
@@ -366,24 +364,24 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
 
     if (absoluteDirection)
     {
-      zTranslationNeg = getModuleCount(Content.moduleTranslate, getDirectionSlots(ForgeDirection.NORTH): _*)
-      zTranslationPos = getModuleCount(Content.moduleTranslate, getDirectionSlots(ForgeDirection.SOUTH): _*)
-      xTranslationNeg = getModuleCount(Content.moduleTranslate, getDirectionSlots(ForgeDirection.WEST): _*)
-      xTranslationPos = getModuleCount(Content.moduleTranslate, getDirectionSlots(ForgeDirection.EAST): _*)
-      yTranslationPos = getModuleCount(Content.moduleTranslate, getDirectionSlots(ForgeDirection.UP): _*)
-      yTranslationNeg = getModuleCount(Content.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN): _*)
+      zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.NORTH): _*)
+      zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.SOUTH): _*)
+      xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.WEST): _*)
+      xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.EAST): _*)
+      yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP): _*)
+      yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN): _*)
     }
     else
     {
-      zTranslationNeg = getModuleCount(Content.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*)
-      zTranslationPos = getModuleCount(Content.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)): _*)
-      xTranslationNeg = getModuleCount(Content.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*)
-      xTranslationPos = getModuleCount(Content.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)): _*)
-      yTranslationPos = getModuleCount(Content.moduleTranslate, getDirectionSlots(ForgeDirection.UP): _*)
-      yTranslationNeg = getModuleCount(Content.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN): _*)
+      zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*)
+      zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)): _*)
+      xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*)
+      xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)): _*)
+      yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP): _*)
+      yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN): _*)
     }
 
-    val translation = new Vector3(xTranslationPos - xTranslationNeg, yTranslationPos - yTranslationNeg, zTranslationPos - zTranslationNeg)
+    val translation = new Pos(xTranslationPos - xTranslationNeg, yTranslationPos - yTranslationNeg, zTranslationPos - zTranslationNeg)
 
     cache(cacheID, translation)
 
@@ -400,11 +398,11 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
 
     if (this.absoluteDirection)
     {
-      horizontalRotation = getModuleCount(Content.moduleRotate, getDirectionSlots(ForgeDirection.EAST): _*) - getModuleCount(Content.moduleRotate, getDirectionSlots(ForgeDirection.WEST): _*) + getModuleCount(Content.moduleRotate, this.getDirectionSlots(ForgeDirection.SOUTH): _*) - this.getModuleCount(Content.moduleRotate, getDirectionSlots(ForgeDirection.NORTH): _*)
+      horizontalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.EAST): _*) - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.WEST): _*) + getModuleCount(ModularForceFieldSystem.moduleRotate, this.getDirectionSlots(ForgeDirection.SOUTH): _*) - this.getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.NORTH): _*)
     }
     else
     {
-      horizontalRotation = getModuleCount(Content.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)): _*) - getModuleCount(Content.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*) + this.getModuleCount(Content.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)): _*) - getModuleCount(Content.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*)
+      horizontalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)): _*) - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*) + this.getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)): _*) - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*)
     }
 
     horizontalRotation *= 2
@@ -420,7 +418,7 @@ abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with
 
     if (hasCache(classOf[Integer], cacheID)) return getCache(classOf[Integer], cacheID)
 
-    var verticalRotation = getModuleCount(Content.moduleRotate, getDirectionSlots(ForgeDirection.UP): _*) - getModuleCount(Content.moduleRotate, getDirectionSlots(ForgeDirection.DOWN): _*)
+    var verticalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.UP): _*) - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.DOWN): _*)
     verticalRotation *= 2
 
     cache(cacheID, verticalRotation)

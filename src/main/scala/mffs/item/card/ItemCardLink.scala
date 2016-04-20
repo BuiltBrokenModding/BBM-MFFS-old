@@ -8,10 +8,6 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ChatComponentTranslation
 import net.minecraft.world.World
-import resonantengine.api.mffs.card.ICoordLink
-import resonantengine.lib.transform.vector.VectorWorld
-import resonantengine.lib.wrapper.CollectionWrapper._
-import resonantengine.lib.wrapper.StringWrapper._
 
 /**
  * A linking card used to link machines in specific positions.

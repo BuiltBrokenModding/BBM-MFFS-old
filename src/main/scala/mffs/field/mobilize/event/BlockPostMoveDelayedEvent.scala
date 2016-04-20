@@ -8,9 +8,6 @@ import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
 import net.minecraftforge.common.MinecraftForge
-import resonantengine.api.mffs.event.EventForceMobilize
-import resonantengine.lib.utility.MovementUtility
-import resonantengine.lib.transform.vector.VectorWorld
 
 /**
  * Sets the new position into the original TileEntities' block.

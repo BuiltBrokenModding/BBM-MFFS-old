@@ -4,10 +4,6 @@ import com.builtbroken.mc.prefab.tile.traits.TInventory
 import io.netty.buffer.ByteBuf
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
-import resonantengine.core.network.discriminator.PacketType
-import resonantengine.lib.content.prefab.TInventory
-import resonantengine.lib.utility.inventory.TPrefabInventory
-import resonantengine.lib.wrapper.ByteBufWrapper._
 
 /**
  * All TileEntities that have an inventory should extend this.

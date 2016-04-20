@@ -2,6 +2,10 @@ package mffs.field
 
 import java.util.{Set => JSet}
 
+import com.builtbroken.mc.core.Engine
+import com.builtbroken.mc.core.network.packet.PacketTile
+import com.builtbroken.mc.lib.transform.region.Cube
+import com.builtbroken.mc.lib.transform.vector.Pos
 import cpw.mods.fml.common.network.ByteBufUtils
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import io.netty.buffer.ByteBuf
@@ -20,12 +24,8 @@ import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.world.{IBlockAccess, World}
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
-import resonantengine.api.mffs.machine.IProjector
-import resonantengine.api.mffs.modules.{IModule, IProjectorMode}
-import resonantengine.core.network.discriminator.{PacketTile, PacketType}
-import resonantengine.lib.transform.region.Cuboid
-import resonantengine.lib.transform.vector.Vector3
-import resonantengine.lib.wrapper.ByteBufWrapper._
+import resonant.api.mffs.machine.IProjector
+import resonant.api.mffs.modules.{IModule, IProjectorMode}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -33,7 +33,7 @@ import scala.collection.mutable
 class TileElectromagneticProjector extends TileFieldMatrix with IProjector
 {
   /** A set containing all positions of all force field blocks generated. */
-  val forceFields = mutable.Set.empty[Vector3]
+  val forceFields = mutable.Set.empty[Pos]
 
   /** Marks the field for an update call */
   var markFieldUpdate = true
@@ -47,7 +47,7 @@ class TileElectromagneticProjector extends TileFieldMatrix with IProjector
   /** Are the filters in the projector inverted? */
   private var isInverted = false
 
-  bounds = new Cuboid(0, 0, 0, 1, 0.8, 1)
+  bounds = new Cube(0, 0, 0, 1, 0.8, 1)
   capacityBase = 30
   startModuleIndex = 1
 
@@ -76,14 +76,14 @@ class TileElectromagneticProjector extends TileFieldMatrix with IProjector
   {
     val nbt = new NBTTagCompound
     val nbtList = new NBTTagList
-    calculatedField foreach (vec => nbtList.appendTag(vec.toNBT))
+    calculatedField foreach (vec => nbtList.appendTag(vec.toNBT()))
     nbt.setTag("blockList", nbtList)
-    ModularForceFieldSystem.packetHandler.sendToAll(new PacketTile(this, TilePacketType.field.id: Integer, nbt))
+    Engine.instance.packetHandler.sendToAll(new PacketTile(this, TilePacketType.field.id: Integer, nbt))
   }
 
   private def clientSideSimulationRequired: Boolean =
   {
-    return getModuleCount(Content.moduleRepulsion) > 0
+    return getModuleCount(ModularForceFieldSystem.moduleRepulsion) > 0
   }
 
   /**
@@ -347,9 +347,13 @@ class TileElectromagneticProjector extends TileFieldMatrix with IProjector
     return hasPerm
   }
 
-  def getFilterItems: Set[Item] = getFilterStacks map (_.getItem)
+  def getFilterItems: List[Item] = getFilterStacks map (_.getItem)
 
-  def getFilterStacks: Set[ItemStack] = ((26 until 32) map (getStackInSlot(_)) filter (_ != null)).toSet
+  def getFilterStacks: List[ItemStack] =
+    {
+      for()
+      ((26 until 32) map (getStackInSlot(_)) filter (_ != null)).toSet
+    }
 
   def isInvertedFilter: Boolean = isInverted
 

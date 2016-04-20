@@ -2,7 +2,6 @@ package mffs.security
 
 import mffs.base.GuiMFFS
 import net.minecraft.entity.player.EntityPlayer
-import resonantengine.lib.render.EnumColor
 
 class GuiBiometricIdentifier(player: EntityPlayer, tile: TileBiometricIdentifier) extends GuiMFFS(new ContainerBiometricIdentifier(player, tile), tile)
 {

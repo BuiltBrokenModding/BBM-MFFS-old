@@ -10,9 +10,9 @@ import mffs.security.{MFFSPermissions, TileBiometricIdentifier}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ChatComponentText
-import resonantengine.api.mffs.card.ICoordLink
-import resonantengine.api.mffs.fortron.FrequencyGridRegistry
-import resonantengine.api.tile.IBlockFrequency
+import resonant.api.mffs.card.ICoordLink
+import resonant.api.mffs.fortron.FrequencyGridRegistry
+import resonant.api.tile.IBlockFrequency
 
 import scala.collection.convert.wrapAll._
 

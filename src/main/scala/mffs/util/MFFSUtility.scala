@@ -1,7 +1,10 @@
 package mffs.util
 
+import com.builtbroken.mc.lib.access.Permission
+import com.builtbroken.mc.lib.transform.rotation.EulerAngle
+import com.builtbroken.mc.lib.transform.vector.Pos
 import com.mojang.authlib.GameProfile
-import mffs.Content
+import mffs.{ModularForceFieldSystem, Content}
 import mffs.field.TileElectromagneticProjector
 import mffs.field.mode.ItemModeCustom
 import net.minecraft.block.Block
@@ -12,14 +15,9 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
-import resonantengine.api.mffs.fortron.FrequencyGridRegistry
-import resonantengine.api.mffs.machine.IProjector
-import resonantengine.lib.access.Permission
-import resonantengine.lib.grid.frequency.GridFrequency
-import resonantengine.lib.transform.rotation.EulerAngle
-import resonantengine.lib.transform.vector.Vector3
+import resonant.api.mffs.fortron.FrequencyGridRegistry
+import resonant.api.mffs.machine.IProjector
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 /**
@@ -65,7 +63,7 @@ object MFFSUtility
       ForgeDirection.VALID_DIRECTIONS.foreach(
         direction =>
         {
-          val vector = new Vector3(tileEntity) + direction
+          val vector = new Pos(tileEntity).add(direction)
           val checkTile = vector.getTileEntity(tileEntity.getWorldObj())
 
           if (checkTile != null)
@@ -95,7 +93,7 @@ object MFFSUtility
     return null
   }
 
-  def getCamoBlock(proj: IProjector, position: Vector3): ItemStack =
+  def getCamoBlock(proj: IProjector, position: Pos): ItemStack =
   {
     val projector = proj.asInstanceOf[TileElectromagneticProjector]
     val tile = projector.asInstanceOf[TileEntity]
@@ -104,7 +102,7 @@ object MFFSUtility
     {
       if (!tile.getWorldObj().isRemote)
       {
-        if (projector.getModuleCount(Content.moduleCamouflage) > 0)
+        if (projector.getModuleCount(ModularForceFieldSystem.moduleCamouflage) > 0)
         {
           if (projector.getMode.isInstanceOf[ItemModeCustom])
           {
@@ -112,8 +110,8 @@ object MFFSUtility
 
             if (fieldMap != null)
             {
-              val fieldCenter = new Vector3(projector.asInstanceOf[TileEntity]) + projector.getTranslation()
-              var relativePosition: Vector3 = position - fieldCenter
+              val fieldCenter = new Pos(projector.asInstanceOf[TileEntity]) + projector.getTranslation()
+              var relativePosition: Pos = position.subtract(fieldCenter)
               relativePosition = relativePosition.transform(new EulerAngle(-projector.getRotationYaw, -projector.getRotationPitch, 0))
 
               val blockInfo = fieldMap(relativePosition.round)
@@ -157,17 +155,17 @@ object MFFSUtility
     return null
   }
 
-  def hasPermission(world: World, position: Vector3, permission: Permission, player: EntityPlayer): Boolean =
+  def hasPermission(world: World, position: Pos, permission: Permission, player: EntityPlayer): Boolean =
   {
     return hasPermission(world, position, permission, player.getGameProfile())
   }
 
-  def hasPermission(world: World, position: Vector3, permission: Permission, profile: GameProfile): Boolean =
+  def hasPermission(world: World, position: Pos, permission: Permission, profile: GameProfile): Boolean =
   {
     return getRelevantProjectors(world, position).forall(_.hasPermission(profile, permission))
   }
 
-  def hasPermission(world: World, position: Vector3, action: PlayerInteractEvent.Action, player: EntityPlayer): Boolean =
+  def hasPermission(world: World, position: Pos, action: PlayerInteractEvent.Action, player: EntityPlayer): Boolean =
   {
     return getRelevantProjectors(world, position) forall (_.isAccessGranted(world, position, player, action))
   }
@@ -175,7 +173,7 @@ object MFFSUtility
   /**
    * Gets the set of projectors that have an effect in this position.
    */
-  def getRelevantProjectors(world: World, position: Vector3): mutable.Set[TileElectromagneticProjector] =
+  def getRelevantProjectors(world: World, position: Pos): mutable.Set[TileElectromagneticProjector] =
   {
     return FrequencyGridRegistry.instance.asInstanceOf[GridFrequency].getNodes(classOf[TileElectromagneticProjector]) filter (_.isInField(position))
   }

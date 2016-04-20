@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.{Side, SideOnly}
 import mffs.Reference
 import net.minecraft.util.ResourceLocation
 import net.minecraft.world.World
-import resonantengine.lib.transform.vector.Vector3
 
 /**
  * Based off Thaumcraft's Beam Renderer.

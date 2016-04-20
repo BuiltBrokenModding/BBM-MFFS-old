@@ -5,15 +5,9 @@ import java.util.{Set => JSet}
 import mffs.base.ItemModule
 import mffs.field.TileElectromagneticProjector
 import mffs.security.MFFSPermissions
-import net.minecraft.entity.Entity
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
-import resonantengine.api.mffs.machine.IProjector
-import resonantengine.lib.transform.region.Cuboid
-import resonantengine.lib.transform.vector.Vector3
-
-import scala.collection.JavaConversions._
 
 class ItemModuleRepulsion extends ItemModule
 {

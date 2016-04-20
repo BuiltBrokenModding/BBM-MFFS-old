@@ -4,7 +4,6 @@ import cpw.mods.fml.common.Loader
 import cpw.mods.fml.relauncher.ReflectionHelper
 import mffs.field.mobilize.TileForceMobilizer
 import net.minecraft.world.World
-import resonantengine.lib.transform.vector.Vector3
 
 /**
  * Removes the TileEntity

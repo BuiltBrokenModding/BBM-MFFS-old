@@ -6,8 +6,6 @@ import mffs.base.GuiMFFS
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiButton
 import org.lwjgl.opengl.GL11
-import resonantengine.lib.utility.LanguageUtility
-import resonantengine.lib.transform.vector.Vector2
 
 class GuiIndexedButton(id: Int, x: Int, y: Int, val offset: Vector2 = new Vector2, mainGui: GuiMFFS = null, name: String = "") extends GuiButton(id, x, y, 18, 18, name)
 {

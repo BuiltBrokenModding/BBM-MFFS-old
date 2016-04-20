@@ -10,5 +10,5 @@ public interface IFortronCost
 	 *
 	 * @return
 	 */
-	public float getFortronCost(float amplifier);
+	float getFortronCost(float amplifier);
 }

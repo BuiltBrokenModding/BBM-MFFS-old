@@ -10,11 +10,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World
-import resonantengine.api.item.IItemFrequency
-import resonantengine.api.network.IPacketReceiver
-import resonantengine.core.network.discriminator.PacketType
-import resonantengine.lib.utility.LanguageUtility
-import resonantengine.lib.wrapper.CollectionWrapper._
 
 class ItemCardFrequency extends ItemCard with IItemFrequency with IPacketReceiver
 {

@@ -1,7 +1,6 @@
 package resonant.api.tile.node;
 
 import resonant.api.tile.INodeProvider;
-import resonant.api.tile.node.INode;
 
 import java.util.HashMap;
 

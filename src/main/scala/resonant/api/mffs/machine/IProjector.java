@@ -1,8 +1,8 @@
 package resonant.api.mffs.machine;
 
+import com.builtbroken.mc.lib.transform.vector.Pos;
 import net.minecraft.inventory.IInventory;
 import resonant.api.tile.IBlockFrequency;
-import resonant.lib.transform.vector.Vector3;
 
 import java.util.Set;
 
@@ -38,6 +38,6 @@ public abstract interface IProjector extends IInventory, IFieldMatrix, IBlockFre
 	 *
 	 * @return The actual force field block coordinates in the world.
 	 */
-	public Set<Vector3> getForceFields();
+	public Set<Pos> getForceFields();
 
 }

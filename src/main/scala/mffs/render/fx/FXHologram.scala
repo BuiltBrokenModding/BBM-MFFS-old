@@ -7,8 +7,6 @@ import net.minecraft.client.particle.EntityFX
 import net.minecraft.client.renderer.{OpenGlHelper, RenderBlocks, Tessellator}
 import net.minecraft.world.World
 import org.lwjgl.opengl.GL11
-import resonantengine.lib.render.RenderUtility
-import resonantengine.lib.transform.vector.Vector3
 
 @SideOnly(Side.CLIENT)
 class FXHologram(par1World: World, position: Vector3, red: Float, green: Float, blue: Float, age: Int) extends FXMFFS(par1World, position.x, position.y, position.z)

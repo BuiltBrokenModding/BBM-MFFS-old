@@ -1,9 +1,9 @@
 package resonant.api.mffs.fortron;
 
+import com.builtbroken.mc.lib.transform.region.Cube;
+import com.builtbroken.mc.lib.transform.vector.Pos;
 import net.minecraft.world.World;
 import resonant.api.tile.IBlockFrequency;
-import resonant.lib.transform.region.Cuboid;
-import resonant.lib.transform.vector.Vector3;
 
 import java.util.Set;
 
@@ -15,6 +15,8 @@ import java.util.Set;
  */
 public class FrequencyGridRegistry
 {
+	//TODO make per world
+	//TODO make per chunk for faster access
 	public static IFrequencyGrid CLIENT_INSTANCE;
 	public static IFrequencyGrid SERVER_INSTANCE;
 
@@ -50,12 +52,12 @@ public class FrequencyGridRegistry
 		/**
 		 * Gets a list of TileEntities that has a specific frequency, within a radius around a position.
 		 */
-		Set<IBlockFrequency> getNodes(World world, Vector3 position, int radius, int frequency);
+		Set<IBlockFrequency> getNodes(World world, Pos position, int radius, int frequency);
 
-		<C extends IBlockFrequency> Set<C> getNodes(Class<C> clazz, World world, Vector3 position, int radius, int frequency);
+		<C extends IBlockFrequency> Set<C> getNodes(Class<C> clazz, World world, Pos position, int radius, int frequency);
 
-		Set<IBlockFrequency> getNodes(World world, Cuboid region, int frequency);
+		Set<IBlockFrequency> getNodes(World world, Cube region, int frequency);
 
-		<C extends IBlockFrequency> Set<C> getNodes(Class<C> clazz, World world, Cuboid region, int frequency);
+		<C extends IBlockFrequency> Set<C> getNodes(Class<C> clazz, World world, Cube region, int frequency);
 	}
 }

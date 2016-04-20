@@ -5,9 +5,7 @@ import java.util.Set
 import mffs.field.TileElectromagneticProjector
 import mffs.security.MFFSPermissions
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.{ChatComponentTranslation, ChatComponentText}
-import resonantengine.api.mffs.machine.IProjector
-import resonantengine.lib.transform.vector.Vector3
+import net.minecraft.util.ChatComponentTranslation
 
 class ItemModuleConfiscate extends ItemModuleDefense
 {

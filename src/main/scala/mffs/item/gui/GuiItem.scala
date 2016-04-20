@@ -3,7 +3,6 @@ package mffs.item.gui
 import net.minecraft.client.gui.GuiTextField
 import net.minecraft.inventory.Container
 import net.minecraft.item.ItemStack
-import resonantengine.lib.prefab.gui.GuiContainerBase
 
 /**
  * @author Calclavia

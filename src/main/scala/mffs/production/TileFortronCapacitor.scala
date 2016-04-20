@@ -13,12 +13,6 @@ import net.minecraft.client.renderer.RenderBlocks
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.fluids.IFluidContainerItem
-import resonantengine.api.mffs.card.ICoordLink
-import resonantengine.api.mffs.fortron.{FrequencyGridRegistry, IFortronCapacitor, IFortronFrequency, IFortronStorage}
-import resonantengine.api.mffs.modules.IModule
-import resonantengine.core.network.discriminator.PacketType
-import resonantengine.lib.transform.vector.Vector3
-import resonantengine.lib.wrapper.ByteBufWrapper._
 
 import scala.collection.JavaConversions._
 
