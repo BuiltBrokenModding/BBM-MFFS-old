@@ -1,11 +1,11 @@
 package resonant.api.mffs.card;
 
+import com.builtbroken.mc.lib.transform.vector.Location;
 import net.minecraft.item.ItemStack;
-import resonant.lib.transform.vector.VectorWorld;
 
 public interface ICoordLink
 {
-	public void setLink(ItemStack itemStack, VectorWorld position);
+	public void setLink(ItemStack itemStack, Location position);
 
-	public VectorWorld getLink(ItemStack itemStack);
+	public Location getLink(ItemStack itemStack);
 }
