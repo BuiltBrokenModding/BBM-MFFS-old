@@ -29,7 +29,6 @@ public class FortronUtility {
 	}
 
 	public int getAmount(FluidStack liquidStack) {
-
 		return liquidStack != null ? liquidStack.amount : 0;
 	}
 
@@ -37,10 +36,8 @@ public class FortronUtility {
     if (frequencyTiles.size > 1 && Settings.allowFortronTeleport) {
       int totalFortron = 0, totalCapacity = 0;
 
-      for (IFortronFrequency machine : frequencyTiles)
-      {
-        if (machine != null)
-        {
+      for (IFortronFrequency machine : frequencyTiles) {
+        if (machine != null) {
           totalFortron += machine.getFortronEnergy();
           totalCapacity += machine.getFortronCapacity();
         }
@@ -73,15 +70,13 @@ public class FortronUtility {
           
             frequencyTiles.remove(source);
 
-            for(IFortronFrequency machine : frequencyTiles)
-            {
-              if (machine != null)
-              {
+            for(IFortronFrequency machine : frequencyTiles) {
+              if (machine != null) {
                 double capacityPercentage = machine.getFortronCapacity() / (double) totalCapacity;
                 int amountToSet = totalFortron * capacityPercentage;
 
                 if (amountToSet - machine.getFortronEnergy > 0)
-                  doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit)
+                  doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit);
               }
             }
             break;
@@ -101,12 +96,13 @@ public class FortronUtility {
                   
                 }
               }
-              break;
             
           }
+            break;
         }
       }
     }
+	}
 
 	/**
 	 * Tries to transfer Fortron to a specific machine from this capacitor.
@@ -123,10 +119,8 @@ public class FortronUtility {
 			World world = tileEntity.getWorldObj();
 			boolean isCamo = false;
 
-			if (transferer instanceof IModuleProvider) {
-				isCamo = (transferer.asInstanceOf[IModuleProvider])
-						.getModuleCount(ModularForceFieldSystem.moduleCamouflage) > 0;
-			}
+			if (transferer instanceof IModuleProvider)
+				isCamo = ((IModuleProvider) transferer).getModuleCount(ModularForceFieldSystem.moduleCamouflage) > 0;
 
 			if (joules > 0) {
 				int transferEnergy = Math.min(joules, limit);
