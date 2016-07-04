@@ -1,177 +1,149 @@
-package mffs.util
+package mffs.util;
 
-import com.builtbroken.mc.lib.transform.vector.Pos
-import mffs.render.FieldColor
-import mffs.util.TransferMode._
-import mffs.{Content, ModularForceFieldSystem, Settings}
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.world.World
-import net.minecraftforge.fluids.{Fluid, FluidStack, FluidTank}
-import resonant.api.mffs.fortron.IFortronFrequency
-import resonant.api.mffs.modules.IModuleProvider
+import java.util.List;
 
-import scala.collection.mutable
+import com.builtbroken.mc.lib.transform.vector.Pos;
+
+import mffs.ModularForceFieldSystem;
+import mffs.Settings;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 
 /**
  * A class with useful functions related to Fortron.
  *
- * @author Calclavia
  */
-object FortronUtility
-{
-  lazy val fluidFortron = new Fluid("fortron")
-  lazy val fluidstackFortron = new FluidStack(FortronUtility.fluidFortron, 0)
+public class FortronUtility {
+	private Fluid fluidFortron = new Fluid("fortron");
+	private FluidStack fluidstackFortron = new FluidStack(fluidFortron, 0);
 
-  def getFortron(amount: Int): FluidStack =
-  {
-    val stack: FluidStack = new FluidStack(fluidFortron, amount)
-    return stack
-  }
+	public FluidStack getFortron(int amount) {
+		return new FluidStack(fluidFortron, amount);
+	}
 
-  def getAmount(fortronTank: FluidTank): Int =
-  {
-    if (fortronTank != null)
-    {
-      return getAmount(fortronTank.getFluid)
-    }
-    return 0
-  }
+	public int getAmount(FluidTank fortronTank) {
+		return fortronTank != null ? getAmount(fortronTank.getFluid()) : 0;
+	}
 
-  def getAmount(liquidStack: FluidStack): Int =
-  {
-    if (liquidStack != null)
-    {
-      return liquidStack.amount
-    }
-    return 0
-  }
+	public int getAmount(FluidStack liquidStack) {
 
-  def transferFortron(source: IFortronFrequency, frequencyTiles: mutable.Set[IFortronFrequency], transferMode: TransferMode, limit: Int)
-  {
-    if (frequencyTiles.size > 1 && Settings.allowFortronTeleport)
-    {
-      var totalFortron = 0
-      var totalCapacity = 0
+		return liquidStack != null ? liquidStack.amount : 0;
+	}
 
-      for (machine <- frequencyTiles)
+	public void transferFortron(IFortronFrequency source, List<IFortronFrequency> frequencyTiles, TransferMode transferMode, int limit) {
+    if (frequencyTiles.size > 1 && Settings.allowFortronTeleport) {
+      int totalFortron = 0, totalCapacity = 0;
+
+      for (IFortronFrequency machine : frequencyTiles)
       {
         if (machine != null)
         {
-          totalFortron += machine.getFortronEnergy
-          totalCapacity += machine.getFortronCapacity
+          totalFortron += machine.getFortronEnergy();
+          totalCapacity += machine.getFortronCapacity();
         }
       }
-      if (totalFortron > 0 && totalCapacity > 0)
-      {
-        transferMode match
-        {
-          case TransferMode.`equalize` =>
-          {
-            for (machine <- frequencyTiles)
-            {
-              if (machine != null)
-              {
-                val capacityPercentage: Double = machine.getFortronCapacity.asInstanceOf[Double] / totalCapacity.asInstanceOf[Double]
-                val amountToSet: Int = (totalFortron * capacityPercentage).asInstanceOf[Int]
-                doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit)
+      
+      if (totalFortron > 0 && totalCapacity > 0) {
+        switch(transferMode) {
+        
+          case equalize:
+          
+            for (IFortronFrequency machine : frequencyTiles) {
+              if (machine != null) {
+                double capacityPercentage = machine.getFortronCapacity() / (double) totalCapacity;
+                int amountToSet = (int) (totalFortron * capacityPercentage);
+                doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit);
               }
             }
-          }
-          case TransferMode.`distribute` =>
-          {
-            val amountToSet: Int = totalFortron / frequencyTiles.size
-            for (machine <- frequencyTiles)
-            {
+            break;
+          
+          case distribute:
+            int amountToSet = totalFortron / frequencyTiles.size;
+            for (IFortronFrequency machine : frequencyTiles) {
               if (machine != null)
-              {
-                doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit)
-              }
+                doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit);
+              
             }
-          }
-          case TransferMode.`drain` =>
-          {
-            frequencyTiles.remove(source)
+            break;
+          
+          case drain:
+          
+            frequencyTiles.remove(source);
 
-            for (machine <- frequencyTiles)
+            for(IFortronFrequency machine : frequencyTiles)
             {
               if (machine != null)
               {
-                val capacityPercentage: Double = machine.getFortronCapacity.asInstanceOf[Double] / totalCapacity.asInstanceOf[Double]
-                val amountToSet: Int = (totalFortron * capacityPercentage).asInstanceOf[Int]
+                double capacityPercentage = machine.getFortronCapacity() / (double) totalCapacity;
+                int amountToSet = totalFortron * capacityPercentage;
 
                 if (amountToSet - machine.getFortronEnergy > 0)
-                {
                   doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit)
-                }
               }
             }
-          }
-          case TransferMode.`fill` =>
-          {
-            if (source.getFortronEnergy < source.getFortronCapacity)
-            {
-              frequencyTiles.remove(source)
-              val requiredFortron: Int = source.getFortronCapacity - source.getFortronEnergy
+            break;
+          
+          case fill:
+            if (source.getFortronEnergy < source.getFortronCapacity) {
+            	
+              frequencyTiles.remove(source);
+              int requiredFortron = source.getFortronCapacity - source.getFortronEnergy;
 
-              for (machine <- frequencyTiles)
-              {
-                if (machine != null)
-                {
-                  val amountToConsume: Int = Math.min(requiredFortron, machine.getFortronEnergy)
-                  val amountToSet: Int = -machine.getFortronEnergy - amountToConsume
+              for (IFortronFrequency machine : frequencyTiles) {
+                if (machine != null) {
+                  int amountToConsume = Math.min(requiredFortron, machine.getFortronEnergy);
+                  int amountToSet = -machine.getFortronEnergy - amountToConsume;
                   if (amountToConsume > 0)
-                  {
-                    doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit)
-                  }
+                	  doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit);
+                  
                 }
               }
-            }
+              break;
+            
           }
         }
       }
     }
-  }
 
-  /**
-   * Tries to transfer Fortron to a specific machine from this capacitor. Renders an animation on
-   * the client side.
-   *
-   * @param receiver : The machine to be transfered to.
-   * @param joules   : The amount of energy to be transfered.
-   */
-  def doTransferFortron(transferer: IFortronFrequency, receiver: IFortronFrequency, joules: Int, limit: Int)
-  {
-    if (transferer != null && receiver != null)
-    {
-      val tileEntity = transferer.asInstanceOf[TileEntity]
-      val world: World = tileEntity.getWorldObj()
-      var isCamo = false
+	/**
+	 * Tries to transfer Fortron to a specific machine from this capacitor.
+	 * Renders an animation on the client side.
+	 *
+	 * @param receiver
+	 *            : The machine to be transfered to.
+	 * @param joules
+	 *            : The amount of energy to be transfered.
+	 */
+	public void doTransferFortron(IFortronFrequency transferer, IFortronFrequency receiver, int joules, int limit) {
+		if (transferer != null && receiver != null) {
+			TileEntity tileEntity = transferer;
+			World world = tileEntity.getWorldObj();
+			boolean isCamo = false;
 
-      if (transferer.isInstanceOf[IModuleProvider])
-      {
-        isCamo = (transferer.asInstanceOf[IModuleProvider]).getModuleCount(ModularForceFieldSystem.moduleCamouflage) > 0
-      }
+			if (transferer instanceof IModuleProvider) {
+				isCamo = (transferer.asInstanceOf[IModuleProvider])
+						.getModuleCount(ModularForceFieldSystem.moduleCamouflage) > 0;
+			}
 
-      if (joules > 0)
-      {
-        val transferEnergy = Math.min(joules, limit)
-        var toBeInjected: Int = receiver.provideFortron(transferer.requestFortron(transferEnergy, false), false)
-        toBeInjected = transferer.requestFortron(receiver.provideFortron(toBeInjected, true), true)
-        if (world.isRemote && toBeInjected > 0 && !isCamo)
-        {
-          ModularForceFieldSystem.proxy.renderBeam(world, new Pos(tileEntity).add(0.5), new Pos(receiver.asInstanceOf[TileEntity]).add(0.5), FieldColor.blue, 20)
-        }
-      }
-      else
-      {
-        val transferEnergy = Math.min(Math.abs(joules), limit)
-        var toBeEjected: Int = transferer.provideFortron(receiver.requestFortron(transferEnergy, false), false)
-        toBeEjected = receiver.requestFortron(transferer.provideFortron(toBeEjected, true), true)
-        if (world.isRemote && toBeEjected > 0 && !isCamo)
-        {
-          ModularForceFieldSystem.proxy.renderBeam(world, new Pos(receiver.asInstanceOf[TileEntity]).add(0.5), new Pos(tileEntity).add(0.5), FieldColor.blue, 20)
-        }
-      }
-    }
-  }
+			if (joules > 0) {
+				int transferEnergy = Math.min(joules, limit);
+				int toBeInjected = receiver.provideFortron(transferer.requestFortron(transferEnergy, false), false);
+				toBeInjected = transferer.requestFortron(receiver.provideFortron(toBeInjected, true), true);
+				if (world.isRemote && toBeInjected > 0 && !isCamo)
+					ModularForceFieldSystem.proxy.renderBeam(world, new Pos(tileEntity).add(0.5),
+							new Pos(receiver.asInstanceOf[TileEntity]).add(0.5), FieldColor.blue, 20);
+			} else {
+				int transferEnergy = Math.min(Math.abs(joules), limit);
+				int toBeEjected = transferer.provideFortron(receiver.requestFortron(transferEnergy, false), false);
+				toBeEjected = receiver.requestFortron(transferer.provideFortron(toBeEjected, true), true);
+				if (world.isRemote && toBeEjected > 0 && !isCamo)
+					ModularForceFieldSystem.proxy.renderBeam(world, new Pos(receiver.asInstanceOf[TileEntity]).add(0.5),
+							new Pos(tileEntity).add(0.5), FieldColor.blue, 20);
+
+			}
+		}
+	}
 }
