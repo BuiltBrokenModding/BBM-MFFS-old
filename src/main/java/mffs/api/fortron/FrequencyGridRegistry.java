@@ -1,9 +1,8 @@
-package resonant.api.mffs.fortron;
+package mffs.api.fortron;
 
 import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import net.minecraft.world.World;
-import resonant.api.tile.IBlockFrequency;
 
 import java.util.Set;
 

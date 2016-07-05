@@ -1,4 +1,4 @@
-package resonant.api.mffs;
+package mffs.api;
 
 import net.minecraft.block.Block;
 

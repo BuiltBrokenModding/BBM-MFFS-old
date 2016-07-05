@@ -1,4 +1,4 @@
-package resonant.api.mffs.card;
+package mffs.api.card;
 
 import com.builtbroken.mc.lib.transform.vector.Location;
 import net.minecraft.item.ItemStack;

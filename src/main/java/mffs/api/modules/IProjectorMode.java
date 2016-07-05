@@ -1,10 +1,7 @@
-package resonant.api.mffs.modules;
-
-import resonant.api.mffs.machine.IFieldMatrix;
-import resonant.api.mffs.machine.IProjector;
-import resonant.lib.transform.vector.Vector3;
+package mffs.api.modules;
 
 import java.util.Set;
+
 
 public interface IProjectorMode extends IFortronCost
 {

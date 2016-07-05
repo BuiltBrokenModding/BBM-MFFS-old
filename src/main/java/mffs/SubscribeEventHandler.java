@@ -7,8 +7,6 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mffs.base.TileFortron;
-import mffs.field.TileElectromagneticProjector;
 import mffs.util.FortronUtility;
 import mffs.util.MFFSUtility;
 import net.minecraft.block.BlockSkull;
@@ -24,9 +22,6 @@ import net.minecraft.util.IIcon;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import resonant.api.mffs.event.EventForceMobilize;
-import resonant.api.mffs.event.EventStabilize;
-import resonant.api.mffs.fortron.FrequencyGridRegistry;
 import scala.collection.mutable.Set;
 
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package resonant.api.mffs.modules;
+package mffs.api.modules;
 
 /**
  * @author Calclavia

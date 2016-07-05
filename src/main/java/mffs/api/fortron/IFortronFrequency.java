@@ -1,6 +1,5 @@
-package resonant.api.mffs.fortron;
+package mffs.api.fortron;
 
-import resonant.api.tile.IBlockFrequency;
 
 public interface IFortronFrequency extends IFortronStorage, IBlockFrequency
 {

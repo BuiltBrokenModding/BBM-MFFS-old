@@ -1,4 +1,4 @@
-package resonant.api.mffs.machine;
+package mffs.api.machine;
 
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import net.minecraft.item.ItemStack;

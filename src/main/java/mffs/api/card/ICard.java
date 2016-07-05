@@ -1,4 +1,4 @@
-package resonant.api.mffs.card;
+package mffs.api.card;
 
 public interface ICard
 {

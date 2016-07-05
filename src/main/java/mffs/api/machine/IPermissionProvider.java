@@ -1,7 +1,7 @@
-package resonant.api.mffs.machine;
+package mffs.api.machine;
 
+import com.builtbroken.mc.lib.access.Permission;
 import com.mojang.authlib.GameProfile;
-import resonant.lib.access.java.Permission;
 
 /**
  * Used by tiles that provide permissions.

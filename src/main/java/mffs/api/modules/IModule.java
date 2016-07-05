@@ -1,4 +1,4 @@
-package resonant.api.mffs.modules;
+package mffs.api.modules;
 
 import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;

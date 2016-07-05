@@ -1,4 +1,4 @@
-package resonant.api.mffs.machine;
+package mffs.api.machine;
 
 public interface IActivatable
 {

@@ -6,6 +6,8 @@ import com.builtbroken.mc.lib.transform.vector.Pos;
 
 import mffs.ModularForceFieldSystem;
 import mffs.Settings;
+import mffs.api.fortron.IFortronFrequency;
+import mffs.api.modules.IModuleProvider;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
@@ -33,7 +35,7 @@ public class FortronUtility {
 	}
 
 	public void transferFortron(IFortronFrequency source, List<IFortronFrequency> frequencyTiles, TransferMode transferMode, int limit) {
-    if (frequencyTiles.size > 1 && Settings.allowFortronTeleport) {
+    if (frequencyTiles.size() > 1 && Settings.allowFortronTeleport) {
       int totalFortron = 0, totalCapacity = 0;
 
       for (IFortronFrequency machine : frequencyTiles) {
@@ -52,16 +54,16 @@ public class FortronUtility {
               if (machine != null) {
                 double capacityPercentage = machine.getFortronCapacity() / (double) totalCapacity;
                 int amountToSet = (int) (totalFortron * capacityPercentage);
-                doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit);
+                doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy(), limit);
               }
             }
             break;
           
           case distribute:
-            int amountToSet = totalFortron / frequencyTiles.size;
+            int amountToSet = totalFortron / frequencyTiles.size();
             for (IFortronFrequency machine : frequencyTiles) {
               if (machine != null)
-                doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit);
+                doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy(), limit);
               
             }
             break;
@@ -73,26 +75,26 @@ public class FortronUtility {
             for(IFortronFrequency machine : frequencyTiles) {
               if (machine != null) {
                 double capacityPercentage = machine.getFortronCapacity() / (double) totalCapacity;
-                int amountToSet = totalFortron * capacityPercentage;
+                int amountToSet = (int) (totalFortron * capacityPercentage);
 
-                if (amountToSet - machine.getFortronEnergy > 0)
-                  doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit);
+                if (amountToSet - machine.getFortronEnergy() > 0)
+                  doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy(), limit);
               }
             }
             break;
           
           case fill:
-            if (source.getFortronEnergy < source.getFortronCapacity) {
+            if (source.getFortronEnergy() < source.getFortronCapacity()) {
             	
               frequencyTiles.remove(source);
-              int requiredFortron = source.getFortronCapacity - source.getFortronEnergy;
+              int requiredFortron = source.getFortronCapacity() - source.getFortronEnergy();
 
               for (IFortronFrequency machine : frequencyTiles) {
                 if (machine != null) {
-                  int amountToConsume = Math.min(requiredFortron, machine.getFortronEnergy);
-                  int amountToSet = -machine.getFortronEnergy - amountToConsume;
+                  int amountToConsume = Math.min(requiredFortron, machine.getFortronEnergy());
+                  int amountToSet = -machine.getFortronEnergy() - amountToConsume;
                   if (amountToConsume > 0)
-                	  doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy, limit);
+                	  doTransferFortron(source, machine, amountToSet - machine.getFortronEnergy(), limit);
                   
                 }
               }

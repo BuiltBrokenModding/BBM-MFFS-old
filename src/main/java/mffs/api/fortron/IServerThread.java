@@ -1,4 +1,4 @@
-package resonant.api.mffs.fortron;
+package mffs.api.fortron;
 
 /**
  * Implemented by threads that exist server side.

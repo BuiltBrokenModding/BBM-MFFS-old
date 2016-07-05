@@ -1,4 +1,4 @@
-package resonant.api.mffs.fortron;
+package mffs.api.fortron;
 
 import java.util.Set;
 
