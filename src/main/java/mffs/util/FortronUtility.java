@@ -19,8 +19,8 @@ import net.minecraftforge.fluids.FluidTank;
  *
  */
 public class FortronUtility {
-	private Fluid fluidFortron = new Fluid("fortron");
-	private FluidStack fluidstackFortron = new FluidStack(fluidFortron, 0);
+	public static Fluid fluidFortron = new Fluid("fortron");
+	public static FluidStack fluidstackFortron = new FluidStack(fluidFortron, 0);
 
 	public FluidStack getFortron(int amount) {
 		return new FluidStack(fluidFortron, amount);
