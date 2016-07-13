@@ -20,98 +20,98 @@ message.modeCustom.modeChange=Selectie mode veranderd naar: %p
 message.modeCustom.saved=Krachtveldstructuur opgeslagen.
 
 # Blocks
-tile.mffs:fortronite.name=Fortronite
-tile.mffs:biometricIdentifier.name=Biometrische Indetificator
-tile.mffs:interdictionMatrix.name=Verbods Matrix
-tile.mffs:fortronCapacitor.name=Fortron Capacitator
-tile.mffs:projector.name=Krachtveld Projector
-tile.mffs:coercionDeriver.name=Dwangverplaatser
-tile.mffs:manipulator.name=Krachtfeld manipulator
-tile.mffs:forceField.name=Krachtveld
+tile.mffs\:fortronite.name=Fortronite
+tile.mffs\:biometricIdentifier.name=Biometrische Indetificator
+tile.mffs\:interdictionMatrix.name=Verbods Matrix
+tile.mffs\:fortronCapacitor.name=Fortron Capacitator
+tile.mffs\:projector.name=Krachtveld Projector
+tile.mffs\:coercionDeriver.name=Dwangverplaatser
+tile.mffs\:manipulator.name=Krachtfeld manipulator
+tile.mffs\:forceField.name=Krachtveld
 
 
 # Cards
-item.mffs:cardBlank.name=Lege kaart
-item.mffs:cardInfinite.name=Oneindige Energie Kaart
-item.mffs:cardInfinite.tooltip=De Oneindige Energie Kaart is een creatief voorwerp dat oneindige energie geeft als het in een Capacitator geplaatst is.
-item.mffs:cardFrequency.name=Frequentiekaart
-item.mffs:cardFrequency.tooltip=De frequentiekaart is gebruikt om frequenties over te dragen. Shift-rechts klikken genereert een willekeurige frequentie.
-item.mffs:cardLink.name=Linkkaart
-item.mffs:cardLink.tooltip=Rechts klikken op een blok met deze kaart maakt een link met die locatie.
-item.mffs:cardIdentification.name=Identiteitskaart
-item.mffs:cardIdentification.tooltip=Klik rechts met de kaart om hem aan jouw naam te koppelen.
+item.mffs\:cardBlank.name=Lege kaart
+item.mffs\:cardInfinite.name=Oneindige Energie Kaart
+item.mffs\:cardInfinite.tooltip=De Oneindige Energie Kaart is een creatief voorwerp dat oneindige energie geeft als het in een Capacitator geplaatst is.
+item.mffs\:cardFrequency.name=Frequentiekaart
+item.mffs\:cardFrequency.tooltip=De frequentiekaart is gebruikt om frequenties over te dragen. Shift-rechts klikken genereert een willekeurige frequentie.
+item.mffs\:cardLink.name=Linkkaart
+item.mffs\:cardLink.tooltip=Rechts klikken op een blok met deze kaart maakt een link met die locatie.
+item.mffs\:cardIdentification.name=Identiteitskaart
+item.mffs\:cardIdentification.tooltip=Klik rechts met de kaart om hem aan jouw naam te koppelen.
 
 #Items
-item.mffs:remoteController.name=Afstandsbediening
-item.mffs:fortron.name=Fortron
-item.mffs:focusMatrix.name=Focus Matrix
+item.mffs\:remoteController.name=Afstandsbediening
+item.mffs\:fortron.name=Fortron
+item.mffs\:focusMatrix.name=Focus Matrix
 
 #Projection Modes
-item.mffs:modeCube.name=Kubus Modus
-item.mffs:modeTube.name=Koker Modus
-item.mffs:modeSphere.name=Bol Modus
-item.mffs:modePyramid.name=Pyramide Modus
-item.mffs:modeCylinder.name=Cilinder Modus
-item.mffs:modeCustom.name=Aangepaste Modus
-item.mffs:modeCustom.tooltip=Markeer je eigen gebied door op twee blokken te klikken. Shift-rechts klikken slaat het op.
+item.mffs\:modeCube.name=Kubus Modus
+item.mffs\:modeTube.name=Koker Modus
+item.mffs\:modeSphere.name=Bol Modus
+item.mffs\:modePyramid.name=Pyramide Modus
+item.mffs\:modeCylinder.name=Cilinder Modus
+item.mffs\:modeCustom.name=Aangepaste Modus
+item.mffs\:modeCustom.tooltip=Markeer je eigen gebied door op twee blokken te klikken. Shift-rechts klikken slaat het op.
 
 # Modules
 ## General Modules
-item.mffs:moduleScale.name=Schaalmodule
-item.mffs:moduleScale.tooltip=De schaalmodule verhoogt de schaal van een onderdeel.
-item.mffs:moduleTranslate.name=Verplaatsingsmodule
-item.mffs:moduleTranslate.tooltip=De verplaatsingsmodule verplaatst een veld weg van de oorsprong.
-item.mffs:moduleRotate.name=Rotatiemodule
-item.mffs:moduleRotate.tooltip=De rotatiemodule draait een veld met een specifieke hoek.
+item.mffs\:moduleScale.name=Schaalmodule
+item.mffs\:moduleScale.tooltip=De schaalmodule verhoogt de schaal van een onderdeel.
+item.mffs\:moduleTranslate.name=Verplaatsingsmodule
+item.mffs\:moduleTranslate.tooltip=De verplaatsingsmodule verplaatst een veld weg van de oorsprong.
+item.mffs\:moduleRotate.name=Rotatiemodule
+item.mffs\:moduleRotate.tooltip=De rotatiemodule draait een veld met een specifieke hoek.
 
-item.mffs:moduleCapacity.name=Capaciteitsmodule
-item.mffs:moduleCapacity.tooltip=Verhoogt de capaciteit van een module.
-item.mffs:moduleSpeed.name=Snelheidsmodule
-item.mffs:moduleSpeed.tooltip=Verhoogt de snelheid van een machine.
+item.mffs\:moduleCapacity.name=Capaciteitsmodule
+item.mffs\:moduleCapacity.tooltip=Verhoogt de capaciteit van een module.
+item.mffs\:moduleSpeed.name=Snelheidsmodule
+item.mffs\:moduleSpeed.tooltip=Verhoogt de snelheid van een machine.
 
 ## Force Field Projector Modules
-item.mffs:moduleShock.name=Schokmodule
-item.mffs:moduleSponge.name=Sponsmodule
-item.mffs:moduleDome.name=Koepelmodule
-item.mffs:moduleFusion.name=Versmeltingsmodule
-item.mffs:moduleCamouflage.name=Camouflagemodule
-item.mffs:moduleCamouflage.tooltip=Camoufleert het krachtveld. Als je deze module samen met een desintegratiemodule gebruikt werkt deze andersom.
-item.mffs:moduleDisintegration.name=Desintegratiemodule
-item.mffs:moduleDisintegration.tooltip=Vernietigd alle blokken die in de weg van het krachtveld zitten en laat ze vallen.
-item.mffs:moduleGlow.name=Gloeimodule
-item.mffs:moduleStabilize.name=Stabilisatormodule
-item.mffs:moduleStabilize.tooltip=Stabiliseerd het veld en kristaliseert het in massieve blokken. Plaats een kist met blokken naast de projector met blokken om te gebruiken.
-item.mffs:moduleCollection.name=Verzamelmodule
-item.mffs:moduleCollection.tooltip=Verzamelt alle blokken die de desintegratiemodule heeft laten vallen.
-item.mffs:moduleInvert.name=Omgekeerde module
-item.mffs:moduleInvert.tooltip=Draait het veld om zodat het negatieve i.p.v positieve ruimten gebruikt.
-item.mffs:moduleSilence.name=Geluidsdemper Module
-item.mffs:moduleSilence.tooltip=Dempt al het geluid binnen het krachtveld.
-item.mffs:moduleRepulsion.name=Afstotingsmodule
-item.mffs:moduleRepulsion.tooltip=Cre�ert een onzichtbaar afstotingsveld.
-item.mffs:moduleArray.name=Herhalingsmodule
-item.mffs:moduleArray.tooltip=Herhaalt het veld volgens een ingesteld patroon.
+item.mffs\:moduleShock.name=Schokmodule
+item.mffs\:moduleSponge.name=Sponsmodule
+item.mffs\:moduleDome.name=Koepelmodule
+item.mffs\:moduleFusion.name=Versmeltingsmodule
+item.mffs\:moduleCamouflage.name=Camouflagemodule
+item.mffs\:moduleCamouflage.tooltip=Camoufleert het krachtveld. Als je deze module samen met een desintegratiemodule gebruikt werkt deze andersom.
+item.mffs\:moduleDisintegration.name=Desintegratiemodule
+item.mffs\:moduleDisintegration.tooltip=Vernietigd alle blokken die in de weg van het krachtveld zitten en laat ze vallen.
+item.mffs\:moduleGlow.name=Gloeimodule
+item.mffs\:moduleStabilize.name=Stabilisatormodule
+item.mffs\:moduleStabilize.tooltip=Stabiliseerd het veld en kristaliseert het in massieve blokken. Plaats een kist met blokken naast de projector met blokken om te gebruiken.
+item.mffs\:moduleCollection.name=Verzamelmodule
+item.mffs\:moduleCollection.tooltip=Verzamelt alle blokken die de desintegratiemodule heeft laten vallen.
+item.mffs\:moduleInvert.name=Omgekeerde module
+item.mffs\:moduleInvert.tooltip=Draait het veld om zodat het negatieve i.p.v positieve ruimten gebruikt.
+item.mffs\:moduleSilence.name=Geluidsdemper Module
+item.mffs\:moduleSilence.tooltip=Dempt al het geluid binnen het krachtveld.
+item.mffs\:moduleRepulsion.name=Afstotingsmodule
+item.mffs\:moduleRepulsion.tooltip=Cre�ert een onzichtbaar afstotingsveld.
+item.mffs\:moduleArray.name=Herhalingsmodule
+item.mffs\:moduleArray.tooltip=Herhaalt het veld volgens een ingesteld patroon.
 
 ## Interdiction Matrix Modules
-item.mffs:moduleAntiPersonnel.name=Anti-Personeels Module
-item.mffs:moduleAntiPersonnel.tooltip=Laat de verbodsmatrix iedereen vermoorden.
-item.mffs:moduleAntiFriendly.name=Anti-vriendschaps Module
-item.mffs:moduleAntiFriendly.tooltip=Laat de verbodsmatrix alle vriendelijke levensvormen doden.
-item.mffs:moduleAntiHostile.name=Anti-vijands Module
-item.mffs:moduleAntiHostile.tooltip=Laat de verbodsmatrix alle vijandige levensvormen doden.
-item.mffs:moduleWarn.name=Waarschuwingsmodule
-item.mffs:moduleWarn.tooltip=Geeft een waarschuwing aan indringers.
-item.mffs:moduleConfiscate.name=Inbeslagname Module
-item.mffs:moduleConfiscate.tooltip=Neemt de spullen van indringers in beslag.
-item.mffs:moduleBlockAccess.name=Toegangsmodule
-item.mffs:moduleBlockAccess.tooltip=Voorkomt dat indringers rechts kunnen klikken op blokken.
-item.mffs:moduleBlockAlter.name=Blok aanpassingsmodule
-item.mffs:moduleBlockAlter.tooltip=Voorkomt dat indringers blokken breken of plaatsen.
-item.mffs:moduleAntiSpawn.name=Anti-Spawn Module
-item.mffs:moduleAntiSpawn.tooltip=Voorkomt dat iemant spawnt in het krachtveld.
+item.mffs\:moduleAntiPersonnel.name=Anti-Personeels Module
+item.mffs\:moduleAntiPersonnel.tooltip=Laat de verbodsmatrix iedereen vermoorden.
+item.mffs\:moduleAntiFriendly.name=Anti-vriendschaps Module
+item.mffs\:moduleAntiFriendly.tooltip=Laat de verbodsmatrix alle vriendelijke levensvormen doden.
+item.mffs\:moduleAntiHostile.name=Anti-vijands Module
+item.mffs\:moduleAntiHostile.tooltip=Laat de verbodsmatrix alle vijandige levensvormen doden.
+item.mffs\:moduleWarn.name=Waarschuwingsmodule
+item.mffs\:moduleWarn.tooltip=Geeft een waarschuwing aan indringers.
+item.mffs\:moduleConfiscate.name=Inbeslagname Module
+item.mffs\:moduleConfiscate.tooltip=Neemt de spullen van indringers in beslag.
+item.mffs\:moduleBlockAccess.name=Toegangsmodule
+item.mffs\:moduleBlockAccess.tooltip=Voorkomt dat indringers rechts kunnen klikken op blokken.
+item.mffs\:moduleBlockAlter.name=Blok aanpassingsmodule
+item.mffs\:moduleBlockAlter.tooltip=Voorkomt dat indringers blokken breken of plaatsen.
+item.mffs\:moduleAntiSpawn.name=Anti-Spawn Module
+item.mffs\:moduleAntiSpawn.tooltip=Voorkomt dat iemant spawnt in het krachtveld.
 
 # Multitool
-item.mffs:itemMultiTool.name=Multifunctioneel Gereedschap
+item.mffs\:itemMultiTool.name=Multifunctioneel Gereedschap
 
 # GUI
 gui.frequency.name=Frequentie

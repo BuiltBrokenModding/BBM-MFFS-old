@@ -6,120 +6,119 @@ itemGroup.MFFS=Modular Force Field System
 fluid.fortron=Fortron
 
 # Chat Messages
-death.attack.areaDefense=#1 ignorierte Warnungen und wurde desintegriert.
-death.attack.fieldShock=#1 wurde von einem Kraftfeld desintegriert.
+death.attack.areaDefense=%1$s ignorierte Warnungen und wurde desintegriert.
+death.attack.fieldShock=%1$s wurde von einem Kraftfeld desintegriert.
 
-message.cardFrequency.generated=Willkürliche Frequenz generiert:
-message.cardFrequency.set=Frequenz auf #p gesetzt
-message.remoteController.linked=Verbunden bei Position: #p mit Block: #q
-message.remoteController.fail=Erhalt von #p vom Fortron-Feld fehlgeschlagen.
+message.cardFrequency.generated=Willk\u00FCrliche Frequenz generiert:
+message.cardFrequency.set=Frequenz auf %p gesetzt
+message.remoteController.linked=Verbunden bei Position: %p mit Block: %q
+message.remoteController.fail=Erhalt von %p vom Fortron-Feld fehlgeschlagen.
 message.moduleAntiPersonnel.death=Leb wohl.
-message.moduleConfiscate.confiscate=#p deiner Item wurde(n) konfisziert.
+message.moduleConfiscate.confiscate=%p deiner Item wurde(n) konfisziert.
 message.moduleWarn.warn=Verlasse diese Zone sofort. Du hast kein Recht, sie zu betreten.
 message.interdictionMatrix.warn=Warnung! Du bist nahe der Scan-Reichweite!
-message.modeCustom.modeChange=Auswählmodus zu #p geändert
+message.modeCustom.modeChange=Ausw\u00E4hlmodus zu %p ge\u00E4ndert
 message.modeCustom.saved=Feldstruktur gepeichert.
 
 # Blocks
-tile.mffs:fortronite.name=Fortronit
-tile.mffs:biometricIdentifier.name=Biometrie-Identifikator
-tile.mffs:interdictionMatrix.name=Interdiktionsmatrix
-tile.mffs:fortronCapacitor.name=Fortron-Speicher
-tile.mffs:electromagneticProjector.name=Elektromagnetischer Projektor
-tile.mffs:coercionDeriver.name=Zwangsansammler
-tile.mffs:forceMobilizer.name=Kraftmobilisator
-tile.mffs:forceField.name=Kraftfeld
+tile.fortronite.name=Fortronit
+tile.biometricIdentifier.name=Biometrie-Identifikator
+tile.interdictionMatrix.name=Interdiktionsmatrix
+tile.fortronCapacitor.name=Fortron-Speicher
+tile.projector.name=Kraftfeldprojektor
+tile.coercionDeriver.name=Zwangsansammler
+tile.manipulator.name=Kraftmanipulator
+tile.forceField.name=Kraftfeld
 
 
 # Cards
-item.mffs:cardBlank.name=Leere Karte
-item.mffs:cardInfinite.name=Unendliche Energiekarte
-item.mffs:cardInfinite.tooltip=Die Unendliche Energiekarte ist ein Gegenstand, der nur im Kreativ-Modus zu erhalten ist. Er kann für endlose Energie innerhalb eines Speichers platziert werden.
-item.mffs:cardFrequency.name=Frequenzkarte
-item.mffs:cardFrequency.tooltip=Die Frequenzkarte wird für mühelose Frequenzübertragung genutzt. Mit Shift-rechtsklicken wird die Karte eine zufällige Frequenz generieren.
-item.mffs:cardLink.name=Verbindungskarte
-item.mffs:cardLink.tooltip=Das Rechtsklicken auf einen Block mit dieser Karte wird eine Verbindung zu dieser spezifischen Position kreieren.
-item.mffs:cardIdentification.name=Identifikationskarte
-item.mffs:cardIdentification.tooltip=Rechtsklicke mit dieser Karte, um sie biometrisch auf deinen Namen zu sperren.
+item.cardBlank.name=Leere Karte
+item.cardInfinite.name=Unendliche Energiekarte
+item.cardInfinite.tooltip=Die Unendliche Energiekarte ist ein Gegenstand, der nur im Kreativ-Modus zu erhalten ist. Er kann f\u00FCr endlose Energie innerhalb eines Speichers platziert werden.
+item.cardFrequency.name=Frequenzkarte
+item.cardFrequency.tooltip=Die Frequenzkarte wird f\u00FCr m\u00FChelose Frequenz\u00FCbertragung genutzt. Mit Shift-rechtsklicken wird die Karte eine zuf\u00E4llige Frequenz generieren.
+item.cardLink.name=Verbindungskarte
+item.cardLink.tooltip=Das Rechtsklicken auf einen Block mit dieser Karte wird eine Verbindung zu dieser spezifischen Position kreieren.
+item.cardIdentification.name=Identifikationskarte
+item.cardIdentification.tooltip=Rechtsklicke mit dieser Karte, um sie biometrisch auf deinen Namen zu sperren.
 
 #Items
-item.mffs:remoteController.name=Fernbedienung
-item.mffs:fortron.name=Fortron
-item.mffs:focusMatrix.name=Fokusmatrix
+item.remoteController.name=Fernbedienung
+item.fortron.name=Fortron
+item.focusMatrix.name=Fokusmatrix
 
 #Projection Modes
-item.mffs:modeCube.name=Würfelmodus
-item.mffs:modeTube.name=Röhrenmodus
-item.mffs:modeSphere.name=Kugelmodus
-item.mffs:modePyramid.name=Pyramidenmodus
-item.mffs:modeCylinder.name=Zylindermodus
-item.mffs:modeCustom.name=Spezifischer Modus
-item.mffs:modeCustom.tooltip=Kreiere deinen eigenen Modus, indem du zwei Punkte rechtsklickst, um einen Bereich zu definieren. Shift-rechtklicke, um den Bereich zu speichern.
+item.modeCube.name=W\u00FCrfelmodus
+item.modeTube.name=R\u00F6hrenmodus
+item.modeSphere.name=Kugelmodus
+item.modePyramid.name=Pyramidenmodus
+item.modeCylinder.name=Zylindermodus
+item.modeCustom.name=Spezifischer Modus
+item.modeCustom.tooltip=Kreiere deinen eigenen Modus, indem du zwei Punkte rechtsklickst, um einen Bereich zu definieren. Shift-rechtklicke, um den Bereich zu speichern.
 
 # Modules
 ## General Modules
-item.mffs:moduleScale.name=Skalierungsmodul
-item.mffs:moduleScale.tooltip=Das Skalierungsmodul erhöht die Größe oder Reichweite einer bestimmten Komponente.
-item.mffs:moduleTranslate.name=Translationsmodul
-item.mffs:moduleTranslate.tooltip=Das Translationsmodul setzt das Kraftfeld um, platziert es vom Ursprungsort entfernt.
-item.mffs:moduleRotate.name=Rotationsmodul
-item.mffs:moduleRotate.tooltip=Das Rotationsmodul rotiert das Kraftfeld mit einem bestimmten Winkel.
+item.moduleScale.name=Skalierungsmodul
+item.moduleScale.tooltip=Das Skalierungsmodul erh\u00F6ht die Gr\u00F6\u00DFe oder Reichweite einer bestimmten Komponente.
+item.moduleTranslate.name=Translationsmodul
+item.moduleTranslate.tooltip=Das Translationsmodul setzt das Kraftfeld um, platziert es vom Ursprungsort entfernt.
+item.moduleRotate.name=Rotationsmodul
+item.moduleRotate.tooltip=Das Rotationsmodul rotiert das Kraftfeld mit einem bestimmten Winkel.
 
-item.mffs:moduleCapacity.name=Kapazitätsmodul
-item.mffs:moduleCapacity.tooltip=Erhöht die Kapazität eines Geräts.
-item.mffs:moduleSpeed.name=Geschwindigkeitsmodul
-item.mffs:moduleSpeed.tooltip=Erhöht die Geschwindigkeit eines Geräts.
+item.moduleCapacity.name=Kapazit\u00E4tsmodul
+item.moduleCapacity.tooltip=Erh\u00F6ht die Kapazit\u00E4t eines Ger\u00E4ts.
+item.moduleSpeed.name=Geschwindigkeitsmodul
+item.moduleSpeed.tooltip=Erh\u00F6ht die Geschwindigkeit eines Ger\u00E4ts.
 
 ## Force Field Projector Modules
-item.mffs:moduleShock.name=Schockmodul
-item.mffs:moduleSponge.name=Schwammmodul
-item.mffs:moduleDome.name=Kuppelmodul
-item.mffs:moduleFusion.name=Feldfusionsmodul
-item.mffs:moduleCamouflage.name=Tarnungsmodul
-item.mffs:moduleCamouflage.tooltip=Tarnt das Kraftfeld. Wenn du dieses Modul mit dem Desintegrationsmosul nutzt, invertiert es den Desintegrationsfilter.
-item.mffs:moduleDisintegration.name=Desintegrationsmodul
-item.mffs:moduleDisintegration.tooltip=Desintegriert die Blöcke, die den Bereich des Kraftfeldes belegen, und lässt sie fallen.
-item.mffs:moduleGlow.name=Leuchtmodul
-item.mffs:moduleStabilize.name=Feldstabilisatormodul
-item.mffs:moduleStabilize.tooltip=Stabilisiert das projezierte Kraftfeld und kristallisiert das Feld zu soliden Blöcken. Platziere eine Kiste mit Blöcken neben dem Projektor, um das Feld zu stabilisieren.
-item.mffs:moduleCollection.name=Sammelmodul
-item.mffs:moduleCollection.tooltip=Das Sammelmodul erlaubt es, die vom Desintegrationsmodul fallen gelassenen Blöcke zu sammeln.
-item.mffs:moduleInvert.name=Umkehrmodul
-item.mffs:moduleInvert.tooltip=Kehrt das Feld um, um negativen Raum statt positiven zu nutzen.
-item.mffs:moduleSilence.name=Stillemodul
-item.mffs:moduleSilence.tooltip=Macht das Kraftfeld lautlos und bewahrt es davor, Töne zu erzeugen. Außerdem hindert es die Interdiktionsmatrix, Spieler zu warnen.
-item.mffs:moduleRepulsion.name=Repulsionsmodul
-item.mffs:moduleRepulsion.tooltip=Kreiert ein Feld ohne Blöcke, dass Lebewesen und Items abstößt.
-item.mffs:moduleArray.name=Bereichsmodul
-item.mffs:moduleArray.tooltip=Wiederholt das Feld nach einem Muster spezifiziert durch die Richtung.
-item.mffs:moduleApproximation.name=Approximationsmodul
-item.mffs:moduleApproximation.tooltip=Sorgt dafür, dass das Feld 'ungenau' wird und Metadata ignoriert, wenn es stabilisiert oder desintegriert.
+item.moduleShock.name=Schockmodul
+item.moduleSponge.name=Schwammmodul
+item.moduleDome.name=Kuppelmodul
+item.moduleFusion.name=Feldfusionsmodul
+item.moduleCamouflage.name=Tarnungsmodul
+item.moduleCamouflage.tooltip=Tarnt das Kraftfeld. Wenn du dieses Modul mit dem Desintegrationsmosul nutzt, invertiert es den Desintegrationsfilter.
+item.moduleDisintegration.name=Desintegrationsmodul
+item.moduleDisintegration.tooltip=Desintegriert die Blöcke, die den Bereich des Kraftfeldes belegen, und l\u00E4sst sie fallen.
+item.moduleGlow.name=Leuchtmodul
+item.moduleStabilize.name=Feldstabilisatormodul
+item.moduleStabilize.tooltip=Stabilisiert das projezierte Kraftfeld und kristallisiert das Feld zu soliden Bl\u00F6cken. Platziere eine Kiste mit Bl\u00F6cken neben dem Projektor, um das Feld zu stabilisieren.
+item.moduleCollection.name=Sammelmodul
+item.moduleCollection.tooltip=Das Sammelmodul erlaubt es, die vom Desintegrationsmodul fallen gelassenen Bl\u00F6cke zu sammeln.
+item.moduleInvert.name=Umkehrmodul
+item.moduleInvert.tooltip=Kehrt das Feld um, um negativen Raum statt positiven zu nutzen.
+item.moduleSilence.name=Stillemodul
+item.moduleSilence.tooltip=Macht das Kraftfeld lautlos und bewahrt es davor, T\u00F6ne zu erzeugen.
+item.moduleRepulsion.name=Repulsionsmodul
+item.moduleRepulsion.tooltip=Kreiert ein Feld ohne Bl\u00F6cke, dass Lebewesen und Items abst\u00F6\u00DFt.
+item.moduleArray.name=Bereichsmodul
+item.moduleArray.tooltip=Wiederholt das Feld nach einem Muster spezifiziert durch die Richtung.
+item.moduleApproximation.name=Approximationsmodul
+item.moduleApproximation.tooltip=Sorgt daf\u00FCr, dass das Feld 'ungenau' wird und Metadata ignoriert, wenn es stabilisiert oder desintegriert.
 
 ## Interdiction Matrix Modules
-item.mffs:moduleAntiPersonnel.name=Anti-Spieler-Modul
-item.mffs:moduleAntiPersonnel.tooltip=Wird die Interdiktionsmatrix dazu bringen, alle Spieler zu töten.
-item.mffs:moduleAntiFriendly.name=Anti-Friedlich-Modul
-item.mffs:moduleAntiFriendly.tooltip=Wird die Interdiktionsmatrix dazu bringen, alle friedlichen Mobs zu töten.
-item.mffs:moduleAntiHostile.name=Anti-Feindlich-Modul
-item.mffs:moduleAntiHostile.tooltip=Wird die Interdiktionsmatrix dazu bringen, alle feindlichen Mobs zu töten.
-item.mffs:moduleBroadcast.name=Broadcasting-Modul
-item.mffs:moduleBroadcast.tooltip=Sendet jedem im Feld eine Nachricht.
-item.mffs:moduleConfiscate.name=Konfiszierungsmodul
-item.mffs:moduleConfiscate.tooltip=Konfisziert die Gegenstände des Eindringlings.
-item.mffs:moduleBlockAccess.name=Blockzugriffsmodul
-item.mffs:moduleBlockAccess.tooltip=Hindert einen Eindringling am Rechtsklicken von Blöcken.
-item.mffs:moduleBlockAlter.name=Blockänderungsmodul
-item.mffs:moduleBlockAlter.tooltip=Hindert einen Eindringling am Platzieren und Zerstören von Blöcken.
-item.mffs:moduleAntiSpawn.name=Anti-Spawn-Modul
-item.mffs:moduleAntiSpawn.tooltip=Hindert Dinge am Spawnen in einer bestimmten Region.
+item.moduleAntiPersonnel.name=Anti-Spieler-Modul
+item.moduleAntiPersonnel.tooltip=Wird die Interdiktionsmatrix dazu bringen, alle Spieler zu t\u00F6ten.
+item.moduleAntiFriendly.name=Anti-Friedlich-Modul
+item.moduleAntiFriendly.tooltip=Wird die Interdiktionsmatrix dazu bringen, alle friedlichen Mobs zu t\u00F6ten.
+item.moduleAntiHostile.name=Anti-Feindlich-Modul
+item.moduleAntiHostile.tooltip=Wird die Interdiktionsmatrix dazu bringen, alle feindlichen Mobs zu t\u00F6ten.
+item.moduleWarn.name=Warnungsmodul
+item.moduleWarn.tooltip=Sendet dem Eindringling eine Warnung.
+item.moduleConfiscate.name=Konfiszierungsmodul
+item.moduleConfiscate.tooltip=Konfisziert die Gegenst\u00E4nde des Eindringlings.
+item.moduleBlockAccess.name=Blockzugriffsmodul
+item.moduleBlockAccess.tooltip=Hindert einen Eindringling am Rechtsklicken von Bl\u00F6cken.
+item.moduleBlockAlter.name=Block\u00E4nderungsmodul
+item.moduleBlockAlter.tooltip=Hindert einen Eindringling am Platzieren und Zerst\u00F6ren von Bl\u00F6cken.
+item.moduleAntiSpawn.name=Anti-Spawn-Modul
+item.moduleAntiSpawn.tooltip=Hindert Dinge am Spawnen in einer bestimmten Region.
 
 # Multitool
-item.mffs:itemMultiTool.name=Multi-Tool
+item.itemMultiTool.name=Multi-Tool
 
 # GUI
 gui.frequency.name=Frequenz
 gui.frequency.tooltip=Maschinen mit der selben Frequenz werden Fortronenergie teilen.
-gui.frequency.random=Zufällige Frequenz
 gui.progress.name=Fortschitt
 gui.fortron.name=Fortron
 gui.fortron.tooltip=Fortron ist der Typ von Energie, der in MFFS-Maschinen genutzt wird.
@@ -132,57 +131,61 @@ gui.deriver.derive=Sammeln
 gui.deriver.integrate=Integrieren
 gui.deriver.running=Laufend
 gui.deriver.idle=Bereit
-gui.mobilizer.anchor=Anker:
-gui.mobilizer.time=Bew.-Zeit
-
-gui.energy=Energie
-gui.direction=Richtung
-gui.makecopy=Kopieren
-gui.input.name=Input
-gui.output.name=Output
+gui.manipulator.anchor=Anker:
+gui.manipulator.fortron=Fortron:
 
 # Capacitor
-gui.linkedDevice.name=Verbundene Geräte
-gui.linkedDevice.tooltip=Die Anzahl der Geräte, die mit dieser Maschine verbunden sind.
+gui.linkedDevice.name=Verbundene Ger\u00E4te
+gui.linkedDevice.tooltip=Die Anzahl der Ger\u00E4te, die mit dieser Maschine verbunden sind.
 gui.range.name=Reichweite
-gui.range.tooltip=Die Reichweite kann mit einem Skalierungsmodul erhöht werden.
-gui.transmissionRate.name=Übertragungsrate
-gui.transmissionRate.tooltip=Die Rate, mit der dieser Speicher Fortronenergie übertragen kann.
+gui.range.tooltip=Die Reichweite kann mit einem Skalierungsmodul erh\u00F6ht werden.
+gui.transmissionRate.name=\u00DCbertragungsrate
+gui.transmissionRate.tooltip=Die Rate, mit der dieser Speicher Fortronenergie \u00FCbertragen kann.
 
 ## Transfer Modes
-gui.transferMode.equalize.name=Angleichen
-gui.transferMode.equalize.tooltip=Teile Fortronenergie mit Maschinen basierend auf dem Prozentsatz des Speichers der Maschine.
-gui.transferMode.distribute.name=Aufteilen
-gui.transferMode.distribute.tooltip=Teile Fortronenergie mit Maschinen basierend auf der gespeicherten Menge der Maschine.
-gui.transferMode.drain.name=Leeren
-gui.transferMode.drain.tooltip=Leert die Energie aus dem Speicher und teilt sie gleichmäßig mit verbundenen Maschinen.
-gui.transferMode.fill.name=Füllen
-gui.transferMode.fill.tooltip=Füllt die Energie des Speichers. Teilt überlaufende Energie gleichmäßig auf.
+gui.transferModeEqualize.name=Angleichen
+gui.transferModeEqualize.tooltip=Teile Fortronenergie mit Maschinen basierend auf dem Prozentsatz des Speichers der Maschine.
+gui.transferModeDistribute.name=Aufteilen
+gui.transferModeDistribute.tooltip=Teile Fortronenergie mit Maschinen basierend auf der gespeicherten Menge der Maschine.
+gui.transferModeDrain.name=Leeren
+gui.transferModeDrain.tooltip=Leert die Energie aus dem Speicher und teilt sie gleichm\u00E4\u00DFig mit verbundenen Maschinen.
+gui.transferModeFill.name=F\u00FCllen
+gui.transferModeFill.tooltip=F\u00FCllt die Energie des Speichers. Teilt \u00FCberlaufende Energie gleichm\u00E4\u00DFig auf.
 
 # Permissions
 gui.rights.name=Rechte
 gui.rights.tooltip=Weise hier der Karte links Rechte zu.
 gui.warp.name=Warp
-gui.warp.tooltip=Erlaubt es dem Spieler, das Kraftfeld zu durchqueren und zu übergehen.
-gui.blockPlaceAccess.name=Blockänderung
-gui.blockPlaceAccess.tooltip=Erlaubt es dem Spieler, Blöcke zu platzieren und zu zerstören.
+gui.warp.tooltip=Erlaubt es dem Spieler, das Kraftfeld zu durchqueren und zu \u00FCbergehen.
+gui.blockPlaceAccess.name=Block\u00E4nderung
+gui.blockPlaceAccess.tooltip=Erlaubt es dem Spieler, Bl\u00F6cke zu platzieren und zu zerst\u00F6ren.
 gui.blockAccess.name=Blockzugriff
-gui.blockAccess.tooltip=Erlaubt es dem Spieler, mit Blöcken zu interagieren und ihre GUIs zu öffnen.
+gui.blockAccess.tooltip=Erlaubt es dem Spieler, mit Bl\u00F6cken zu interagieren und ihre GUIs zu \u00F6ffnen.
 gui.configure.name=Konfigurieren
 gui.configure.tooltip=Erlaubt es dem Spieler, den Biometrie-Identifikator zu konfigurieren.
 gui.bypassDefense.name=Verteidigung umgehen
-gui.bypassDefense.tooltip=Erlaubt es dem Spieler, die Einschränkungen der Interdiktionsmatrix zu umgehen.
+gui.bypassDefense.tooltip=Erlaubt es dem Spieler, die Einschr\u00E4nkungen der Interdiktionsmatrix zu umgehen.
 gui.bypassConfiscation.name=Konfiszierung umgehen
 gui.bypassConfiscation.tooltip=Erlaubt es dem Spieler, die Konfiszierung der Interdiktionsmatrix zu Umgehen.
 gui.remoteControl.name=Fernsteuerung
 gui.remoteControl.tooltip=Erlaubt es dem Spieler, eine Fernbedienung in der defensiven Region zu nutzen.
+
+# Interdiction Matrix
+gui.filterMode.name=Filtermodus
+gui.filterMode.tooltip=Der Modus, in dem Gegenst\u00E4nde und Bl\u00F6cke gefiltert werden.
+gui.warn.name=Warnung
+gui.warn.tooltip=Die Reichweite, in der die Interdiktionsmatrix dem Spieler eine Warnung geben wird.
+gui.action.name=Aktion
+gui.action.tooltip=Die Reichweite, in der die Interdiktionsmatrix die angepassten Aktionen auf einen Spieler anwenden wird.
+gui.matrix.banned=Verboten
+gui.matrix.allowed=Erlaubt
 
 # Force Field Projector
 gui.projector.mode=Modus
 gui.projector.up=Oben
 gui.projector.down=Unten
 gui.projector.north=Nord
-gui.projector.south=Süd
+gui.projector.south=S\u00FCd
 gui.projector.east=Ost
 gui.projector.west=West
 gui.projector.front=Vorne
@@ -197,12 +200,11 @@ info.modeCustom.additive=Additiv
 info.modeCustom.point1=Punkt 1:
 info.modeCustom.point2=Punkt 2:
 info.modeCustom.modeID=Modus-ID:
-info.modeCustom.fieldSize=Feldgröße:
+info.modeCustom.fieldSize=Feldgr\u00F6\u00DFe:
 info.modeCustom.notSaved=Feld nicht gespeichert.
-info.modeCustom.shift=Halte Shift für mehr...
+info.modeCustom.shift=Halte Shift f\u00FCr mehr...
 
 # More tooltips
-info.module.defense=Verteidigungsmodul
 info.item.linkedWith=Verbunden mit:
 info.item.dimension=Dimension:
 info.item.notLinked=Nicht verbunden.

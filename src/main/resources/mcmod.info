@@ -1,18 +1,16 @@
-[{
-    "modid": "MFFS",
-    "name": "Modular Force Field System",
-    "description": "Modular Force Field System is a mod that adds force fields, high tech machinery and defensive systems to Minecraft.",
-    "version": "${version}",
-    "mcversion": "${mcversion}",
-    "url": "www.calclavia.com/mffs/",
-    "updateUrl": "",
-    "authors": ["Calclavia"],
-    "credits": "Calclavia",
-    "logoFile": "assets/mffs/textures/gui/logo.png",
-    "screenshots": [],
-    "parent": "",
-    "requiredMods": ["ResonantEngine"],
-    "dependencies": [],
-    "dependants": [],
-    "useDependencyInformation": "false"
-}]
+[
+{
+  "modid": "mffs",
+  "name": "MFFS",
+  "description": "Modular Forcefield System is a add-on feature for mekanism. Popular with Voltz modpack.",
+  "version": "0.25",
+  "mcversion": "1.7.10",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Poopsicle360", "Thunderdark", "Calclavia"],
+  "credits": "Thunderdark & Calclavia for making the original MFFS.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["Mekanism"]
+}
+]
