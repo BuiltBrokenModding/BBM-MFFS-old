@@ -1,5 +1,6 @@
 package mffs.api.card;
 
+import com.builtbroken.mc.lib.access.AccessProfile;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -9,7 +10,7 @@ import net.minecraft.item.ItemStack;
  */
 public interface IAccessCard extends ICard
 {
-	public AbstractAccess getAccess(ItemStack stack);
+	AccessProfile getAccess(ItemStack stack);
 
-	public void setAccess(ItemStack stack, AbstractAccess access);
+	void setAccess(ItemStack stack, AccessProfile access);
 }

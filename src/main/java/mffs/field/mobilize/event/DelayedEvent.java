@@ -1,22 +1,38 @@
-package mffs.field.mobilize.event
+package mffs.field.mobilize.event;
 
-class DelayedEvent(val handler: IDelayedEventHandler, var ticks: Int, val evtMethod: (() => Unit) = null)
+import java.lang.reflect.Method;
+
+class DelayedEvent
 {
-  protected def onEvent = evtMethod.apply()
+    int ticks = 0;
 
-  def update()
-  {
-    if (ticks == 0)
+    public DelayedEvent(IDelayedEventHandler handler, int ticks, Method method)
     {
-      onEvent
+
     }
 
-    ticks -= 1
-  }
+    protected void onEvent()
+    {
+        evtMethod.apply();
+    }
 
-  /**
-   * The higher the number, the higher the priority.
-   * @return
-   */
-  def priority: Int = 0
+    public void update()
+    {
+        if (ticks == 0)
+        {
+            onEvent();
+        }
+
+        ticks -= 1;
+    }
+
+    /**
+     * The higher the number, the higher the priority.
+     *
+     * @return
+     */
+    public int priority()
+    {
+        return 0;
+    }
 }

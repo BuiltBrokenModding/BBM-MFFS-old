@@ -1,66 +1,71 @@
 package mffs.security
 
-import cpw.mods.fml.client.FMLClientHandler
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import mffs.Reference
-import net.minecraft.client.Minecraft
-import net.minecraft.util.ResourceLocation
-import net.minecraftforge.client.model.AdvancedModelLoader
-import org.lwjgl.opengl.GL11._
+import com.builtbroken.mc.lib.render.RenderUtility;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mffs.Reference;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.AdvancedModelLoader;
+import net.minecraftforge.client.model.IModelCustom;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-final object RenderBiometricIdentifier
+public class RenderBiometricIdentifier
 {
-  val textureOn = new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier_on.png")
-  val textureOff = new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier_off.png")
-  val model = AdvancedModelLoader.loadModel(new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier.tcn"))
+    public static ResourceLocation textureOn = new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier_on.png");
+    public static ResourceLocation textureOff = new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier_off.png");
+    public static IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier.tcn"));
 
-  def render(tile: TileBiometricIdentifier, x: Double, y: Double, z: Double, frame: Float, isActive: Boolean, isItem: Boolean)
-  {
-    if (isActive)
+    public static void render(TileBiometricIdentifier tile, double x, double y, double z, float frame, boolean isActive, boolean isItem)
     {
-      FMLClientHandler.instance.getClient.renderEngine.bindTexture(textureOn)
-    }
-    else
-    {
-      FMLClientHandler.instance.getClient.renderEngine.bindTexture(textureOff)
-    }
-
-    glPushMatrix
-    glTranslated(x + 0.5, y + 0.5, z + 0.5)
-
-    if (!isItem)
-    {
-      glRotatef(-90, 0, 1, 0)
-      RenderUtility.rotateBlockBasedOnDirection(tile.getDirection)
-    }
-
-    model.renderAllExcept("holoScreen")
-
-    if (!isItem)
-    {
-      /**
-       * Simulate flicker and, hovering
-       */
-      val t = System.currentTimeMillis()
-
-      val look = Minecraft.getMinecraft.thePlayer.rayTrace(8, 1)
-
-      if (look != null && tile.toVector3.equals(new Vector3(look).floor))
-      {
-        if (Math.random() > 0.05 || (tile.lastFlicker - t) > 200)
+        if (isActive)
         {
-          glPushMatrix()
-          glTranslated(0, Math.sin(Math.toRadians(tile.animation)) * 0.05, 0)
-          RenderUtility.enableBlending()
-          model.renderOnly("holoScreen")
-          RenderUtility.disableBlending()
-          glPopMatrix()
-          tile.lastFlicker = t
+            FMLClientHandler.instance().getClient().renderEngine.bindTexture(textureOn);
         }
-      }
-    }
+        else
+        {
+            FMLClientHandler.instance().getClient().renderEngine.bindTexture(textureOff);
+        }
 
-    glPopMatrix
-  }
+        GL11.glPushMatrix();
+        GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5)
+
+        if (!isItem)
+        {
+            GL11.glRotatef(-90, 0, 1, 0)
+            RenderUtility.rotateBlockBasedOnDirection(tile.getDirection());
+        }
+
+        model.renderAllExcept("holoScreen")
+
+        if (!isItem)
+        {
+            /**
+             * Simulate flicker and, hovering
+             */
+            long t = System.currentTimeMillis();
+
+            MovingObjectPosition look = Minecraft.getMinecraft().thePlayer.rayTrace(8, 1);
+
+            if (look != null && tile.toPos().equals(new Pos(look).floor()))
+            {
+                if (Math.random() > 0.05 || (tile.lastFlicker - t) > 200)
+                {
+                    GL11.glPushMatrix();
+                    GL11.glTranslated(0, Math.sin(Math.toRadians(tile.animation)) * 0.05, 0);
+                    RenderUtility.enableBlending();
+                    model.renderOnly("holoScreen");
+                    RenderUtility.disableBlending();
+                    GL11.glPopMatrix();
+                    tile.lastFlicker = t;
+                }
+            }
+        }
+
+        GL11.glPopMatrix();
+    }
 }

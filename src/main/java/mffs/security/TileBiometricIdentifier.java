@@ -1,83 +1,112 @@
-package mffs.security
+package mffs.security;
 
-import java.util
-import java.util.{Set => JSet}
+import com.builtbroken.mc.api.tile.IRotatable;
+import com.builtbroken.mc.lib.access.AccessProfile;
+import com.builtbroken.mc.lib.access.Permission;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.mojang.authlib.GameProfile;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mffs.ModularForceFieldSystem;
+import mffs.Settings;
+import mffs.api.card.IAccessCard;
+import mffs.base.TileFrequency;
+import mffs.item.card.ItemCardFrequency;
+import net.minecraft.item.ItemStack;
 
-import com.mojang.authlib.GameProfile
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import mffs.base.TileFrequency
-import mffs.item.card.ItemCardFrequency
-import mffs.{ModularForceFieldSystem, Settings}
-import net.minecraft.client.renderer.RenderBlocks
-import net.minecraft.item.ItemStack
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-object TileBiometricIdentifier
+public class TileBiometricIdentifier extends TileFrequency implements IRotatable
 {
-  val SLOT_COPY = 12
-}
+    public static final int SLOT_COPY = 12;
+    /**
+     * Rendering
+     */
+    public long lastFlicker = 0L;
 
-class TileBiometricIdentifier extends TileFrequency with TRotatable
-{
-  /**
-   * Rendering
-   */
-  var lastFlicker = 0L
+    /**
+     * 2 slots: Card copying
+     * 9 x 4 slots: Access Cards
+     * Under access cards we have a permission selector
+     */
+    @Override
+    public int getSizeInventory()
+    {
+        return 46;
+    }
 
-  /**
-   * 2 slots: Card copying
-   * 9 x 4 slots: Access Cards
-   * Under access cards we have a permission selector
-   */
-  override def getSizeInventory = 1 + 45
+    @Override
+    public void update()
+    {
+        super.update();
+        animation += 0.1f;
+    }
 
-  override def update()
-  {
-    super.update()
-    animation += 0.1f
-  }
+    public boolean hasPermission(GameProfile profile, Permission permission)
+    {
+        if (!isActive || ModularForceFieldSystem.proxy.isOp(profile) && Settings.allowOpOverride)
+        {
+            return true;
+        }
+        for(ItemStack stack : getCards())
+        {
+            AccessProfile access = ((IAccessCard)stack.getItem()).getAccess(stack);
+            if(access != null && access.hasNode(profile.getName(), permission.toString()))
+            {
+                return true;
+            }
+        }
+    }
 
-  override def hasPermission(profile: GameProfile, permission: Permission): Boolean =
-  {
-    if (!isActive || ModularForceFieldSystem.proxy.isOp(profile) && Settings.allowOpOverride)
-      return true
+    @Override
+    public List<ItemStack> getCards()
+    {
+        List<ItemStack> set = new ArrayList();
+        for (int slot = 0; slot < getSizeInventory(); slot++)
+        {
+            if (getStackInSlot(slot) != null && getStackInSlot(slot).getItem() instanceof IAccessCard)
+            {
+                set.add(getStackInSlot(slot));
+            }
+        }
+        return set;
+    }
 
-    return getCards map (stack => stack.getItem.asInstanceOf[IAccessCard].getAccess(stack)) filter (_ != null) exists (_.hasPermission(profile.getName, permission))
-  }
+    @Override
+    public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
+    {
+        if (slotID == 0)
+        {
+            return itemStack.getItem() instanceof ItemCardFrequency;
+        }
+        return itemStack.getItem() instanceof  IAccessCard
+    }
 
-  override def getCards: Set[ItemStack] = (getInventory().getContainedItems filter (_ != null) filter (_.getItem.isInstanceOf[IAccessCard])).toSet
+    @Override
+    public int getInventoryStackLimit()
+    {
+        return 1;
+    }
 
-  override def isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
-  {
-    if (slotID == 0)
-      return itemStack.getItem.isInstanceOf[ItemCardFrequency]
+    @Override
+    public List<TileBiometricIdentifier> getBiometricIdentifiers()
+    {
+        return Collections.singletonList(this);
+    }
 
-    return itemStack.getItem.isInstanceOf[IAccessCard]
-  }
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderDynamic(Pos pos, float frame, int pass)
+    {
+        RenderBiometricIdentifier.render(this, pos.xf(), pos.yf(), pos.zf(), frame, isActive, false);
+    }
 
-  override def getInventoryStackLimit: Int = 1
-
-  override def getBiometricIdentifiers: JSet[TileBiometricIdentifier] =
-  {
-    val set = new util.HashSet[TileBiometricIdentifier]()
-    set.add(this)
-    return set
-  }
-
-  @SideOnly(Side.CLIENT)
-  override def renderStatic(renderer: RenderBlocks, pos: Vector3, pass: Int): Boolean =
-  {
-    return false
-  }
-
-  @SideOnly(Side.CLIENT)
-  override def renderDynamic(pos: Vector3, frame: Float, pass: Int)
-  {
-    RenderBiometricIdentifier.render(this, pos.x, pos.y, pos.z, frame, isActive, false)
-  }
-
-  @SideOnly(Side.CLIENT)
-  override def renderInventory(itemStack: ItemStack)
-  {
-    RenderBiometricIdentifier.render(this, -0.5, -0.5, -0.5, 0, true, true)
-  }
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderInventory(ItemStack itemStack)
+    {
+        RenderBiometricIdentifier.render(this, -0.5, -0.5, -0.5, 0, true, true);
+    }
 }

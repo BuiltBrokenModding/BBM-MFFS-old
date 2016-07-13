@@ -1,82 +1,61 @@
-package mffs
+package mffs;
 
-import com.builtbroken.mc.lib.mod.AbstractProxy
-import com.builtbroken.mc.lib.transform.vector.Pos
-import com.mojang.authlib.GameProfile
-import cpw.mods.fml.common.FMLCommonHandler
-import cpw.mods.fml.common.network.IGuiHandler
-import mffs.field.TileElectromagneticProjector
-import mffs.field.gui.{ContainerElectromagneticProjector, ContainerMatrix}
-import mffs.field.mobilize.TileForceMobilizer
-import mffs.item.gui.{ContainerFrequency, ContainerItem}
-import mffs.production._
-import mffs.render.fx.IEffectController
-import mffs.security.{ContainerBiometricIdentifier, TileBiometricIdentifier}
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.server.MinecraftServer
-import net.minecraft.world.World
+import com.builtbroken.mc.lib.mod.AbstractProxy;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.mojang.authlib.GameProfile;
+import cpw.mods.fml.common.FMLCommonHandler;
+import mffs.render.fx.IEffectController;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 
-class CommonProxy extends AbstractProxy with IGuiHandler
+class CommonProxy extends AbstractProxy
 {
-  override def getServerGuiElement(id: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): AnyRef =
-  {
-    id match
+    //case tile: TileFortronCapacitor => return new ContainerFortronCapacitor(player, tile)
+    //case tile: TileElectromagneticProjector => return new ContainerElectromagneticProjector(player, tile)
+    //case tile: TileCoercionDeriver => return new ContainerCoercionDeriver(player, tile)
+    //case tile: TileBiometricIdentifier => return new ContainerBiometricIdentifier(player, tile)
+    //case tile: TileForceMobilizer => return new ContainerMatrix(player, tile)
+
+    //case 1 => return new ContainerFrequency(player, player.getCurrentEquippedItem)
+    //case 2 => return new ContainerItem(player, player.getCurrentEquippedItem)
+
+
+    public World getClientWorld()
     {
-      case 0 =>
-      {
-        val tileEntity = world.getTileEntity(x, y, z)
-        tileEntity match
+        return null;
+    }
+
+    /**
+     * Checks if the player is an operator.
+     */
+    public boolean isOp(GameProfile profile)
+    {
+        MinecraftServer theServer = FMLCommonHandler.instance().getMinecraftServerInstance();
+
+        if (theServer != null)
         {
-          case tile: TileFortronCapacitor => return new ContainerFortronCapacitor(player, tile)
-          case tile: TileElectromagneticProjector => return new ContainerElectromagneticProjector(player, tile)
-          case tile: TileCoercionDeriver => return new ContainerCoercionDeriver(player, tile)
-          case tile: TileBiometricIdentifier => return new ContainerBiometricIdentifier(player, tile)
-          case tile: TileForceMobilizer => return new ContainerMatrix(player, tile)
+            return theServer.getConfigurationManager().func_152596_g(profile);
         }
-      }
-      case 1 => return new ContainerFrequency(player, player.getCurrentEquippedItem)
-      case 2 => return new ContainerItem(player, player.getCurrentEquippedItem)
+        return false;
     }
 
-    return null
-  }
-
-  def getClientWorld: World =
-  {
-    return null
-  }
-
-  /**
-   * Checks if the player is an operator.
-   */
-  def isOp(profile: GameProfile): Boolean =
-  {
-    val theServer: MinecraftServer = FMLCommonHandler.instance.getMinecraftServerInstance()
-
-    if (theServer != null)
+    public void renderBeam(World world, Pos position, Pos target, float[] color, int age)
     {
-      return theServer.getConfigurationManager().func_152596_g(profile)
     }
-    return false
-  }
 
-  def renderBeam(world: World, position: Pos, target: Pos, color: (Float, Float, Float), age: Int)
-  {
-  }
+    public void renderHologram(World world, Pos position, float[] color, int age, Pos targetPosition)
+    {
+    }
 
-  def renderHologram(world: World, position: Pos, color: (Float, Float, Float), age: Int, targetPosition: Pos)
-  {
-  }
+    public void renderHologramOrbit(World world, Pos orbitCenter, float[] color, int age, float maxSpeed)
+    {
+    }
 
-  def renderHologramMoving(world: World, position: Pos, color: (Float, Float, Float), age: Int)
-  {
-  }
+    public void renderHologramOrbit(IEffectController controller, World world, Pos orbitCenter, Pos position, float[] color, int age, float maxSpeed)
+    {
+    }
 
-  def renderHologramOrbit(world: World, orbitCenter: Pos, color: (Float, Float, Float), age: Int, maxSpeed: Float)
-  {
-  }
-
-  def renderHologramOrbit(owner: IEffectController, world: World, orbitCenter: Pos, position: Pos, color: (Float, Float, Float), age: Int, maxSpeed: Float)
-  {
-  }
+    public void renderHologramMoving(World world, Pos position, float[] color, int age)
+    {
+    }
 }
