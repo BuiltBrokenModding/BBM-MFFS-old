@@ -1,17 +1,18 @@
-package mffs.security.module
+package mffs.security.module;
 
-import java.util.List
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import mffs.base.ItemModule;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
-import mffs.base.ItemModule
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
+import java.util.List;
 
 class ItemModuleDefense extends ItemModule
 {
-  override def addInformation(itemStack: ItemStack, player: EntityPlayer, info: List[_], b: Boolean)
+  @Override
+  public void addInformation(ItemStack itemStack, EntityPlayer player, List info, boolean b)
   {
-    info.add("\u00a74" + LanguageUtility.getLocal("info.module.defense"))
-    super.addInformation(itemStack, player, info, b)
+    info.add("\u00a74" + LanguageUtility.getLocal("info.module.defense"));
+    super.addInformation(itemStack, player, info, b);
   }
-
 }

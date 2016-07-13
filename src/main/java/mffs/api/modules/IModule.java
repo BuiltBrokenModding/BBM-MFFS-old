@@ -2,12 +2,12 @@ package mffs.api.modules;
 
 import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.api.machine.IFieldMatrix;
+import mffs.api.machine.IProjector;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import resonant.api.mffs.machine.IFieldMatrix;
-import resonant.api.mffs.machine.IProjector;
 
 import java.util.List;
 import java.util.Set;

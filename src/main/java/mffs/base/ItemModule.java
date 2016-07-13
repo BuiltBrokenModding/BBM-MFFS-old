@@ -2,9 +2,9 @@ package mffs.base;
 
 import com.builtbroken.jlib.data.science.units.UnitDisplay;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
+import mffs.api.modules.IModule;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import resonant.api.mffs.modules.IModule;
 
 import java.util.List;
 
