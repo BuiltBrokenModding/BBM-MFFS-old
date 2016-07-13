@@ -1,55 +1,65 @@
 package mffs.field
 
-import java.util.{Set => JSet}
+import com.builtbroken.mc.core.Engine;
+import com.builtbroken.mc.core.network.packet.PacketTile;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import mffs.Content;
+import mffs.ModularForceFieldSystem;
+import mffs.Reference;
+import mffs.Settings;
+import mffs.api.machine.IProjector;
+import mffs.base.TileFieldMatrix;
+import mffs.base.TilePacketType;
+import mffs.field.mode.ItemModeCustom;
+import mffs.item.card.ItemCard;
+import mffs.render.FieldColor;
+import mffs.security.MFFSPermissions;
+import mffs.util.TCache;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import scala.collection.JavaConversions._;
+import scala.collection.mutable;
 
-import com.builtbroken.mc.core.Engine
-import com.builtbroken.mc.core.network.packet.PacketTile
-import com.builtbroken.mc.lib.transform.region.Cube
-import com.builtbroken.mc.lib.transform.vector.Pos
-import cpw.mods.fml.common.network.ByteBufUtils
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import io.netty.buffer.ByteBuf
-import mffs.base.{TileFieldMatrix, TilePacketType}
-import mffs.field.mode.ItemModeCustom
-import mffs.item.card.ItemCard
-import mffs.render.FieldColor
-import mffs.security.MFFSPermissions
-import mffs.util.TCache
-import mffs.{Content, ModularForceFieldSystem, Reference, Settings}
-import net.minecraft.block.Block
-import net.minecraft.client.renderer.RenderBlocks
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.init.Blocks
-import net.minecraft.item.{Item, ItemStack}
-import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
-import net.minecraft.world.{IBlockAccess, World}
-import net.minecraftforge.event.entity.player.PlayerInteractEvent
-import resonant.api.mffs.machine.IProjector
-import resonant.api.mffs.modules.{IModule, IProjectorMode}
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-import scala.collection.JavaConversions._
-import scala.collection.mutable
-
-class TileElectromagneticProjector extends TileFieldMatrix with IProjector
+public class TileElectromagneticProjector extends TileFieldMatrix implements IProjector
 {
   /** A set containing all positions of all force field blocks generated. */
-  val forceFields = mutable.Set.empty[Pos]
+  List<Pos> forceFields = new ArrayList();
 
   /** Marks the field for an update call */
-  var markFieldUpdate = true
+  boolean markFieldUpdate = true;
 
   /** True if the field is done constructing and the projector is simply maintaining the field  */
-  private var isCompleteConstructing = false
+  private boolean isCompleteConstructing = false;
 
   /** True to make the field constantly tick */
-  private var fieldRequireTicks = false
+  private boolean fieldRequireTicks = false;
 
   /** Are the filters in the projector inverted? */
-  private var isInverted = false
+  private boolean isInverted = false;
 
-  bounds = new Cube(0, 0, 0, 1, 0.8, 1)
-  capacityBase = 30
-  startModuleIndex = 1
+    public TileElectromagneticProjector()
+    {
+        bounds = new Cube(0, 0, 0, 1, 0.8, 1);
+        capacityBase = 30;
+        startModuleIndex = 1;
+    }
 
   override def getSizeInventory = 1 + 25 + 6
 

@@ -1,29 +1,24 @@
 package mffs.base
 
-import java.util.{Set => JSet}
+import com.builtbroken.mc.api.tile.IRotatable;
+import com.builtbroken.mc.core.network.packet.PacketType;
+import com.builtbroken.mc.lib.helper.RotationUtility;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import io.netty.buffer.ByteBuf;
+import mffs.ModularForceFieldSystem;
+import mffs.api.machine.IFieldMatrix;
+import mffs.api.machine.IPermissionProvider;
+import mffs.field.mobilize.event.IDelayedEventHandler;
+import mffs.item.card.ItemCard;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
+import scala.util.Failure;
+import scala.util.Success;
 
-import com.builtbroken.mc.core.network.packet.PacketType
-import com.builtbroken.mc.lib.helper.RotationUtility
-import com.builtbroken.mc.lib.transform.vector.Pos
-import io.netty.buffer.ByteBuf
-import mffs.ModularForceFieldSystem
-import mffs.field.mobilize.event.{DelayedEvent, IDelayedEventHandler}
-import mffs.field.module.ItemModuleArray
-import mffs.item.card.ItemCard
-import mffs.util.TCache
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
-import net.minecraftforge.common.util.ForgeDirection
-import resonant.api.mffs.machine.{IPermissionProvider, IFieldMatrix}
-import resonant.api.mffs.modules.{IProjectorMode, IModule}
+import java.util.Set;
 
-import scala.collection.convert.wrapAll._
-import scala.collection.mutable
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
-import scala.util.{Failure, Success}
-
-abstract class TileFieldMatrix extends TileModuleAcceptor with IFieldMatrix with IDelayedEventHandler with TRotatable with IPermissionProvider
+public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFieldMatrix, IDelayedEventHandler, IRotatable, IPermissionProvider
 {
   protected final val delayedEvents = new mutable.SynchronizedQueue[DelayedEvent]()
   val _getModuleSlots = (14 until 25).toArray

@@ -1,15 +1,26 @@
-package mffs.field.gui
+package mffs.field.gui;
 
-import mffs.field.TileElectromagneticProjector
-import mffs.slot.SlotBase
-import net.minecraft.entity.player.EntityPlayer
+import mffs.field.TileElectromagneticProjector;
+import mffs.slot.SlotBase;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Container for the projector.
+ *
  * @author Calclavia
  */
-class ContainerElectromagneticProjector(player: EntityPlayer, tileEntity: TileElectromagneticProjector) extends ContainerMatrix(player, tileEntity)
+public class ContainerElectromagneticProjector extends ContainerMatrix
 {
-  for (x <- 0 until 2; y <- 0 until 3)
-    addSlotToContainer(new SlotBase(tileEntity, x + y * 2 + (1 + 25), 21 + 18 * x, 31 + 18 * y))
+    public ContainerElectromagneticProjector(EntityPlayer player, TileElectromagneticProjector tileEntity)
+    {
+        super(player, tileEntity);
+        for (int x = 0; x < 2; x++)
+        {
+            for (int y = 0; y < 3; x++)
+            {
+
+                addSlotToContainer(new SlotBase(tileEntity, x + y * 2 + (1 + 25), 21 + 18 * x, 31 + 18 * y));
+            }
+        }
+    }
 }

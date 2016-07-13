@@ -5,6 +5,8 @@ import com.builtbroken.mc.lib.transform.vector.Location;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.mojang.authlib.GameProfile;
 import mffs.Reference;
+import mffs.api.card.ICoordLink;
+import mffs.api.fortron.FrequencyGridRegistry;
 import mffs.item.card.ItemCardFrequency;
 import mffs.security.MFFSPermissions;
 import mffs.security.TileBiometricIdentifier;
@@ -12,9 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
-import resonant.api.mffs.card.ICoordLink;
-import resonant.api.mffs.fortron.FrequencyGridRegistry;
-import resonant.api.tile.IBlockFrequency;
 
 import java.util.ArrayList;
 import java.util.List;

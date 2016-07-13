@@ -2,6 +2,7 @@ package mffs.security.card
 
 import java.util.List
 
+import com.builtbroken.mc.core.network.IPacketIDReceiver;
 import io.netty.buffer.ByteBuf
 import mffs.ModularForceFieldSystem
 import mffs.item.gui.EnumGui
@@ -10,18 +11,18 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
 
-class ItemCardIdentification extends ItemCardAccess with IPacketReceiver
+class ItemCardIdentification extends ItemCardAccess implements IPacketIDReceiver
 {
-  override def hitEntity(itemStack: ItemStack, entityLiving: EntityLivingBase, par3EntityLiving: EntityLivingBase): Boolean =
+  public boolean hitEntity(ItemStack itemStack, EntityLivingBase entityLiving, EntityLivingBase par3EntityLiving)
   {
     if (entityLiving.isInstanceOf[EntityPlayer])
     {
-      val access = getAccess(itemStack)
+      ItemStack access = getAccess(itemStack)
       access.username = entityLiving.asInstanceOf[EntityPlayer].getGameProfile.getName
       setAccess(itemStack, access)
     }
 
-    return false
+    return false;
   }
 
   override def addInformation(itemStack: ItemStack, player: EntityPlayer, info: List[_], b: Boolean)
