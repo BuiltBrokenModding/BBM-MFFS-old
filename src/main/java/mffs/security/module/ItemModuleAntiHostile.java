@@ -1,22 +1,20 @@
-package mffs.security.module
+package mffs.security.module;
 
-import java.util.Set
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.entity.damage.DamageSources;
+import mffs.api.machine.IProjector;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.IMob;
 
-import mffs.ModularForceFieldSystem
-import net.minecraft.entity.monster.IMob
-import net.minecraft.entity.{EntityLivingBase, INpc}
+import java.util.List;
 
 class ItemModuleAntiHostile extends ItemModuleDefense
 {
-  override def onProject(projector: IProjector, fields: Set[Vector3]): Boolean =
-  {
-    val entities = getEntitiesInField(projector)
-
-    entities.view
-      .filter(entity => entity.isInstanceOf[EntityLivingBase] && entity.isInstanceOf[IMob] && !entity.isInstanceOf[INpc])
-      .map(_.asInstanceOf[EntityLivingBase])
-      .foreach(_.attackEntityFrom(ModularForceFieldSystem.damageFieldShock, 20))
-
-    return false
-  }
+    @Override
+    public boolean onProject(IProjector projector, List<Pos> fields)
+    {
+        List<Entity> entities = getEntitiesInField(projector);
+        entities.stream().filter(entity -> entity instanceof IMob).forEach(entity1 -> entity1.attackEntityFrom(DamageSources.ELECTRIC.getSource(), 100));
+        return false;
+    }
 }

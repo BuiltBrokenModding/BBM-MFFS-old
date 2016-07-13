@@ -17,7 +17,7 @@ class ItemModuleAntiFriendly extends ItemModuleDefense
     public boolean onProject(IProjector projector, List<Pos> fields)
     {
         List<Entity> entities = getEntitiesInField(projector);
-        entities.stream().filter(entity -> entities instanceof EntityLivingBase && !(entities instanceof IMob || entities instanceof INpc || entities instanceof EntityPlayer)).forEach(entity1 -> entity1.attackEntityFrom(DamageSources.ELECTRIC.getSource(), 100));
+        entities.stream().filter(entity -> entity instanceof EntityLivingBase && !(entity instanceof IMob || entity instanceof INpc || entity instanceof EntityPlayer)).forEach(entity1 -> entity1.attackEntityFrom(DamageSources.ELECTRIC.getSource(), 100));
         return false;
     }
 }

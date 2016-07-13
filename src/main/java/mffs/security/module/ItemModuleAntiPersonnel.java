@@ -1,44 +1,39 @@
-package mffs.security.module
+package mffs.security.module;
 
-import java.util.Set
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.entity.damage.DamageElectrical;
+import mffs.api.machine.IProjector;
+import mffs.security.MFFSPermissions;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 
-import mffs.ModularForceFieldSystem
-import mffs.field.TileElectromagneticProjector
-import mffs.security.MFFSPermissions
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.ChatComponentTranslation
+import java.util.List;
 
 class ItemModuleAntiPersonnel extends ItemModuleDefense
 {
-  override def onProject(projector: IProjector, fields: Set[Vector3]): Boolean =
-  {
-    val proj = projector.asInstanceOf[TileElectromagneticProjector]
-    val entities = getEntitiesInField(projector)
-
-    entities.view
-    .filter(entity => entity.isInstanceOf[EntityPlayer])
-    .map(_.asInstanceOf[EntityPlayer])
-    .filter(player => !player.capabilities.isCreativeMode && !player.isEntityInvulnerable)
-    .filter(p => !projector.hasPermission(p.getGameProfile, MFFSPermissions.defense))
-    .foreach(
-        player =>
+    @Override
+    public boolean onProject(IProjector projector, List<Pos> fields)
+    {
+        List<Entity> entities = getEntitiesInField(projector);
+        for (Entity entity : entities)
         {
-          (0 until player.inventory.getSizeInventory)
-          .filter(player.inventory.getStackInSlot(_) != null)
-          .foreach(
-              i =>
-              {
-                proj.mergeIntoInventory(player.inventory.getStackInSlot(i))
-                player.inventory.setInventorySlotContents(i, null)
-              }
-            )
-
-          player.attackEntityFrom(ModularForceFieldSystem.damageFieldShock, 1000)
-          player.addChatMessage(new ChatComponentTranslation("message.moduleAntiPersonnel.death"))
+            if (entity instanceof EntityPlayer && !((EntityPlayer) entity).capabilities.disableDamage && !((EntityPlayer) entity).capabilities.isCreativeMode && !projector.hasPermission(((EntityPlayer) entity).getGameProfile(), MFFSPermissions.defense))
+            {
+                //TODO collect player's items
+                entity.attackEntityFrom(new DamageAntiPersonnel(projector), 1000);
+            }
         }
-      )
+        return false;
+    }
 
-    return false
-  }
+    public class DamageAntiPersonnel extends DamageElectrical
+    {
+        IProjector projector;
 
+        public DamageAntiPersonnel(IProjector projector)
+        {
+            this.projector = projector;
+        }
+        //TODO custom death message
+    }
 }

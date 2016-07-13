@@ -1,25 +1,25 @@
-package mffs.security.module
+package mffs.security.module;
 
-import java.util.Set
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.api.machine.IProjector;
+import mffs.security.MFFSPermissions;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentTranslation;
 
-import mffs.field.TileElectromagneticProjector
-import mffs.security.MFFSPermissions
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.ChatComponentTranslation
+import java.util.List;
 
 class ItemModuleBroadcast extends ItemModuleDefense
 {
-  override def onProject(projector: IProjector, fields: Set[Vector3]): Boolean =
-  {
-    val proj = projector.asInstanceOf[TileElectromagneticProjector]
-    val entities = getEntitiesInField(projector)
+    @Override
+    public boolean onProject(IProjector projector, List<Pos> fields)
+    {
+        List<Entity> entities = getEntitiesInField(projector);
 
-    //TODO: Add custom broadcast messages
-    entities.view
-    .filter(_.isInstanceOf[EntityPlayer])
-    .map(_.asInstanceOf[EntityPlayer])
-    .filter(p => !projector.hasPermission(p.getGameProfile, MFFSPermissions.defense))
-    .foreach(_.addChatMessage(new ChatComponentTranslation("message.moduleWarn.warn")))
-    return false
-  }
+        //TODO: Add custom broadcast messages
+        entities.stream()
+                .filter(entity -> entity instanceof EntityPlayer && !projector.hasPermission(((EntityPlayer) entity).getGameProfile(), MFFSPermissions.defense))
+                .forEach(entity1 -> ((EntityPlayer) entity1).addChatMessage(new ChatComponentTranslation("message.moduleWarn.warn")));
+        return false;
+    }
 }
