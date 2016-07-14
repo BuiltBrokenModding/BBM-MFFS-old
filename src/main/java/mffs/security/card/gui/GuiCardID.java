@@ -1,44 +1,56 @@
-package mffs.security.card.gui
+package mffs.security.card.gui;
 
-import mffs.ModularForceFieldSystem
-import mffs.item.gui.ContainerItem
-import mffs.security.card.ItemCardIdentification
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
+import com.builtbroken.mc.core.Engine;
+import com.builtbroken.mc.core.network.packet.PacketPlayerItem;
+import com.builtbroken.mc.lib.access.AccessUser;
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import mffs.security.card.ItemCardIdentification;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 /**
  * @author Calclavia
  */
-class GuiCardID(player: EntityPlayer, itemStack: ItemStack) extends GuiAccessCard(player, itemStack, new ContainerItem(player, itemStack))
+class GuiCardID extends GuiAccessCard
 {
-  override def initGui()
-  {
-    super.initGui()
-    textField.setMaxStringLength(20)
+    public GuiCardID(EntityPlayer player, ItemStack stack)
+    {
+        super(player, stack, new ContainerItem(player, itemStack));
+    }
 
-    val item = itemStack.getItem.asInstanceOf[ItemCardIdentification]
-    val access = item.getAccess(itemStack)
+    @Override
+    public void initGui()
+    {
+        super.initGui();
+        textField.setMaxStringLength(20);
 
-    if (access != null)
-      textField.setText(access.username)
-  }
+        ItemCardIdentification item = (ItemCardIdentification) stack.getItem();
+        AccessUser access = item.getAccess(stack);
 
-  override def keyTyped(char: Char, p_73869_2_ : Int)
-  {
-    super.keyTyped(char, p_73869_2_)
-    ModularForceFieldSystem.packetHandler.sendToServer(new PacketPlayerItem(player) <<< 1 <<< textField.getText)
-  }
+        if (access != null)
+        {
+            textField.setText(access.getName());
+        }
+    }
 
-  protected override def drawGuiContainerForegroundLayer(x: Int, y: Int)
-  {
-    drawStringCentered(LanguageUtility.getLocal("item.mffs:cardIdentification.name"))
-    textField.drawTextBox()
-    super.drawGuiContainerForegroundLayer(x, y)
-  }
+    @Override
+    public void keyTyped(char c, int id)
+    {
+        super.keyTyped(c, id);
+        Engine.instance.packetHandler.sendToServer(new PacketPlayerItem(player, 1, textField.getText()));
+    }
 
-  protected override def drawGuiContainerBackgroundLayer(f: Float, x: Int, y: Int)
-  {
-    super.drawGuiContainerBackgroundLayer(f, x, y)
-  }
+    @Override
+    protected void drawGuiContainerForegroundLayer(int x, int y)
+    {
+        drawStringCentered(LanguageUtility.getLocal("item.mffs:cardIdentification.name"), x, y);
+        textField.drawTextBox();
+        super.drawGuiContainerForegroundLayer(x, y);
+    }
 
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
+    {
+        super.drawGuiContainerBackgroundLayer(f, x, y);
+    }
 }

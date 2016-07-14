@@ -1,4 +1,4 @@
-package mffs.security.card
+package mffs.security.card;
 
 import com.builtbroken.mc.lib.access.AccessUser;
 import mffs.api.card.IAccessCard;
@@ -8,11 +8,11 @@ import net.minecraft.item.ItemStack;
 /**
  * @author Calclavia
  */
-abstract class ItemCardAccess extends ItemCard implements IAccessCard
+public abstract class ItemCardAccess extends ItemCard implements IAccessCard
 {
     @Override
     public void setAccess(ItemStack itemStack, AccessUser access)
     {
-        itemStack.setTagCompound(access.toNBT);
+        itemStack.setTagCompound(access.toNBT());
     }
 }

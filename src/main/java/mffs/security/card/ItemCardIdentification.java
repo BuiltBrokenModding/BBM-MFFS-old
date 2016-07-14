@@ -1,134 +1,122 @@
-package mffs.security.card
-
-import java.util.List
+package mffs.security.card;
 
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
-import io.netty.buffer.ByteBuf
-import mffs.ModularForceFieldSystem
-import mffs.item.gui.EnumGui
-import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
-import net.minecraft.world.World
+import com.builtbroken.mc.core.network.packet.PacketType;
+import com.builtbroken.mc.lib.access.AccessUser;
+import com.builtbroken.mc.lib.access.Permission;
+import com.builtbroken.mc.lib.access.Permissions;
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import com.builtbroken.mc.lib.helper.NBTUtility;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import io.netty.buffer.ByteBuf;
+import mffs.ModularForceFieldSystem;
+import mffs.item.gui.EnumGui;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
-class ItemCardIdentification extends ItemCardAccess implements IPacketIDReceiver
+import java.util.List;
+
+public class ItemCardIdentification extends ItemCardAccess implements IPacketIDReceiver
 {
-  public boolean hitEntity(ItemStack itemStack, EntityLivingBase entityLiving, EntityLivingBase par3EntityLiving)
-  {
-    if (entityLiving.isInstanceOf[EntityPlayer])
+    @Override
+    public boolean hitEntity(ItemStack itemStack, EntityLivingBase entityLiving, EntityLivingBase par3EntityLiving)
     {
-      ItemStack access = getAccess(itemStack)
-      access.username = entityLiving.asInstanceOf[EntityPlayer].getGameProfile.getName
-      setAccess(itemStack, access)
+        if (entityLiving instanceof EntityPlayer)
+        {
+            AccessUser user = new AccessUser(((EntityPlayer) entityLiving));
+            setAccess(itemStack, user);
+        }
+        return false;
     }
 
-    return false;
-  }
-
-  override def addInformation(itemStack: ItemStack, player: EntityPlayer, info: List[_], b: Boolean)
-  {
-    val access = getAccess(itemStack)
-
-    if (access != null)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List info, boolean b)
     {
-      info.add(LanguageUtility.getLocal("info.cardIdentification.username") + " " + access.username)
-    }
-    else
-    {
-      info.add(LanguageUtility.getLocal("info.cardIdentification.empty"))
-    }
-
-  }
-
-  override def onItemRightClick(itemStack: ItemStack, world: World, player: EntityPlayer): ItemStack =
-  {
-    if (!world.isRemote)
-    {
-      if (player.isSneaking)
-      {
-        var access = getAccess(itemStack)
+        final AccessUser access = getAccess(itemStack);
 
         if (access != null)
-          access.username = player.getGameProfile.getName
-        else
-          access = new AccessUser(player.getGameProfile.getName)
-
-        setAccess(itemStack, access)
-      }
-      else
-      {
-        /**
-         * Open item GUI
-         */
-        player.openGui(ModularForceFieldSystem, EnumGui.cardID.id, world, 0, 0, 0)
-      }
-    }
-
-    return itemStack
-  }
-
-  /**
-   * Reads a packet
-   * @param buf   - data encoded into the packet
-   * @param player - player that is receiving the packet
-   * @param packet - The packet instance that was sending this packet.
-   */
-  override def read(buf: ByteBuf, player: EntityPlayer, packet: PacketType)
-  {
-    val itemStack = player.getCurrentEquippedItem
-    var access = getAccess(itemStack)
-
-    buf.readInt() match
-    {
-      case 0 =>
-      {
-        /**
-         * Permission toggle packet
-         */
-        val perm = Permissions.find(buf.readString())
-
-        if (access == null)
         {
-          access = new AccessUser(player)
-        }
-
-        if (perm != null)
-        {
-          if (access.permissions.contains(perm))
-            access.permissions -= perm
-          else
-            access.permissions += perm
-        }
-      }
-      case 1 =>
-      {
-        /**
-         * Username packet
-         */
-        if (access != null)
-        {
-          access.username = buf.readString()
+            info.add(LanguageUtility.getLocal("info.cardIdentification.username") + " " + access.getName());
         }
         else
         {
-          access = new AccessUser(buf.readString())
+            info.add(LanguageUtility.getLocal("info.cardIdentification.empty"));
         }
-      }
+
     }
 
-    setAccess(itemStack, access)
-  }
-
-  override def getAccess(itemStack: ItemStack): AccessUser =
-  {
-    val nbt = NBTUtility.getNBTTagCompound(itemStack)
-
-    if (nbt != null)
+    @Override
+    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player)
     {
-      val user = new AccessUser(nbt)
-      return user
+        if (!world.isRemote)
+        {
+            if (player.isSneaking())
+            {
+                setAccess(itemStack, new AccessUser(player));
+            }
+            else
+            {
+                player.openGui(ModularForceFieldSystem.instance, EnumGui.cardID.ordinal(), world, 0, 0, 0);
+            }
+        }
+
+        return itemStack;
     }
 
-    return null
-  }
+    @Override
+    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType type)
+    {
+        ItemStack itemStack = player.getCurrentEquippedItem();
+        AccessUser access = getAccess(itemStack);
+
+        //Permission toggle packet
+        if (id == 0)
+        {
+            Permission perm = Permissions.find(ByteBufUtils.readUTF8String(buf));
+
+            if (access == null)
+            {
+                access = new AccessUser(player);
+            }
+
+            if (perm != null)
+            {
+                if (access.hasNode(perm))
+                {
+                    access.removeNode(perm);
+                }
+                else
+                {
+                    access.addNode(perm);
+                }
+            }
+            //Update entry in NBT
+            setAccess(itemStack, access);
+            return true;
+        }
+        //Username change packet
+        else if (id == 1)
+        {
+            String name = ByteBufUtils.readUTF8String(buf);
+            //TODO look up player by name to get UUID for better permission control
+            //Update entry in NBT
+            setAccess(itemStack, access.copyToNewUser(name));
+            return true;
+        }
+        return false;
+    }
+
+    public AccessUser getAccess(ItemStack itemStack)
+    {
+        NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);
+
+        if (nbt != null)
+        {
+            return AccessUser.loadFromNBT(nbt);
+        }
+        return null;
+    }
 }

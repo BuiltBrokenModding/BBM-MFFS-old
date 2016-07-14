@@ -27,6 +27,7 @@ import mffs.item.fortron.ItemCardInfinite;
 import mffs.production.TileCoercionDeriver;
 import mffs.production.TileFortronCapacitor;
 import mffs.security.TileBiometricIdentifier;
+import mffs.security.card.ItemCardAccess;
 import mffs.security.card.ItemCardIdentification;
 import mffs.security.module.*;
 import mffs.util.FortronUtility;
@@ -68,7 +69,7 @@ public class ModularForceFieldSystem extends AbstractMod
     public static Item cardBlank;
     public static Item cardInfinite;
     public static Item cardFrequency;
-    public static Item cardID;
+    public static ItemCardAccess cardID;
     public static Item cardLink;
 
     /**
