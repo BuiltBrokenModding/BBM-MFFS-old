@@ -4,7 +4,7 @@ import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import net.minecraft.world.World;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * A grid MFFS uses to search for machines with frequencies that can be linked and spread Fortron
@@ -31,32 +31,39 @@ public class FrequencyGridRegistry
 		return CLIENT_INSTANCE;
 	}
 
-	public static interface IFrequencyGrid
+	public interface IFrequencyGrid
 	{
 		void add(IBlockFrequency tileEntity);
 
 		void remove(IBlockFrequency tileEntity);
 
-		Set<IBlockFrequency> getNodes();
+        List<IBlockFrequency> getNodes();
 
-		<C extends IBlockFrequency> Set<C> getNodes(Class<C> clazz);
+		<C extends IBlockFrequency> List<C> getNodes(Class<C> clazz);
 
 		/**
 		 * Gets a list of TileEntities that has a specific frequency.
 		 */
-		Set<IBlockFrequency> getNodes(int frequency);
+		List<IBlockFrequency> getNodes(int frequency);
 
-		<C extends IBlockFrequency> Set<C> getNodes(Class<C> clazz, int frequency);
+		<C extends IBlockFrequency> List<C> getNodes(Class<C> clazz, int frequency);
 
 		/**
 		 * Gets a list of TileEntities that has a specific frequency, within a radius around a position.
 		 */
-		Set<IBlockFrequency> getNodes(World world, Pos position, int radius, int frequency);
+        List<IBlockFrequency> getNodes(World world, Pos position, int radius, int frequency);
 
-		<C extends IBlockFrequency> Set<C> getNodes(Class<C> clazz, World world, Pos position, int radius, int frequency);
+		<C extends IBlockFrequency> List<C> getNodes(Class<C> clazz, World world, Pos position, int radius, int frequency);
 
-		Set<IBlockFrequency> getNodes(World world, Cube region, int frequency);
+        List<IBlockFrequency> getNodes(World world, Cube region, int frequency);
 
-		<C extends IBlockFrequency> Set<C> getNodes(Class<C> clazz, World world, Cube region, int frequency);
+		<C extends IBlockFrequency> List<C> getNodes(Class<C> clazz, World world, Cube region, int frequency);
+
+
+    }
+
+	public interface IBlockFrequency
+	{
+		//TODO get actual interface from where every it went to, this is a place holder to remove errors
 	}
 }

@@ -8,7 +8,9 @@ import mffs.render.fx.IEffectController;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
-class CommonProxy extends AbstractProxy
+import java.awt.*;
+
+public class CommonProxy extends AbstractProxy
 {
     //case tile: TileFortronCapacitor => return new ContainerFortronCapacitor(player, tile)
     //case tile: TileElectromagneticProjector => return new ContainerElectromagneticProjector(player, tile)
@@ -37,6 +39,11 @@ class CommonProxy extends AbstractProxy
             return theServer.getConfigurationManager().func_152596_g(profile);
         }
         return false;
+    }
+
+    public void renderBeam(World world, Pos position, Pos target, Color color, int age)
+    {
+        renderBeam(world, position, target, new float[]{color.getRed() / 255f, color.getBlue() / 255f, color.getGreen() / 255f}, age);
     }
 
     public void renderBeam(World world, Pos position, Pos target, float[] color, int age)

@@ -12,7 +12,7 @@ public interface IFortronStorage
 	 *
 	 * @param joules
 	 */
-	public void setFortronEnergy(int joules);
+	public void setFortronEnergy(double joules);
 
 	/**
 	 * @return Gets the maximum possible amount of fortron that can be stored.
@@ -26,7 +26,7 @@ public interface IFortronStorage
 	 * @param doUse  - True if actually using, false if just simulating.
 	 * @return joules - The amount of energy that was actually provided.
 	 */
-	public int requestFortron(int joules, boolean doUse);
+	public int requestFortron(double joules, boolean doUse);
 
 	/**
 	 * Called to use and give fortron energy from this storage unit.
@@ -35,5 +35,5 @@ public interface IFortronStorage
 	 * @param doUse  - True if actually using, false if just simulating.
 	 * @return joules - The amount of energy that was actually injected.
 	 */
-	public int provideFortron(int joules, boolean doUse);
+	public int provideFortron(double joules, boolean doUse);
 }

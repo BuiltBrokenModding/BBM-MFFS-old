@@ -1,13 +1,12 @@
 package mffs.util;
 
-import java.util.HashMap;
-import java.util.List;
-
 import com.builtbroken.mc.lib.access.Permission;
 import com.builtbroken.mc.lib.transform.rotation.EulerAngle;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.mojang.authlib.GameProfile;
-
+import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.machine.IProjector;
+import mffs.field.TileElectromagneticProjector;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -19,24 +18,31 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * @see <a href=
- *      "https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a>
- *      for what you can and can't do with the code. Created by
- *      Dark(DarkGuardsman, Robert) on 4/19/2016.
+ * "https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a>
+ * for what you can and can't do with the code. Created by
+ * Dark(DarkGuardsman, Robert) on 4/19/2016.
  */
-public class MFFSUtility {
-	/**
-	 * Gets the first itemStack that is an ItemBlock in this TileEntity or in
-	 * nearby chests.
-	 */
-	public ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack) {
-		return getFirstItemBlock(tileEntity, itemStack, true);
-	}
+public class MFFSUtility
+{
+    /**
+     * Gets the first itemStack that is an ItemBlock in this TileEntity or in
+     * nearby chests.
+     */
+    public ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack)
+    {
+        return getFirstItemBlock(tileEntity, itemStack, true);
+    }
 
-	public ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack, Boolean recur) {
-        if (tileEntity instanceof IProjector) {
-        	IProjector projector = (IProjector)tileEntity;
+    public ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack, Boolean recur)
+    {
+        if (tileEntity instanceof IProjector)
+        {
+            IProjector projector = (IProjector) tileEntity;
 
             projector.getModuleSlots().find(getFirstItemBlock(_, projector, itemStack) != null) match
             {
@@ -46,7 +52,7 @@ public class MFFSUtility {
         }
         else if (tileEntity instanceof IInventory)
         {
-        	IInventory inventory = (IInventory)tileEntity;
+            IInventory inventory = (IInventory) tileEntity;
 
             (0 until inventory.getSizeInventory()).view map (getFirstItemBlock(_, inventory, itemStack))
             headOption match
@@ -58,33 +64,39 @@ public class MFFSUtility {
 
         if (recur)
         {
-            for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-                    
-                            Pos vector = new Pos(tileEntity).add(direction);
-                            TileEntity checkTile = vector.getTileEntity(tileEntity.getWorldObj());
-
-            if (checkTile != null)
+            for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
             {
-                ItemStack checkStack = getFirstItemBlock(checkTile, itemStack, false);
 
-                if (checkStack != null)
-                   return checkStack;
-                
-            }
+                Pos vector = new Pos(tileEntity).add(direction);
+                TileEntity checkTile = vector.getTileEntity(tileEntity.getWorldObj());
+
+                if (checkTile != null)
+                {
+                    ItemStack checkStack = getFirstItemBlock(checkTile, itemStack, false);
+
+                    if (checkStack != null)
+                    {
+                        return checkStack;
+                    }
+
+                }
             }
         }
         return null;
     }
 
-	public ItemStack getFirstItemBlock(int i, IInventory inventory, ItemStack itemStack) {
-		ItemStack checkStack = inventory.getStackInSlot(i);
-		if (checkStack != null && checkStack.getItem() instanceof ItemBlock
-				&& (itemStack == null || checkStack.isItemEqual(itemStack)))
-			return checkStack;
-		return null;
-	}
+    public ItemStack getFirstItemBlock(int i, IInventory inventory, ItemStack itemStack)
+    {
+        ItemStack checkStack = inventory.getStackInSlot(i);
+        if (checkStack != null && checkStack.getItem() instanceof ItemBlock
+                && (itemStack == null || checkStack.isItemEqual(itemStack)))
+        {
+            return checkStack;
+        }
+        return null;
+    }
 
-	public ItemStack getCamoBlock(IProjector proj, Pos position)
+    public ItemStack getCamoBlock(IProjector proj, Pos position)
     {
         if (proj instanceof TileElectromagneticProjector)
         {
@@ -113,45 +125,66 @@ public class MFFSUtility {
                         }
                     }
 
-                   return projector.getFilterStacks().size() > 0 ? projector.getFilterStacks().get(0);
+                    return projector.getFilterStacks().size() > 0 ? projector.getFilterStacks().get(0);
                 }
             }
         }
         return null;
     }
 
-	public Block getFilterBlock(ItemStack itemStack) {
-		if (itemStack != null) {
-			return getFilterBlock(itemStack.getItem());
-
-		}
-		return null;
-	}
-
-	public Block getFilterBlock(Item item) {
-		if (item instanceof ItemBlock) {
-			return ((ItemBlock) item).field_150939_a;
-		}
-		return null;
-	}
-
-	public boolean hasPermission(World world, Pos position, Permission permission, EntityPlayer player) {
-		return hasPermission(world, position, permission, player.getGameProfile());
-	}
-
-	public boolean hasPermission(World world, Pos position, Permission permission, GameProfile profile) {
-		return getRelevantProjectors(world, position).forall(_.hasPermission(profile, permission));
-	}
-
-	public boolean hasPermission(World world, Pos position, PlayerInteractEvent.Action action, EntityPlayer player)
+    public Block getFilterBlock(ItemStack itemStack)
     {
-        return getRelevantProjectors(world, position) forall(_.isAccessGranted(world, position, player, action))
+        if (itemStack != null)
+        {
+            return getFilterBlock(itemStack.getItem());
+
+        }
+        return null;
     }
 
-	/**
-	 * Gets the set of projectors that have an effect in this position.
-	 */
-	public List<TileElectromagneticProjector> getRelevantProjectors(World world, Pos position) {
-		return FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class);
-	}
+    public Block getFilterBlock(Item item)
+    {
+        if (item instanceof ItemBlock)
+        {
+            return ((ItemBlock) item).field_150939_a;
+        }
+        return null;
+    }
+
+    public boolean hasPermission(World world, Pos position, Permission permission, EntityPlayer player)
+    {
+        return hasPermission(world, position, permission, player.getGameProfile());
+    }
+
+    public boolean hasPermission(World world, Pos position, Permission permission, GameProfile profile)
+    {
+        for(TileElectromagneticProjector projector : getRelevantProjectors(world, position))
+        {
+            if(projector.hasPermission(profile, permission))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hasPermission(World world, Pos position, PlayerInteractEvent.Action action, EntityPlayer player)
+    {
+        for(TileElectromagneticProjector projector : getRelevantProjectors(world, position))
+        {
+            if(projector.isAccessGranted(world, position, player, action))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Gets the set of projectors that have an effect in this position.
+     */
+    public List<TileElectromagneticProjector> getRelevantProjectors(World world, Pos position)
+    {
+        return FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class);
+    }
 }

@@ -334,9 +334,9 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
   def isInField(position: Vector3) = if (getMode != null) getMode.isInField(this, position) else false
 
-  def isAccessGranted(checkWorld: World, checkPos: Vector3, player: EntityPlayer, action: PlayerInteractEvent.Action): Boolean =
+  public boolean isAccessGranted(World checkWorld, Pos checkPos, EntityPlayer player, PlayerInteractEvent.Action action)
   {
-    var hasPerm = true
+    boolean hasPerm = true;
 
     if (action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && checkPos.getTileEntity(checkWorld) != null)
     {

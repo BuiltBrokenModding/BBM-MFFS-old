@@ -1,56 +1,83 @@
-package mffs.field.mode
+package mffs.field.mode;
 
-import java.util.{HashSet, Set}
+import com.builtbroken.mc.lib.render.model.ModelCube;
+import com.builtbroken.mc.lib.transform.region.Cube;
+import com.builtbroken.mc.lib.transform.rotation.EulerAngle;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mffs.api.machine.IFieldMatrix;
+import mffs.api.machine.IProjector;
+import net.minecraft.tileentity.TileEntity;
+import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import net.minecraft.tileentity.TileEntity
-import org.lwjgl.opengl.GL11
+import java.util.ArrayList;
+import java.util.List;
 
-class ItemModeCube extends ItemMode
+public class ItemModeCube extends ItemMode
 {
-  private val step = 1
+    private int step = 1;
 
-  def getExteriorPoints(projector: IFieldMatrix): Set[Vector3] =
-  {
-    val fieldBlocks = new HashSet[Vector3]
-    val posScale: Vector3 = projector.getPositiveScale
-    val negScale: Vector3 = projector.getNegativeScale
+    @Override
+    public List<Pos> getExteriorPoints(IFieldMatrix projector)
+    {
+        List<Pos> fieldBlocks = new ArrayList();
+        Pos posScale = projector.getPositiveScale();
+        Pos negScale = projector.getNegativeScale();
 
-    for (x <- -negScale.xi to posScale.xi by step; y <- -negScale.yi to posScale.yi by step; z <- -negScale.zi to posScale.zi by step)
-      if (y == -negScale.yi || y == posScale.yi || x == -negScale.xi || x == posScale.xi || z == -negScale.zi || z == posScale.zi)
-        fieldBlocks.add(new Vector3(x, y, z))
+        for (int x = negScale.xi(); x < posScale.xi(); x += step)
+        {
+            for (int y = negScale.yi(); y < posScale.yi(); y += step)
+            {
+                for (int z = negScale.zi(); z < posScale.zi(); z += step)
+                {
+                    if (y == -negScale.yi() || y == posScale.yi() || x == -negScale.xi() || x == posScale.xi() || z == -negScale.zi() || z == posScale.zi())
+                    {
+                        fieldBlocks.add(new Pos(x, y, z));
+                    }
+                }
+            }
+        }
+        return fieldBlocks;
+    }
 
+    @Override
+    public List<Pos> getInteriorPoints(IFieldMatrix projector)
+    {
+        List<Pos> fieldBlocks = new ArrayList();
+        Pos posScale = projector.getPositiveScale();
+        Pos negScale = projector.getNegativeScale();
 
-    return fieldBlocks
-  }
+        //TODO: Check parallel possibility
+        for (int x = negScale.xi(); x < posScale.xi(); x += step)
+        {
+            for (int y = negScale.yi(); y < posScale.yi(); y += step)
+            {
+                for (int z = negScale.zi(); z < posScale.zi(); z += step)
+                {
+                    fieldBlocks.add(new Pos(x, y, z));
+                }
+            }
+        }
 
-  def getInteriorPoints(projector: IFieldMatrix): Set[Vector3] =
-  {
-    val fieldBlocks = new HashSet[Vector3]
-    val posScale = projector.getPositiveScale
-    val negScale = projector.getNegativeScale
+        return fieldBlocks;
+    }
 
-    //TODO: Check parallel possibility
-    for (x <- -negScale.xi to posScale.xi by step; y <- -negScale.yi to posScale.yi by step; z <- -negScale.zi to posScale.zi by step)
-      fieldBlocks.add(new Vector3(x, y, z))
+    @Override
+    public boolean isInField(IFieldMatrix projector, Pos position)
+    {
+        Pos projectorPos = new Pos((TileEntity) projector);
+        projectorPos = projectorPos.add(projector.getTranslation());
+        Pos relativePosition = position.clone().subtract(projectorPos);
+        relativePosition.transform(new EulerAngle(-projector.getRotationYaw(), -projector.getRotationPitch(), 0));
+        Cube region = new Cube(projector.getNegativeScale().multiply(-1), projector.getPositiveScale());
+        return region.intersects(relativePosition);
+    }
 
-    return fieldBlocks
-  }
-
-  override def isInField(projector: IFieldMatrix, position: Vector3): Boolean =
-  {
-    val projectorPos: Vector3 = new Vector3(projector.asInstanceOf[TileEntity])
-    projectorPos.add(projector.getTranslation)
-    val relativePosition = position.clone.subtract(projectorPos)
-    relativePosition.transform(new EulerAngle(-projector.getRotationYaw, -projector.getRotationPitch, 0))
-    val region = new Cuboid(-projector.getNegativeScale, projector.getPositiveScale)
-    return region.intersects(relativePosition)
-  }
-
-  @SideOnly(Side.CLIENT)
-  override def render(projector: IProjector, x: Double, y: Double, z: Double, f: Float, ticks: Long)
-  {
-    GL11.glScalef(0.5f, 0.5f, 0.5f)
-    ModelCube.INSTNACE.render
-  }
+    @SideOnly(Side.CLIENT)
+    public void render(IProjector projector, double x, double y, double z, float f, long ticks)
+    {
+        GL11.glScalef(0.5f, 0.5f, 0.5f);
+        ModelCube.INSTNACE.render();
+    }
 }

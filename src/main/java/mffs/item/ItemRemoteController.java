@@ -1,184 +1,196 @@
-package mffs.item
+package mffs.item;
 
-import java.util.{HashSet, List, Set}
+import com.builtbroken.jlib.data.science.units.UnitDisplay;
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import com.builtbroken.mc.lib.transform.vector.Location;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mffs.ModularForceFieldSystem;
+import mffs.api.card.ICoordLink;
+import mffs.api.event.EventForceMobilize;
+import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.IFortronFrequency;
+import mffs.item.card.ItemCardFrequency;
+import mffs.security.MFFSPermissions;
+import mffs.util.MFFSUtility;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import mffs.ModularForceFieldSystem
-import mffs.item.card.ItemCardFrequency
-import mffs.render.FieldColor
-import mffs.security.MFFSPermissions
-import mffs.util.MFFSUtility
-import net.minecraft.block.Block
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.init.Blocks
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.ChatComponentText
-import net.minecraft.world.World
-import net.minecraft.world.chunk.Chunk
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action
-import net.minecraftforge.fluids.FluidContainerRegistry
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import scala.collection.JavaConversions._
-
-class ItemRemoteController extends ItemCardFrequency with ICoordLink
+public class ItemRemoteController extends ItemCardFrequency implements ICoordLink
 {
-  private final val remotesCached = new HashSet[ItemStack]
-  private final val temporaryRemoteBlacklist = new HashSet[ItemStack]
+    private final Set<ItemStack> remotesCached = new HashSet();
+    private final Set<ItemStack> temporaryRemoteBlacklist = new HashSet();
 
-  @SideOnly(Side.CLIENT)
-  override def addInformation(itemstack: ItemStack, entityplayer: EntityPlayer, list: List[_], flag: Boolean)
-  {
-    super.addInformation(itemstack, entityplayer, list, flag)
-
-    if (hasLink(itemstack))
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag)
     {
-      val vec: VectorWorld = getLink(itemstack)
-      val block: Block = vec.getBlock(entityplayer.worldObj)
-      if (block ne Blocks.air)
-      {
-        list.add(LanguageUtility.getLocal("info.item.linkedWith") + " " + block.getLocalizedName)
-      }
-      list.add(vec.xi + ", " + vec.yi + ", " + vec.zi)
-      list.add(LanguageUtility.getLocal("info.item.dimension") + " '" + vec.world.provider.getDimensionName + "'")
-    }
-    else
-    {
-      list.add(LanguageUtility.getLocal("info.item.notLinked"))
-    }
-  }
+        super.addInformation(itemstack, entityplayer, list, flag);
 
-  def hasLink(itemStack: ItemStack): Boolean =
-  {
-    return getLink(itemStack) != null
-  }
-
-  override def onItemUse(itemStack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, par7: Int, par8: Float, par9: Float, par10: Float): Boolean =
-  {
-    if (!world.isRemote && player.isSneaking)
-    {
-      val vector: VectorWorld = new VectorWorld(world, x, y, z)
-      setLink(itemStack, vector)
-      val block = vector.getBlock
-
-      if (block != null)
-      {
-        player.addChatMessage(new ChatComponentText(LanguageUtility.getLocal("message.remoteController.linked").replaceAll("#p", x + ", " + y + ", " + z).replaceAll("#q", block.getLocalizedName)))
-      }
-    }
-    return true
-  }
-
-  def clearLink(itemStack: ItemStack)
-  {
-    itemStack.getTagCompound.removeTag("link")
-  }
-
-  override def onItemRightClick(itemStack: ItemStack, world: World, entityPlayer: EntityPlayer): ItemStack =
-  {
-    if (!entityPlayer.isSneaking)
-    {
-      val position: Vector3 = this.getLink(itemStack)
-      if (position != null)
-      {
-        val block: Block = position.getBlock(world)
-        if (block ne Blocks.air)
+        if (hasLink(itemstack))
         {
-          val chunk: Chunk = world.getChunkFromBlockCoords(position.xi, position.zi)
-          if (chunk != null && chunk.isChunkLoaded && (MFFSUtility.hasPermission(world, position, Action.RIGHT_CLICK_BLOCK, entityPlayer) || MFFSUtility.hasPermission(world, position, MFFSPermissions.remoteControl, entityPlayer)))
-          {
-            val requiredEnergy = new Vector3(entityPlayer).distance(position) * (FluidContainerRegistry.BUCKET_VOLUME / 100)
-            var receivedEnergy = 0
-            val fortronTiles: Set[IFortronFrequency] = FrequencyGridRegistry.instance.getNodes(classOf[IFortronFrequency], world, new Vector3(entityPlayer), 50, this.getFrequency(itemStack))
-
-            for (fortronTile <- fortronTiles)
+            Location vec = getLink(itemstack);
+            Block block = vec.getBlock(entityplayer.worldObj);
+            if (block != Blocks.air)
             {
-              val consumedEnergy: Int = fortronTile.requestFortron(Math.ceil(requiredEnergy / fortronTiles.size).asInstanceOf[Int], true)
-              if (consumedEnergy > 0)
-              {
-                if (world.isRemote)
+                list.add(LanguageUtility.getLocal("info.item.linkedWith") + " " + block.getLocalizedName());
+            }
+            list.add(vec.xi() + ", " + vec.yi() + ", " + vec.zi());
+            list.add(LanguageUtility.getLocal("info.item.dimension") + " '" + vec.world.provider.getDimensionName() + "'");
+        }
+        else
+        {
+            list.add(LanguageUtility.getLocal("info.item.notLinked"));
+        }
+    }
+
+    public boolean hasLink(ItemStack itemStack)
+    {
+        return getLink(itemStack) != null;
+    }
+
+    @Override
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10)
+    {
+        if (!world.isRemote && player.isSneaking())
+        {
+            Location vector = new Location(world, x, y, z);
+            setLink(itemStack, vector);
+            Block block = vector.getBlock();
+
+            if (block != null)
+            {
+                player.addChatMessage(new ChatComponentText(LanguageUtility.getLocal("message.remoteController.linked").replaceAll("#p", x + ", " + y + ", " + z).replaceAll("#q", block.getLocalizedName())));
+            }
+        }
+        return true;
+    }
+
+    public void clearLink(ItemStack itemStack)
+    {
+        if (itemStack.getTagCompound() != null)
+        {
+            itemStack.getTagCompound().removeTag("link");
+        }
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
+    {
+        if (!entityPlayer.isSneaking())
+        {
+            Location position = this.getLink(itemStack);
+            if (position != null)
+            {
+                Block block = position.getBlock(world);
+                if (block != Blocks.air)
                 {
-                  ModularForceFieldSystem.proxy.renderBeam(world, new Vector3(entityPlayer).add(new Vector3(0, entityPlayer.getEyeHeight - 0.2, 0)), new Vector3(fortronTile.asInstanceOf[TileEntity]).add(0.5), FieldColor.blue, 20)
-                }
-                receivedEnergy += consumedEnergy
-              }
-              if (receivedEnergy >= requiredEnergy)
-              {
-                try
-                {
-                  block.onBlockActivated(world, position.xi, position.yi, position.zi, entityPlayer, 0, 0, 0, 0)
-                }
-                catch
-                  {
-                    case e: Exception =>
+                    Chunk chunk = world.getChunkFromBlockCoords(position.xi(), position.zi());
+                    if (chunk != null && chunk.isChunkLoaded && (MFFSUtility.hasPermission(world, position, Action.RIGHT_CLICK_BLOCK, entityPlayer) || MFFSUtility.hasPermission(world, position, MFFSPermissions.remoteControl, entityPlayer)))
                     {
-                      e.printStackTrace
+                        double requiredEnergy = new Pos(entityPlayer).distance(position) * (FluidContainerRegistry.BUCKET_VOLUME / 100);
+                        double receivedEnergy = 0;
+                        Set<IFortronFrequency> fortronTiles = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(IFortronFrequency.class, world, new Pos(entityPlayer), 50, this.getFrequency(itemStack));
+
+                        for (IFortronFrequency fortronTile : fortronTiles)
+                        {
+                            double consumedEnergy = fortronTile.requestFortron(Math.ceil(requiredEnergy / fortronTiles.size()), true);
+                            if (consumedEnergy > 0)
+                            {
+                                if (world.isRemote)
+                                {
+                                    ModularForceFieldSystem.proxy.renderBeam(world, new Pos(entityPlayer).add(new Pos(0, entityPlayer.getEyeHeight() - 0.2, 0)), new Pos((TileEntity)fortronTile).add(0.5), ModularForceFieldSystem.fieldColor, 20);
+                                }
+                                receivedEnergy += consumedEnergy;
+                            }
+                            if (receivedEnergy >= requiredEnergy)
+                            {
+                                try
+                                {
+                                    block.onBlockActivated(world, position.xi(), position.yi(), position.zi(), entityPlayer, 0, 0, 0, 0);
+                                }
+                                catch(Exception e)
+                                {
+                                    e.printStackTrace();
+                                }
+                                return itemStack;
+                            }
+                        }
+                        if (!world.isRemote)
+                        {
+                            entityPlayer.addChatMessage(new ChatComponentText(LanguageUtility.getLocal("message.remoteController.fail").replaceAll("#p", new UnitDisplay(UnitDisplay.Unit.JOULES, requiredEnergy).toString())));
+                        }
                     }
-                  }
-                return itemStack
-              }
+                }
             }
-            if (!world.isRemote)
-            {
-              entityPlayer.addChatMessage(new ChatComponentText(LanguageUtility.getLocal("message.remoteController.fail").replaceAll("#p", new UnitDisplay(UnitDisplay.Unit.JOULES, requiredEnergy).toString)))
-            }
-          }
         }
-      }
-    }
-    else
-    {
-      super.onItemRightClick(itemStack, world, entityPlayer)
-    }
-
-    return itemStack
-  }
-
-  def getLink(itemStack: ItemStack): VectorWorld =
-  {
-    if (itemStack.stackTagCompound == null || !itemStack.getTagCompound.hasKey("link"))
-    {
-      return null
-    }
-    return new VectorWorld(itemStack.getTagCompound.getCompoundTag("link"))
-  }
-
-  @SubscribeEvent def preMove(evt: EventForceMobilize.EventPreForceManipulate)
-  {
-    this.temporaryRemoteBlacklist.clear
-  }
-
-  /**
-   * Moves the coordinates of the link if the Force Manipulator moved a block that is linked by
-   * the remote.
-   *
-   * @param evt
-   */
-  @SubscribeEvent def onMove(evt: EventForceMobilize.EventPostForceManipulate)
-  {
-    if (!evt.world.isRemote)
-    {
-      import scala.collection.JavaConversions._
-      for (itemStack <- this.remotesCached)
-      {
-        if (!temporaryRemoteBlacklist.contains(itemStack) && (new Vector3(evt.beforeX, evt.beforeY, evt.beforeZ) == this.getLink(itemStack)))
+        else
         {
-          this.setLink(itemStack, new VectorWorld(evt.world, evt.afterX, evt.afterY, evt.afterZ))
-          temporaryRemoteBlacklist.add(itemStack)
+            super.onItemRightClick(itemStack, world, entityPlayer)
         }
-      }
-    }
-  }
 
-  def setLink(itemStack: ItemStack, vec: VectorWorld)
-  {
-    if (itemStack.getTagCompound == null)
-    {
-      itemStack.setTagCompound(new NBTTagCompound)
+        return itemStack
     }
-    itemStack.getTagCompound.setTag("link", vec.toNBT)
-  }
+
+    public Location getLink(ItemStack itemStack)
+    {
+        if (itemStack.stackTagCompound == null || !itemStack.getTagCompound().hasKey("link"))
+        {
+            return null;
+        }
+        return new Location(itemStack.getTagCompound().getCompoundTag("link"));
+    }
+
+    @SubscribeEvent
+    public void preMove(EventForceMobilize.EventPreForceManipulate evt)
+    {
+        this.temporaryRemoteBlacklist.clear();
+    }
+
+    /**
+     * Moves the coordinates of the link if the Force Manipulator moved a block that is linked by
+     * the remote.
+     *
+     * @param evt
+     */
+    @SubscribeEvent
+    public void onMove(EventForceMobilize.EventPostForceManipulate evt)
+    {
+        if (!evt.world.isRemote)
+        {
+            for (ItemStack itemStack : this.remotesCached)
+            {
+                if (!temporaryRemoteBlacklist.contains(itemStack) && (new Location(evt.world, evt.beforeX, evt.beforeY, evt.beforeZ) == this.getLink(itemStack)))
+                {
+                    this.setLink(itemStack, new Location(evt.world, evt.afterX, evt.afterY, evt.afterZ));
+                    temporaryRemoteBlacklist.add(itemStack);
+                }
+            }
+        }
+    }
+
+    public void setLink(ItemStack itemStack, Location vec)
+    {
+        if (itemStack.getTagCompound() == null)
+        {
+            itemStack.setTagCompound(new NBTTagCompound());
+        }
+        itemStack.getTagCompound().setTag("link", vec.toNBT());
+    }
 
 }

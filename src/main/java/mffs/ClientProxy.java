@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 
-class ClientProxy extends CommonProxy
+public class ClientProxy extends CommonProxy
 {
     public void init()
     {

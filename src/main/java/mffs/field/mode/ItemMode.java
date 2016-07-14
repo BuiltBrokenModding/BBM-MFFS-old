@@ -1,24 +1,32 @@
-package mffs.field.mode
+package mffs.field.mode;
 
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import mffs.base.ItemMFFS
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mffs.api.machine.IFieldMatrix;
+import mffs.api.machine.IProjector;
+import mffs.api.modules.IProjectorMode;
+import mffs.base.ItemMFFS;
 
-abstract class ItemMode extends ItemMFFS with IProjectorMode
+public abstract class ItemMode extends ItemMFFS implements IProjectorMode
 {
-  this.setMaxStackSize(1)
+    public ItemMode()
+    {
+        this.setMaxStackSize(1);
+    }
 
-  @SideOnly(Side.CLIENT)
-  def render(projector: IProjector, x: Double, y: Double, z: Double, f: Float, ticks: Long)
-  {
-  }
+    @SideOnly(Side.CLIENT)
+    public void render(IProjector projector, double x, double y, double z, float f, long ticks)
+    {
+    }
 
-  def isInField(projector: IFieldMatrix, position: Vector3): Boolean =
-  {
-    return false
-  }
+    public boolean isInField(IFieldMatrix projector, Pos position)
+    {
+        return false;
+    }
 
-  def getFortronCost(amplifier: Float): Float =
-  {
-    return 8
-  }
+    public float getFortronCost(float amplifier)
+    {
+        return 8;
+    }
 }

@@ -1,6 +1,7 @@
 package mffs;
 
 
+import com.builtbroken.jlib.data.Colors;
 import com.builtbroken.mc.core.registry.ModManager;
 import com.builtbroken.mc.lib.mod.AbstractMod;
 import com.builtbroken.mc.lib.mod.AbstractProxy;
@@ -40,6 +41,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import resonant.api.mffs.Blacklist;
 
+import java.awt.*;
 import java.util.UUID;
 
 @Mod(modid = Reference.id, name = Reference.name, version = Reference.version, dependencies = "required-after:ResonantEngine", modLanguage = "scala", guiFactory = "mffs.MFFSGuiFactory")
@@ -115,6 +117,8 @@ public class ModularForceFieldSystem extends AbstractMod
     public static Block biometricIdentifier;
     public static Block forceMobilizer;
     public static Block forceField;
+
+    public static Color fieldColor = Color.BLUE; //TODO change to original
 
     public ModularForceFieldSystem()
     {
