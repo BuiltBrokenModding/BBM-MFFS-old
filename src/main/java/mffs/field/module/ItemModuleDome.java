@@ -7,7 +7,7 @@ import net.minecraft.tileentity.TileEntity
 
 import scala.collection.convert.wrapAll._
 
-class ItemModuleDome extends ItemModule
+public class ItemModuleDome extends ItemModule
 {
   setMaxStackSize(1)
 

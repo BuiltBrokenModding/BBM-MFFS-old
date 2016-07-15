@@ -64,6 +64,7 @@ public class FrequencyGridRegistry
 
 	public interface IBlockFrequency
 	{
+		int getFrequency();
 		//TODO get actual interface from where every it went to, this is a place holder to remove errors
 	}
 }

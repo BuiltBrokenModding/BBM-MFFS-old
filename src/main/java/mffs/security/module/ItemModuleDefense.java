@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-class ItemModuleDefense extends ItemModule
+public class ItemModuleDefense extends ItemModule
 {
   @Override
   public void addInformation(ItemStack itemStack, EntityPlayer player, List info, boolean b)

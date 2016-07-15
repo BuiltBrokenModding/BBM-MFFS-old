@@ -1,28 +1,40 @@
-package mffs.field.module
+package mffs.field.module;
 
-import java.util.Set
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.machine.IProjector;
+import mffs.base.ItemModule;
+import mffs.field.TileElectromagneticProjector;
+import net.minecraft.tileentity.TileEntity;
 
-import mffs.base.ItemModule
-import mffs.field.TileElectromagneticProjector
-import net.minecraft.tileentity.TileEntity
+import java.util.List;
 
-import scala.collection.convert.wrapAll._
-
-class ItemModuleFusion extends ItemModule
+public class ItemModuleFusion extends ItemModule
 {
-  setMaxStackSize(1)
-  setCost(1f)
+    public ItemModuleFusion()
+    {
+        setMaxStackSize(1);
+        setCost(1f);
+    }
 
-  override def onProject(projector: IProjector, fieldBlocks: Set[Vector3]): Boolean =
-  {
-    val tile = projector.asInstanceOf[TileEntity]
-    val projectors = FrequencyGridRegistry.instance.getNodes(classOf[TileElectromagneticProjector], projector.getFrequency)
+    @Override
+    public boolean onProject(IProjector projector, List<Pos> field)
+    {
+        TileEntity tile = (TileEntity) projector;
+        List<TileElectromagneticProjector> projectors = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class, projector.getFrequency());
 
-    //TOOD: Check threading efficiency
-    val checkProjectors = projectors.par filter (proj => proj.getWorldObj == tile.getWorldObj && proj.isActive && proj.getMode != null)
-    val removeFields = (fieldBlocks.par filter (pos => checkProjectors exists (proj => proj.getInteriorPoints.contains(pos) || proj.getMode.isInField(proj, pos)))).seq
-    fieldBlocks --= removeFields
+        //TOOD: Check threading efficiency
+        for (TileElectromagneticProjector proj : projectors)
+        {
+            if (proj.getWorldObj() == tile.getWorldObj() && proj.isActive() && proj.getMode() != null))
+            {
 
-    return false
-  }
+                val removeFields = (fieldBlocks.par filter(pos = > checkProjectors
+                exists(proj = > proj.getInteriorPoints.contains(pos) || proj.getMode.isInField(proj, pos)))).seq
+                fieldBlocks-- = removeFields
+            }
+        }
+
+        return false;
+    }
 }

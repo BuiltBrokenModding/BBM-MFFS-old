@@ -7,7 +7,7 @@ import mffs.render.model.ModelPlane
 import net.minecraftforge.common.util.ForgeDirection
 import org.lwjgl.opengl.GL11
 
-class ItemModeTube extends ItemModeCube
+public class ItemModeTube extends ItemModeCube
 {
   private val step = 1
 

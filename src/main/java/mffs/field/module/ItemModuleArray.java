@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.ForgeDirection
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-class ItemModuleArray extends ItemModule
+public class ItemModuleArray extends ItemModule
 {
   override def onPreCalculate(projector: IFieldMatrix, fieldBlocks: Set[Vector3])
   {

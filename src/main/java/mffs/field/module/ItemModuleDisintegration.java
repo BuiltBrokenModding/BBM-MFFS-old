@@ -12,7 +12,7 @@ import net.minecraft.item.{ItemBlock, ItemStack}
 import net.minecraft.tileentity.TileEntity
 import net.minecraftforge.fluids.IFluidBlock
 
-class ItemModuleDisintegration extends ItemModule
+public class ItemModuleDisintegration extends ItemModule
 {
   private var blockCount: Int = 0
   setMaxStackSize(1)

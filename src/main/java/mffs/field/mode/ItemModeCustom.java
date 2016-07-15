@@ -24,7 +24,7 @@ import resonant.api.mffs.machine.IFieldMatrix
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-class ItemModeCustom extends ItemMode with TCache
+public class ItemModeCustom extends ItemMode with TCache
 {
   private final val NBT_ID: String = "id"
   private final val NBT_MODE: String = "mode"

@@ -21,7 +21,7 @@ import net.minecraft.world.IBlockAccess
 
 import scala.collection.convert.wrapAll._
 
-class TileForceField extends Tile(Material.glass) with TPacketReceiver with IForceField
+public class TileForceField extends Tile(Material.glass) with TPacketReceiver with IForceField
 {
   private var camoStack: ItemStack = null
   private var projector: Vector3 = null

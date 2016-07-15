@@ -8,7 +8,7 @@ import net.minecraft.entity.monster.IMob;
 
 import java.util.List;
 
-class ItemModuleAntiHostile extends ItemModuleDefense
+public class ItemModuleAntiHostile extends ItemModuleDefense
 {
     @Override
     public boolean onProject(IProjector projector, List<Pos> fields)

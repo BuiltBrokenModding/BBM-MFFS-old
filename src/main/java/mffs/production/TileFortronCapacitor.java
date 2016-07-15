@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.IFluidContainerItem
 
 import scala.collection.JavaConversions._
 
-class TileFortronCapacitor extends TileModuleAcceptor with IFortronStorage with IFortronCapacitor
+public class TileFortronCapacitor extends TileModuleAcceptor with IFortronStorage with IFortronCapacitor
 {
   private val tickRate = 10
   private var transferMode = TransferMode.equalize

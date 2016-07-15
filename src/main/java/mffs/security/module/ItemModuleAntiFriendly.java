@@ -11,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
 
-class ItemModuleAntiFriendly extends ItemModuleDefense
+public class ItemModuleAntiFriendly extends ItemModuleDefense
 {
     @Override
     public boolean onProject(IProjector projector, List<Pos> fields)

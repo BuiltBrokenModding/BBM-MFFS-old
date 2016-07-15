@@ -1,70 +1,92 @@
-package mffs.field.mode
+package mffs.field.mode;
 
-import java.util.{HashSet, Set}
+import com.builtbroken.mc.lib.render.model.ModelCube;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mffs.ModularForceFieldSystem;
+import mffs.api.machine.IFieldMatrix;
+import mffs.api.machine.IProjector;
+import net.minecraft.tileentity.TileEntity;
+import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import mffs.Content
-import net.minecraft.tileentity.TileEntity
-import org.lwjgl.opengl.GL11
+import java.util.ArrayList;
+import java.util.List;
 
-class ItemModeSphere extends ItemMode
+public class ItemModeSphere extends ItemMode
 {
-  def getExteriorPoints(projector: IFieldMatrix): Set[Vector3] =
-  {
-    val fieldBlocks = new HashSet[Vector3]
-    val radius = projector.getModuleCount(Content.moduleScale)
-    val steps = Math.ceil(Math.PI / Math.atan(1.0D / radius / 2)).asInstanceOf[Int]
-
-    for (phi_n <- 0 until 2 * steps; theta_n <- 0 until steps)
+    @Override
+    public List<Pos> getExteriorPoints(IFieldMatrix projector)
     {
-      val phi = Math.PI * 2 / steps * phi_n
-      val theta = Math.PI / steps * theta_n
-      val point = new Vector3(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi)) * radius
-      fieldBlocks.add(point)
+        List<Pos> fieldBlocks = new ArrayList();
+        int radius = projector.getModuleCount(ModularForceFieldSystem.moduleScale);
+        int steps = (int) Math.ceil(Math.PI / Math.atan(1.0D / radius / 2));
+
+        for (int phi_n = 0; phi_n <= 2 * steps; phi_n++)
+        {
+            for (int theta_n = 0; theta_n <= 2 * steps; theta_n++)
+            {
+                double phi = Math.PI * 2 / steps * phi_n;
+                double theta = Math.PI / steps * theta_n;
+                Pos point = new Pos(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi)).multiply(radius);
+                fieldBlocks.add(point);
+            }
+        }
+        return fieldBlocks;
     }
 
-    return fieldBlocks
-  }
-
-  def getInteriorPoints(projector: IFieldMatrix): Set[Vector3] =
-  {
-    val fieldBlocks = new HashSet[Vector3]
-    val translation: Vector3 = projector.getTranslation
-    val radius: Int = projector.getModuleCount(Content.moduleScale)
-
-    for (x <- radius to radius; y <- -radius to radius; z <- -radius to radius)
+    @Override
+    public List<Pos> getInteriorPoints(IFieldMatrix projector)
     {
-      val position = new Vector3(x, y, z)
-      if (isInField(projector, position + new Vector3(projector.asInstanceOf[TileEntity]) + translation))
-      {
-        fieldBlocks.add(position)
-      }
+        List<Pos> fieldBlocks = new ArrayList();
+        Pos translation = projector.getTranslation();
+        int radius = projector.getModuleCount(ModularForceFieldSystem.moduleScale);
+
+        for (int x = -radius; x <= radius; x++)
+        {
+            for (int y = -radius; y <= radius; y++)
+            {
+                for (int z = -radius; z <= radius; z++)
+                {
+                    Pos position = new Pos(x, y, z);
+                    if (isInField(projector, position.add(new Pos((TileEntity) projector)).add(translation)))
+                    {
+                        fieldBlocks.add(position);
+                    }
+                }
+            }
+        }
+        return fieldBlocks;
     }
 
-    return fieldBlocks
-  }
-
-  override def isInField(projector: IFieldMatrix, position: Vector3): Boolean =
-  {
-    return new Vector3(projector.asInstanceOf[TileEntity]).add(projector.getTranslation).distance(position) < projector.getModuleCount(Content.moduleScale)
-  }
-
-  @SideOnly(Side.CLIENT) override def render(projector: IProjector, x1: Double, y1: Double, z1: Double, f: Float, ticks: Long)
-  {
-    val scale = 0.2f
-    GL11.glScalef(scale, scale, scale)
-    val radius = 0.8f
-    val steps: Int = Math.ceil(Math.PI / Math.atan(1.0D / radius / 2)).asInstanceOf[Int]
-
-    for (phi_n <- 0 until 2 * steps; theta_n <- 0 until steps)
+    @Override
+    public boolean isInField(IFieldMatrix projector, Pos position)
     {
-      val phi = Math.PI * 2 / steps * phi_n
-      val theta = Math.PI / steps * theta_n
-      val vector = new Vector3(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi))
-      vector * radius
-      GL11.glTranslated(vector.x, vector.y, vector.z)
-      ModelCube.INSTNACE.render
-      GL11.glTranslated(-vector.x, -vector.y, -vector.z)
+        return new Pos((TileEntity) projector).add(projector.getTranslation()).distance(position) < projector.getModuleCount(ModularForceFieldSystem.moduleScale);
     }
-  }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void render(IProjector projector, double x1, double y1, double z1, float f, long ticks)
+    {
+        //TODO cache shape to improve FPS
+        float scale = 0.2f;
+        GL11.glScalef(scale, scale, scale);
+        float radius = 0.8f;
+        int steps = (int) Math.ceil(Math.PI / Math.atan(1.0D / radius / 2));
+
+        for (int phi_n = 0; phi_n <= 2 * steps; phi_n++)
+        {
+            for (int theta_n = 0; theta_n <= 2 * steps; theta_n++)
+            {
+                double phi = Math.PI * 2 / steps * phi_n;
+                double theta = Math.PI / steps * theta_n;
+
+                Pos vector = new Pos(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi)).multiply(radius);
+                GL11.glTranslated(vector.x(), vector.y(), vector.z());
+                ModelCube.INSTNACE.render();
+                GL11.glTranslated(-vector.x(), -vector.y(), -vector.z());
+            }
+        }
+    }
 }

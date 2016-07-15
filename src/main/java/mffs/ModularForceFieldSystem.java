@@ -1,7 +1,6 @@
 package mffs;
 
 
-import com.builtbroken.jlib.data.Colors;
 import com.builtbroken.mc.core.registry.ModManager;
 import com.builtbroken.mc.lib.mod.AbstractMod;
 import com.builtbroken.mc.lib.mod.AbstractProxy;
@@ -13,6 +12,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import mffs.api.Blacklist;
 import mffs.base.ItemMFFS;
 import mffs.base.ItemModule;
 import mffs.field.TileElectromagneticProjector;
@@ -39,7 +39,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
-import resonant.api.mffs.Blacklist;
 
 import java.awt.*;
 import java.util.UUID;
@@ -218,7 +217,7 @@ public class ModularForceFieldSystem extends AbstractMod
         FortronUtility.fluidFortron.setGaseous(true);
         FluidRegistry.registerFluid(FortronUtility.fluidFortron);
 
-        ((ModCreativeTab)manager.defaultTab).itemStack = new ItemStack(fortronCapacitor);
+        ((ModCreativeTab) manager.defaultTab).itemStack = new ItemStack(fortronCapacitor);
     }
 
 

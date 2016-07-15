@@ -1,8 +1,8 @@
 package mffs.api.machine;
 
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.api.fortron.FrequencyGridRegistry;
 import net.minecraft.inventory.IInventory;
-import resonant.api.tile.IBlockFrequency;
 
 import java.util.Set;
 
@@ -11,7 +11,7 @@ import java.util.Set;
  *
  * @author Calclavia
  */
-public abstract interface IProjector extends IInventory, IFieldMatrix, IBlockFrequency
+public abstract interface IProjector extends IInventory, IFieldMatrix, FrequencyGridRegistry.IBlockFrequency
 {
 	/**
 	 * Projects the force field.

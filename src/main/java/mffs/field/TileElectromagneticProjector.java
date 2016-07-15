@@ -30,8 +30,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import scala.collection.JavaConversions._;
-import scala.collection.mutable;
 
 import java.util.ArrayList;
 import java.util.List;

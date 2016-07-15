@@ -7,7 +7,7 @@ import mffs.security.MFFSPermissions
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.ChatComponentTranslation
 
-class ItemModuleConfiscate extends ItemModuleDefense
+public class ItemModuleConfiscate extends ItemModuleDefense
 {
   override def onProject(projector: IProjector, fields: Set[Vector3]): Boolean =
   {

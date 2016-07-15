@@ -14,7 +14,7 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.fluids.IFluidBlock
 
-class ItemModuleStabilize extends ItemModule
+public class ItemModuleStabilize extends ItemModule
 {
   private var blockCount: Int = 0
 

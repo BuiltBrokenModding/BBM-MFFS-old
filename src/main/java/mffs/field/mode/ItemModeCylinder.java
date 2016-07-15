@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11
  *
  * @author Calclavia, Thutmose
  */
-class ItemModeCylinder extends ItemMode
+public class ItemModeCylinder extends ItemMode
 {
   private val step = 1
   private val radiusExpansion: Int = 0

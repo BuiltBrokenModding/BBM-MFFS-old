@@ -23,7 +23,7 @@ import scala.collection.convert.wrapAll._
 import scala.collection.mutable
 import scala.math._
 
-class TileForceMobilizer extends TileFieldMatrix with IEffectController
+public class TileForceMobilizer extends TileFieldMatrix with IEffectController
 {
   val packetRange = 60
   val animationTime = 20

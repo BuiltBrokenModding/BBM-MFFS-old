@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.Tessellator
 import net.minecraft.tileentity.TileEntity
 import org.lwjgl.opengl.GL11
 
-class ItemModePyramid extends ItemMode
+public class ItemModePyramid extends ItemMode
 {
   private val step = 1
 

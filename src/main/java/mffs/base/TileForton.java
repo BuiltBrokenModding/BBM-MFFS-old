@@ -1,18 +1,16 @@
 package mffs.base;
 
-import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
+import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.IFortronFrequency;
 import mffs.util.FortronUtility;
-import mffs.util.TransferMode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
-import resonant.api.mffs.fortron.FrequencyGridRegistry;
-import resonant.api.mffs.fortron.IFortronFrequency;
 
 /**
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
@@ -49,7 +47,7 @@ public abstract class TileForton extends TileFrequency implements IFluidHandler,
     {
         if (this.markSendFortron)
         {
-            FortronUtility.transferFortron(this, FrequencyGridRegistry.SERVER_INSTANCE.getNodes(IFortronFrequency.class, worldObj, toPos(), 100, this.getFrequency()), TransferMode.drain(), Integer.MAX_VALUE);
+            FortronUtility.transferFortron(this, FrequencyGridRegistry.SERVER_INSTANCE.getNodes(IFortronFrequency.class, worldObj, toPos(), 100, this.getFrequency()), TransferMode.drain, Integer.MAX_VALUE);
         }
         super.invalidate();
     }
@@ -104,7 +102,7 @@ public abstract class TileForton extends TileFrequency implements IFluidHandler,
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
     {
-        if (resource.isFluidEqual(FortronUtility.fluidstackFortron()))
+        if (resource.isFluidEqual(FortronUtility.fluidstackFortron))
         {
             return this.fortronTank.fill(resource, doFill);
         }

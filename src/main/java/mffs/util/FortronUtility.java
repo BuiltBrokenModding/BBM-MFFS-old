@@ -22,19 +22,19 @@ public class FortronUtility {
 	public static Fluid fluidFortron = new Fluid("fortron");
 	public static FluidStack fluidstackFortron = new FluidStack(fluidFortron, 0);
 
-	public FluidStack getFortron(int amount) {
+	public static FluidStack getFortron(int amount) {
 		return new FluidStack(fluidFortron, amount);
 	}
 
-	public int getAmount(FluidTank fortronTank) {
+	public static int getAmount(FluidTank fortronTank) {
 		return fortronTank != null ? getAmount(fortronTank.getFluid()) : 0;
 	}
 
-	public int getAmount(FluidStack liquidStack) {
+	public static int getAmount(FluidStack liquidStack) {
 		return liquidStack != null ? liquidStack.amount : 0;
 	}
 
-	public void transferFortron(IFortronFrequency source, List<IFortronFrequency> frequencyTiles, TransferMode transferMode, int limit) {
+	public static void transferFortron(IFortronFrequency source, List<IFortronFrequency> frequencyTiles, TransferMode transferMode, int limit) {
     if (frequencyTiles.size() > 1 && Settings.allowFortronTeleport) {
       int totalFortron = 0, totalCapacity = 0;
 

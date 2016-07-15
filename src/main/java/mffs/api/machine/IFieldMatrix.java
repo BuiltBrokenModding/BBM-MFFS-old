@@ -1,11 +1,11 @@
 package mffs.api.machine;
 
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.api.modules.IModule;
+import mffs.api.modules.IModuleProvider;
+import mffs.api.modules.IProjectorMode;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
-import resonant.api.mffs.modules.IModule;
-import resonant.api.mffs.modules.IModuleProvider;
-import resonant.api.mffs.modules.IProjectorMode;
 
 import java.util.Set;
 

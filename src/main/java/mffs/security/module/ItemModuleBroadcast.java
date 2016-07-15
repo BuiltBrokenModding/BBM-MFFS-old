@@ -9,7 +9,7 @@ import net.minecraft.util.ChatComponentTranslation;
 
 import java.util.List;
 
-class ItemModuleBroadcast extends ItemModuleDefense
+public class ItemModuleBroadcast extends ItemModuleDefense
 {
     @Override
     public boolean onProject(IProjector projector, List<Pos> fields)

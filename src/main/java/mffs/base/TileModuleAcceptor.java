@@ -1,44 +1,42 @@
-package mffs.base
+package mffs.base;
 
-import java.util.{Set => JSet}
+import com.builtbroken.mc.api.modules.IModule;
+import com.builtbroken.mc.core.network.packet.PacketType;
+import io.netty.buffer.ByteBuf;
+import mffs.ModularForceFieldSystem;
+import mffs.api.modules.IModuleProvider;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 
-import com.builtbroken.mc.api.modules.IModule
-import com.builtbroken.mc.core.network.packet.PacketType
-import io.netty.buffer.ByteBuf
-import mffs.ModularForceFieldSystem
-import mffs.util.TCache
-import net.minecraft.item.{Item, ItemStack}
-import net.minecraft.nbt.NBTTagCompound
-import net.minecraftforge.fluids.FluidContainerRegistry
-import resonant.api.mffs.modules.IModuleProvider
+import java.util.Set;
 
-import scala.collection.convert.wrapAll._
-
-abstract class TileModuleAcceptor extends TileFortron with IModuleProvider with TCache
+public abstract class TileModuleAcceptor extends TileFortron implements IModuleProvider, TCache
 {
-	var startModuleIndex = 1
-	var endModuleIndex = getSizeInventory - 1
+	int startModuleIndex = 1;
+	int endModuleIndex = getSizeInventory() - 1;
 	/**
 	 * Used for client-side only.
 	 */
-	var clientFortronCost = 0
-	protected var capacityBase = 500
-	protected var capacityBoost = 5
+	int clientFortronCost = 0;
+	protected int capacityBase = 500;
+	protected int capacityBoost = 5;
 
-	override def write(buf: ByteBuf, id: Int)
+	public void write(ByteBuf buf , int id)
 	{
-		super.write(buf, id)
+		//super.write(buf, id);
 
-		if (id == TilePacketType.description.id)
+		if (id == TilePacketType.description.ordinal())
 		{
-			buf <<< getFortronCost
+			buf.writeInt(getFortronCost());
 		}
 	}
 
 	/**
 	 * Returns Fortron cost in ticks.
 	 */
-	final def getFortronCost: Int =
+	public int getFortronCost()
 	{
 		if (this.worldObj.isRemote)
 		{

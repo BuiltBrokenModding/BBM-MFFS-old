@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
 
-class ItemModuleAntiPersonnel extends ItemModuleDefense
+public class ItemModuleAntiPersonnel extends ItemModuleDefense
 {
     @Override
     public boolean onProject(IProjector projector, List<Pos> fields)

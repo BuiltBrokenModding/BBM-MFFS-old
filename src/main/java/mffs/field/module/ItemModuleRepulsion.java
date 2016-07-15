@@ -9,7 +9,7 @@ import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
 
-class ItemModuleRepulsion extends ItemModule
+public class ItemModuleRepulsion extends ItemModule
 {
   setCost(8)
 
