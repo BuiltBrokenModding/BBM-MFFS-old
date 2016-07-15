@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 
+import java.util.List;
 import java.util.Set;
 
 public abstract class TileModuleAcceptor extends TileFortron implements IModuleProvider, TCache
@@ -38,9 +39,9 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 	 */
 	public int getFortronCost()
 	{
-		if (this.worldObj.isRemote)
+		if (this.worldObj.isRemote())
 		{
-			return this.clientFortronCost
+			return this.clientFortronCost;
 		}
 
 		val cacheID = "getFortronCost"
@@ -51,14 +52,21 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 
 		cache(cacheID, result)
 
-		return result
+		return result;
 	}
 
-	protected def doGetFortronCost: Int = Math.round((getModuleStacks() foldLeft 0f)((a: Float, b: ItemStack) => a + b.stackSize * b.getItem.asInstanceOf[IModule].getFortronCost(getAmplifier)))
+	protected int doGetFortronCost()
+	{
+		Math.round((getModuleStacks()foldLeft 0f)((a:Float, b:ItemStack)=>
+		a + b.stackSize * b.getItem.asInstanceOf[IModule].getFortronCost(getAmplifier)))
+	}
 
-	protected def getAmplifier: Float = 1f
+	protected float getAmplifier()
+	{
+		return 1f;
+	}
 
-	override def read(buf: ByteBuf, id: Int, packetType: PacketType)
+	public void read(buf: ByteBuf, id: Int, packetType: PacketType)
 	{
 		super.read(buf, id, packetType)
 
@@ -68,21 +76,22 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 		}
 	}
 
-	override def start()
+	@Override
+	public void firstTick()
 	{
-		super.start()
+		super.firstTick();
 		fortronTank.setCapacity((this.getModuleCount(ModularForceFieldSystem.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME)
 	}
 
-	def consumeCost()
+	public void consumeCost()
 	{
 		if (getFortronCost() > 0)
 		{
-			requestFortron(getFortronCost(), true)
+			requestFortron(getFortronCost(), true);
 		}
 	}
 
-	override def getModule(module: IModule): ItemStack =
+	public ItemStack getModule(IModule module)
 	{
 		val cacheID = "getModule_" + module.hashCode
 
@@ -96,7 +105,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 	}
 
 	@SuppressWarnings(Array("unchecked"))
-	def getModules(slots: Int*): JSet[IModule] =
+	public List<IModule> getModules(int...slots)
 	{
 		var cacheID: String = "getModules_"
 		if (slots != null)
@@ -117,15 +126,16 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 		return modules
 	}
 
-	override def markDirty()
+	@Override
+	public void markDirty()
 	{
 		super.markDirty()
 		this.fortronTank.setCapacity((this.getModuleCount(ModularForceFieldSystem.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME)
 		clearCache()
 	}
 
-	@unchecked
-	override def getModuleCount(module: IModule, slots: Int*): Int =
+
+	public int getModuleCount(IModule module, int... slots)
 	{
 		var cacheID = "getModuleCount_" + module.hashCode
 
@@ -148,7 +158,8 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 		return count
 	}
 
-	def getModuleStacks(slots: Int*): JSet[ItemStack] =
+    @Override
+	public List<ItemStack> getModuleStacks(int... slots)
 	{
 		var cacheID: String = "getModuleStacks_"
 
@@ -171,17 +182,18 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 		return modules
 	}
 
-	override def readFromNBT(nbt: NBTTagCompound)
+    @Override
+	public void readFromNBT(NBTTagCompound nbt)
 	{
-		clearCache()
+		clearCache();
 		super.readFromNBT(nbt)
-		this.clientFortronCost = nbt.getInteger("fortronCost")
+		this.clientFortronCost = nbt.getInteger("fortronCost");
 	}
 
-	override def writeToNBT(nbt: NBTTagCompound)
+    @Override
+	public void writeToNBT(NBTTagCompound nbt)
 	{
 		super.writeToNBT(nbt)
-		nbt.setInteger("fortronCost", this.clientFortronCost)
+		nbt.setInteger("fortronCost", this.clientFortronCost);
 	}
-
 }

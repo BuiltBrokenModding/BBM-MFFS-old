@@ -73,7 +73,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     }
   }
 
-  override def isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
+  public boolean isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
   {
     if (slotID == 0)
     {

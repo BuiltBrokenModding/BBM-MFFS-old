@@ -8,14 +8,14 @@ import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mc.prefab.tile.Tile;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
+import mffs.api.ICamouflageMaterial;
+import mffs.api.machine.IActivatable;
 import mffs.item.card.ItemCardLink;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import resonant.api.mffs.machine.IActivatable;
-import resonant.api.tile.ICamouflageMaterial;
 
 /**
  * A base tile class for all MFFS blocks to inherit.

@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import mffs.api.fortron.FrequencyGridRegistry;
 import mffs.api.fortron.IFortronFrequency;
 import mffs.util.FortronUtility;
+import mffs.util.TransferMode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -16,12 +17,12 @@ import net.minecraftforge.fluids.*;
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
  * Created by Dark(DarkGuardsman, Robert) on 4/19/2016.
  */
-public abstract class TileForton extends TileFrequency implements IFluidHandler, IFortronFrequency
+public abstract class TileFortron extends TileFrequency implements IFluidHandler, IFortronFrequency
 {
     public boolean markSendFortron = true;
     protected FluidTank fortronTank = new FluidTank(FluidContainerRegistry.BUCKET_VOLUME);
 
-    public TileForton(String name)
+    public TileFortron(String name)
     {
         super(name);
     }

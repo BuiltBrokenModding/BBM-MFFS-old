@@ -3,7 +3,7 @@ package mffs.util;
 /**
  * The force field transfer mode.
  */
-enum TransferMode {
+public enum TransferMode {
 	equalize, distribute, drain, fill;
 
 	private TransferMode toggle(TransferMode mode) {
