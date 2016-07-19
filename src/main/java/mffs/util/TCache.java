@@ -10,7 +10,9 @@ public interface TCache {
 
     Object getCache(String paramString);
 
-    boolean putCache(String param, Object object);
+    void putCache(String param, Object object);
+
+    boolean cacheExists(String param);
 
     void clearCache(String paramString);
 
