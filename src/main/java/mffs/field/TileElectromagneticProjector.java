@@ -1,8 +1,5 @@
-package mffs.field
+package mffs.field;
 
-import com.builtbroken.mc.core.Engine;
-import com.builtbroken.mc.core.network.packet.PacketTile;
-import com.builtbroken.mc.lib.transform.vector.Pos;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -18,7 +15,6 @@ import mffs.field.mode.ItemModeCustom;
 import mffs.item.card.ItemCard;
 import mffs.render.FieldColor;
 import mffs.security.MFFSPermissions;
-import mffs.util.TCache;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,69 +31,81 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class TileElectromagneticProjector extends TileFieldMatrix implements IProjector
-{
-  /** A set containing all positions of all force field blocks generated. */
-  List<Pos> forceFields = new ArrayList();
+public class TileElectromagneticProjector extends TileFieldMatrix implements IProjector {
+	/** A set containing all positions of all force field blocks generated. */
+	List<Pos> forceFields = new ArrayList();
 
-  /** Marks the field for an update call */
-  boolean markFieldUpdate = true;
+	/** Marks the field for an update call */
+	boolean markFieldUpdate = true;
 
-  /** True if the field is done constructing and the projector is simply maintaining the field  */
-  private boolean isCompleteConstructing = false;
+	/**
+	 * True if the field is done constructing and the projector is simply
+	 * maintaining the field
+	 */
+	private boolean isCompleteConstructing = false;
 
-  /** True to make the field constantly tick */
-  private boolean fieldRequireTicks = false;
+	/** True to make the field constantly tick */
+	private boolean fieldRequireTicks = false;
 
-  /** Are the filters in the projector inverted? */
-  private boolean isInverted = false;
+	/** Are the filters in the projector inverted? */
+	private boolean isInverted = false;
 
-    public TileElectromagneticProjector()
-    {
-        bounds = new Cube(0, 0, 0, 1, 0.8, 1);
-        capacityBase = 30;
-        startModuleIndex = 1;
-    }
+	public TileElectromagneticProjector() {
+		bounds = new Cube(0, 0, 0, 1, 0.8, 1);
+		capacityBase = 30;
+		startModuleIndex = 1;
+	}
 
-  override def getSizeInventory = 1 + 25 + 6
+	@Override
+	public int getSizeInventory() {
+		return 1 + 25 + 6;
+	}
 
-  override def isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
-  {
-    slotID match
-    {
-      case 0 => itemStack.getItem.isInstanceOf[ItemCard]
-      case `modeSlotID` => itemStack.getItem.isInstanceOf[IProjectorMode]
-      case x: Int if x < 26 => itemStack.getItem.isInstanceOf[IModule]
-      case _ => true
-    }
+	@Override
+	public boolean isItemValidForSlot(int slotID, ItemStack itemStack) {
+
+    	if(slotID == 0)
+    	  return itemStack.getItem() instanceof ItemCard;
+    	
+       if(slotID == modeSlotID)
+    	  return itemStack.getItem() instanceOf IProjectorMode;
+      
+       if(slotID < 26)
+    	   return itemStack.getItem() instanceof IModule;
+      
+       return true;
+    
   }
 
-  override def start()
-  {
+  @Override
+  public void start() {
     super.start()
-    calculateField(postCalculation)
+    calculateField(postCalculation);
   }
 
-  def postCalculation() = if (clientSideSimulationRequired) sendFieldToClient
+	public postCalculation() = if (clientSideSimulationRequired) sendFieldToClient
 
   def sendFieldToClient
   {
     val nbt = new NBTTagCompound
     val nbtList = new NBTTagList
-    calculatedField foreach (vec => nbtList.appendTag(vec.toNBT()))
+
+	calculatedField foreach (vec => nbtList.appendTag(vec.toNBT()))
     nbt.setTag("blockList", nbtList)
     Engine.instance.packetHandler.sendToAll(new PacketTile(this, TilePacketType.field.id: Integer, nbt))
   }
 
-  private def clientSideSimulationRequired: Boolean =
-  {
+	private def clientSideSimulationRequired:Boolean=
+	{
     return getModuleCount(ModularForceFieldSystem.moduleRepulsion) > 0
   }
 
-  /**
+	/**
    * Initiate a field calculation
    */
-  protected override def calculateField(callBack: () => Unit = null)
+  protected override def
+
+	calculateField(callBack: () => Unit = null)
   {
     if (!worldObj.isRemote && !isCalculating)
     {
@@ -167,7 +175,9 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     }
   }
 
-  override def update()
+  override def
+
+	update()
   {
     super.update()
 
@@ -202,7 +212,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     }
   }
 
-  /**
+	/**
    * Projects a force field based on the calculations made.
    */
   def projectField()
@@ -288,7 +298,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     }
   }
 
-  private def canReplaceBlock(vector: Vector3, block: Block): Boolean =
+	private def canReplaceBlock(vector: Vector3, block: Block): Boolean =
   {
     return block == null ||
            (getModuleCount(Content.moduleDisintegration) > 0 && block.getBlockHardness(this.worldObj, vector.xi, vector.yi, vector.zi) != -1) ||
@@ -297,22 +307,23 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
   def getProjectionSpeed: Int = 28 + 28 * getModuleCount(Content.moduleSpeed, getModuleSlots: _*)
 
-  def destroyField()
+	def destroyField()
   {
     if (!world.isRemote && calculatedField != null && !isCalculating)
     {
       getModules(getModuleSlots: _*).forall(!_.onDestroy(this, calculatedField))
       //TODO: Parallelism?
-      calculatedField.view filter (_.getBlock(world) == Content.forceField) foreach (_.setBlock(world, Blocks.air))
+	calculatedField.view filter (_.getBlock(world) == Content.forceField) foreach (_.setBlock(world, Blocks.air))
 
       forceFields.clear()
       calculatedField = null
       isCompleteConstructing = false
       fieldRequireTicks = false
-    }
-  }
+    }}
 
-  override def markDirty()
+	override def
+
+	markDirty()
   {
     super.markDirty()
 
@@ -320,19 +331,23 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
       destroyField()
   }
 
-  override def invalidate
-  {
+	override def invalidate
+	{
     destroyField()
     super.invalidate
   }
 
-  override def getForceFields: JSet[Vector3] = forceFields
+	override def getForceFields:JSet[Vector3]=
+	forceFields
 
-  def getTicks: Long = ticks
+  def getTicks:Long=
+	ticks
 
-  def isInField(position: Vector3) = if (getMode != null) getMode.isInField(this, position) else false
+  def
 
-  public boolean isAccessGranted(World checkWorld, Pos checkPos, EntityPlayer player, PlayerInteractEvent.Action action)
+	isInField(position: Vector3) = if (getMode != null) getMode.isInField(this, position) else false
+
+	public boolean isAccessGranted(World checkWorld, Pos checkPos, EntityPlayer player, PlayerInteractEvent.Action action)
   {
     boolean hasPerm = true;
 
@@ -355,7 +370,9 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     return hasPerm
   }
 
-  def getFilterItems: List[Item] = getFilterStacks map (_.getItem)
+	def getFilterItems:List[Item]=
+
+	getFilterStacks map (_.getItem)
 
   def getFilterStacks: List[ItemStack] =
     {
@@ -386,11 +403,11 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     RenderElectromagneticProjector.render(this, -0.5, -0.5, -0.5, 0, true, true)
   }
 
-  /**
+	/**
    * Returns Fortron cost in ticks.
    */
-  protected override def doGetFortronCost: Int =
-  {
+  protected override def doGetFortronCost:Int=
+	{
     if (this.getMode != null)
     {
       return Math.round(super.doGetFortronCost + this.getMode.getFortronCost(this.getAmplifier))
@@ -398,8 +415,8 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     return 0
   }
 
-  protected override def getAmplifier: Float =
-  {
+	protected override def getAmplifier:Float=
+	{
     if (this.getMode.isInstanceOf[ItemModeCustom])
     {
       return Math.max((this.getMode.asInstanceOf[ItemModeCustom]).getFieldBlocks(this, this.getModeStack).size / 100, 1)
