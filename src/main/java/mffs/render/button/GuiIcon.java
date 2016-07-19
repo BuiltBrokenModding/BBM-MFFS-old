@@ -1,60 +1,61 @@
-package mffs.render.button
+package mffs.render.button;
 
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.{FontRenderer, GuiButton}
-import net.minecraft.client.renderer.RenderHelper
-import net.minecraft.client.renderer.entity.RenderItem
-import net.minecraft.item.ItemStack
-import org.lwjgl.opengl.GL11
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.item.ItemStack;
+import org.lwjgl.opengl.GL11;
 
-class GuiIcon(id: Int, xPos: Int, yPos: Int, itemStacks: ItemStack*) extends GuiButton(id, xPos, yPos, 20, 20, "")
-{
-  private val itemRenderer = new RenderItem
-  private var index = 0
+/**
+ *
+ */
+public class GuiIcon extends GuiButton {
 
-  /**
-   * Changes the index of the icon.
-   * @param i - The index of hte icon
-   * @return True if the index of the icon is changed.
-   */
-  def setIndex(i: Int): Boolean =
-  {
-    if (i >= 0 && i < itemStacks.length)
-    {
-      if (index != i)
-      {
-        index = i
-        return true
-      }
+    /* Renderer assigned to this button */
+    private RenderItem itemRenderer = new RenderItem();
+
+    /* Stack of icons that are assigned to this button */
+    private ItemStack[] icons;
+
+    /* Current index of the icons array */
+    private byte index = 0;
+
+    public GuiIcon(int id, int x, int y, ItemStack... icons) {
+        super(id, x, y, 20, 20, "");
+        this.icons = icons;
     }
 
-    return false
-  }
-
-  override def drawButton(par1Minecraft: Minecraft, par2: Int, par3: Int)
-  {
-    super.drawButton(par1Minecraft, par2, par3)
-
-    if (visible && itemStacks(index) != null)
-    {
-      drawItemStack(itemStacks(index), xPosition, yPosition)
+    /**
+     * @param ind
+     */
+    public void setIndex(int ind) {
+        if (ind >= 0 && ind < icons.length) {
+            this.index = (byte) ind;
+        }
     }
-  }
 
-  protected def drawItemStack(itemStack: ItemStack, x: Int, y: Int)
-  {
-    val renderX = x + 2
-    val renderY = y + 1
-    val mc: Minecraft = Minecraft.getMinecraft
-    val fontRenderer: FontRenderer = mc.fontRenderer
-    RenderHelper.enableGUIStandardItemLighting()
-    GL11.glTranslatef(0.0F, 0.0F, 32.0F)
-    zLevel = 500.0F
-    itemRenderer.zLevel = 500.0F
-    itemRenderer.renderItemAndEffectIntoGUI(fontRenderer, mc.renderEngine, itemStack, renderX, renderY)
-    itemRenderer.renderItemOverlayIntoGUI(fontRenderer, mc.renderEngine, itemStack, renderX, renderY)
-    zLevel = 0.0F
-    itemRenderer.zLevel = 0.0F
-    RenderHelper.disableStandardItemLighting
-  }
+    @Override
+    public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
+        super.drawButton(minecraft, mouseX, mouseY);
+
+        if (visible && icons[index] != null) {
+            drawItemStack(icons[index], xPosition, yPosition);
+        }
+    }
+
+    protected void drawItemStack(ItemStack itemStack, int x, int y) {
+        int renderX = x + 2;
+        int renderY = y + 1;
+        Minecraft mc = Minecraft.getMinecraft();
+        RenderHelper.enableGUIStandardItemLighting();
+        GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+        zLevel = 500.0F;
+        itemRenderer.zLevel = 500.0F;
+        itemRenderer.renderItemAndEffectIntoGUI(mc.fontRenderer, mc.renderEngine, itemStack, renderX, renderY);
+        itemRenderer.renderItemOverlayIntoGUI(mc.fontRenderer, mc.renderEngine, itemStack, renderX, renderY);
+        zLevel = 0.0F;
+        itemRenderer.zLevel = 0.0F;
+        RenderHelper.disableStandardItemLighting();
+    }
 }

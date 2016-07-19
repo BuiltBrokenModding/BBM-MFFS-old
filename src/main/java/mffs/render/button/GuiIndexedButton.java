@@ -1,60 +1,61 @@
-package mffs.render.button
+package mffs.render.button;
 
-import cpw.mods.fml.client.FMLClientHandler
-import mffs.Reference
-import mffs.base.GuiMFFS
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiButton
-import org.lwjgl.opengl.GL11
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import cpw.mods.fml.client.FMLClientHandler;
+import ic2.core.util.Vector2;
+import mffs.Reference;
+import mffs.base.GuiMFFS;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import org.lwjgl.opengl.GL11;
 
-class GuiIndexedButton(id: Int, x: Int, y: Int, val offset: Vector2 = new Vector2, mainGui: GuiMFFS = null, name: String = "") extends GuiButton(id, x, y, 18, 18, name)
-{
-  /**
-   * Stuck determines if the button is should render as pressed or disabled.
-   */
-  var stuck = false
+public class GuiIndexedButton extends GuiButton {
+    /**
+     * Stuck determines if the button is should render as pressed or disabled.
+     */
+    boolean stuck = false;
+    /* Offset of this button */
+    Vector2 offset;
+    /* The parent gui of this element. */
+    private GuiMFFS mainGui;
 
-  override def drawButton(minecraft: Minecraft, x: Int, y: Int)
-  {
-    if (this.visible)
-    {
-      FMLClientHandler.instance.getClient.renderEngine.bindTexture(Reference.guiButtonTexture)
-      if (this.stuck)
-      {
-        GL11.glColor4f(0.6f, 0.6f, 0.6f, 1)
-      }
-      else if (this.isPointInRegion(this.xPosition, this.yPosition, this.width, this.height, x, y))
-      {
-        GL11.glColor4f(0.85f, 0.85f, 0.85f, 1)
-      }
-      else
-      {
-        GL11.glColor4f(1, 1, 1, 1)
-      }
-      this.drawTexturedModalRect(this.xPosition, this.yPosition, this.offset.xi, this.offset.yi, this.width, this.height)
-      this.mouseDragged(minecraft, x, y)
+    public GuiIndexedButton(int id, int x, int y, GuiMFFS main, String name, Vector2 offset) {
+        super(id, x, y, 18, 18, name);
+        this.mainGui = main;
+        this.offset = offset;
     }
-  }
 
-  protected override def mouseDragged(minecraft: Minecraft, x: Int, y: Int)
-  {
-    if (this.mainGui != null && this.displayString != null && this.displayString.length > 0)
-    {
-      if (this.isPointInRegion(this.xPosition, this.yPosition, this.width, this.height, x, y))
-      {
-        val title: String = LanguageUtility.getLocal("gui." + this.displayString + ".name")
-        this.mainGui.tooltip = LanguageUtility.getLocal("gui." + this.displayString + ".tooltip")
-        if (title != null && title.length > 0)
-        {
-          this.mainGui.tooltip = title + ": " + this.mainGui.tooltip
+    @Override
+    public void drawButton(Minecraft minecraft, int x, int y) {
+        if (this.visible) {
+            FMLClientHandler.instance().getClient().renderEngine.bindTexture(Reference.guiButtonTexture);
+            if (this.stuck) {
+                GL11.glColor4f(0.6f, 0.6f, 0.6f, 1);
+            } else if (this.isPointInRegion(this.xPosition, this.yPosition, this.width, this.height, x, y)) {
+                GL11.glColor4f(0.85f, 0.85f, 0.85f, 1);
+            } else {
+                GL11.glColor4f(1, 1, 1, 1);
+            }
+            this.drawTexturedModalRect(this.xPosition, this.yPosition, (int) this.offset.x, (int) this.offset.y, this.width, this.height);
+            this.mouseDragged(minecraft, x, y);
         }
-      }
     }
-  }
 
-  protected def isPointInRegion(x: Int, y: Int, width: Int, height: Int, checkX: Int, checkY: Int): Boolean =
-  {
-    return checkX >= x - 1 && checkX < x + width + 1 && checkY >= y - 1 && checkY < y + height + 1
-  }
+    @Override
+    protected void mouseDragged(Minecraft minecraft, int x, int y) {
+        if (this.mainGui != null && this.displayString != null && this.displayString.length() > 0) {
+            if (this.isPointInRegion(this.xPosition, this.yPosition, this.width, this.height, x, y)) {
+                String title = LanguageUtility.getLocal("gui." + this.displayString + ".name");
+                this.mainGui.tooltip = LanguageUtility.getLocal("gui." + this.displayString + ".tooltip");
+                if (title != null && title.length() > 0) {
+                    this.mainGui.tooltip = title + ": " + this.mainGui.tooltip;
+                }
+            }
+        }
+    }
+
+    protected boolean isPointInRegion(int x, int y, int w, int h, int mouseX, int mouseY) {
+        return mouseX >= x - 1 && mouseX < x + w + 1 && mouseY >= y - 1 && mouseY < y + h + 1;
+    }
 
 }

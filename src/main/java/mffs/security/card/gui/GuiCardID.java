@@ -4,6 +4,7 @@ import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketPlayerItem;
 import com.builtbroken.mc.lib.access.AccessUser;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
+import mffs.item.gui.ContainerItem;
 import mffs.security.card.ItemCardIdentification;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,7 @@ class GuiCardID extends GuiAccessCard
 {
     public GuiCardID(EntityPlayer player, ItemStack stack)
     {
-        super(player, stack, new ContainerItem(player, itemStack));
+        super(player, stack, new ContainerItem(player, stack));
     }
 
     @Override

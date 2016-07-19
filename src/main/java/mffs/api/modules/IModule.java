@@ -23,35 +23,23 @@ public interface IModule extends IFortronCost
 	 * @param projector
 	 * @return True to stop projecting.
 	 */
-	default boolean onProject(IProjector projector, List<Pos> field)
-    {
-        return false;
-    }
+	boolean onProject(IProjector projector, List<Pos> field);
 
-	default boolean onDestroy(IProjector projector, List<Pos> field)
-    {
-        return false;
-    }
+	boolean onDestroy(IProjector projector, List<Pos> field);
 
 	/**
 	 * Called right before the projector creates a force field block.
 	 *
 	 * @return 0 - Do nothing; 1 - Skip this block and continue; 2 - Cancel rest of projection;
 	 */
-	default int onProject(IProjector projector, Pos position)
-	{
-		return 0;
-	}
+	int onProject(IProjector projector, Pos position);
 
 	/**
 	 * Called when an entity collides with a force field block.
 	 *
 	 * @return False to stop the default process of entity collision.
 	 */
-	default boolean onCollideWithForceField(World world, int x, int y, int z, Entity entity, ItemStack moduleStack)
-	{
-		return true;
-	}
+	boolean onCollideWithForceField(World world, int x, int y, int z, Entity entity, ItemStack moduleStack);
 
 	/**
 	 * Called in this module when it is being calculated by the projector. Called BEFORE
@@ -59,34 +47,27 @@ public interface IModule extends IFortronCost
 	 *
 	 * @return False if to prevent this position from being added to the projection que.
 	 */
-	default void onPreCalculate(IFieldMatrix projector, Set<Pos> calculatedField)
-	{
-
-	}
-
+	void onPreCalculate(IFieldMatrix projector, Set<Pos> calculatedField);
 	/**
 	 * Called in this module when after being calculated by the projector.
 	 *
 	 * @return False if to prevent this position from being added to the projection que.
 	 */
-	default void onPostCalculate(IFieldMatrix projector, Set<Pos> fieldDefinition)
-	{
-
-	}
+	void onPostCalculate(IFieldMatrix projector, Set<Pos> fieldDefinition);
 
 	/**
 	 * @param moduleStack
 	 * @return Does this module require ticking from the force field projector?
 	 */
-	default boolean requireTicks(ItemStack moduleStack)
-	{
-		return false;
-	}
+	boolean requireTicks(ItemStack moduleStack);
 
-	default List<Entity> getEntitiesInField(IProjector projector)
-	{
-		TileEntity tile = (TileEntity) projector;
-		Cube volume = new Cube(projector.getNegativeScale().multiply(-1), projector.getPositiveScale().add(1)).add(new Pos(tile).add(projector.getTranslation()));
-		return tile.getWorldObj().getEntitiesWithinAABB(Entity.class, volume.toAABB());
-	}
+	/**
+	 * DEFUALT:
+	 * TileEntity tile = (TileEntity) projector;
+	 Cube volume = new Cube(projector.getNegativeScale().multiply(-1), projector.getPositiveScale().add(1)).add(new Pos(tile).add(projector.getTranslation()));
+	 return tile.getWorldObj().getEntitiesWithinAABB(Entity.class, volume.toAABB());
+	 * @param projector
+	 * @return
+     */
+	List<Entity> getEntitiesInField(IProjector projector);
 }

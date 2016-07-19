@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A gui that contains the permissions
@@ -34,7 +33,7 @@ public abstract class GuiAccessCard extends GuiItem
     {
         super(itemStack, container);
         this.player = player;
-        permissions.addAll(Permissions.root.getAllChildren().stream().collect(Collectors.toList()));
+        permissions.addAll(Permissions.root.getAllChildren());
         scroll = new GuiScroll(Math.max(permissions.size() - 4, 0));
     }
 

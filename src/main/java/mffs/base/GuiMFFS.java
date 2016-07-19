@@ -1,74 +1,75 @@
-package mffs.base
+package mffs.base;
 
-import com.builtbroken.jlib.data.science.units.UnitDisplay
-import com.builtbroken.mc.core.network.packet.PacketTile
-import com.builtbroken.mc.prefab.gui.GuiContainerBase
-import mffs.ModularForceFieldSystem
-import mffs.render.button.GuiIcon
-import net.minecraft.client.gui.GuiButton
-import net.minecraft.init.Blocks
-import net.minecraft.inventory.Container
-import net.minecraft.item.ItemStack
+import com.builtbroken.jlib.data.science.units.UnitDisplay;
+import com.builtbroken.mc.core.Engine;
+import com.builtbroken.mc.core.network.packet.PacketTile;
+import com.builtbroken.mc.prefab.gui.GuiContainerBase;
+import com.mojang.realmsclient.gui.ChatFormatting;
+import mffs.render.button.GuiIcon;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 
-class GuiMFFS(container: Container, tile: TileMFFS) extends GuiContainerBase(container)
-{
-  ySize = 217
+public class GuiMFFS extends GuiContainerBase {
+    /* TileEntity associated with this tile */
+    protected TileMFFS tile;
 
-  def this(container: Container) = this(container, null)
-
-  override def initGui()
-  {
-    super.initGui
-    buttonList.clear()
-
-    //Activation button
-    buttonList.add(new GuiIcon(0, width / 2 - 110, height / 2 - 104, new ItemStack(Blocks.torch), new ItemStack(Blocks.redstone_torch)))
-  }
-
-  override def updateScreen()
-  {
-    super.updateScreen()
-
-    if (tile.isInstanceOf[TileMFFS])
-    {
-      if (buttonList.size > 0 && this.buttonList.get(0) != null)
-      {
-        buttonList.get(0).asInstanceOf[GuiIcon].setIndex(if (tile.isRedstoneActive) 1 else 0)
-      }
+    public GuiMFFS(Container container, TileMFFS tile) {
+        super(container);
+        ySize = 217;
+        this.tile = tile;
     }
-  }
 
-  protected override def actionPerformed(guiButton: GuiButton)
-  {
-    super.actionPerformed(guiButton)
-
-    if (tile != null && guiButton.id == 0)
-    {
-      ModularForceFieldSystem.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.toggleActivation.id: Integer))
+    public GuiMFFS(Container container) {
+        this(container, null);
     }
-  }
 
-  protected def drawFortronText(x: Int, y: Int)
-  {
-    if (tile.isInstanceOf[TileFortron])
-    {
-      val fortronTile = tile.asInstanceOf[TileFortron]
-      drawTextWithTooltip("fortron", EnumColor.WHITE + "" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronEnergy).symbol() + "/" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronCapacity).symbol(), 35, 119, x, y)
+    @Override
+    public void initGui() {
+        super.initGui();
+        buttonList.clear();
+
+        //Activation button
+        buttonList.add(new GuiIcon(0, width / 2 - 110, height / 2 - 104, new ItemStack(Blocks.torch), new ItemStack(Blocks.redstone_torch)));
     }
-  }
 
-  protected def drawFrequencyGui()
-  {
-    //Frequency Card
-    drawSlot(7, 113)
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
 
-    if (tile.isInstanceOf[TileFortron])
-    {
-      val fortronTile = tile.asInstanceOf[TileFortron]
 
-      //Fortron Bar
-      drawLongBlueBar(30, 115, Math.min(fortronTile.getFortronEnergy.asInstanceOf[Float] / fortronTile.getFortronCapacity.asInstanceOf[Float], 1))
+        if (buttonList.size() > 0 && this.buttonList.get(0) != null) {
+            ((GuiIcon) buttonList.get(0)).setIndex(tile.isRedstoneActive ? 1 : 0);
+        }
     }
-  }
+
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        super.actionPerformed(button);
+
+        if (tile != null && button.id == 0) {
+            Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.toggleActivation.ordinal()));
+        }
+    }
+
+    protected void drawFortronText(int x, int y) {
+        if (tile instanceof TileFortron) {
+            TileFortron fortronTile = (TileFortron) tile;
+            drawTextWithTooltip("fortron", ChatFormatting.WHITE + "" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronEnergy()).symbol() + "/" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronCapacity()).symbol(), 35, 119, x, y)
+        }
+    }
+
+    protected void drawFrequencyGui() {
+        //Frequency Card
+        drawSlot(7, 113);
+
+        if (tile instanceof TileFortron) {
+            TileFortron fortronTile = (TileFortron) tile;
+
+            //Fortron Bar
+            drawLongBlueBar(30, 115, Math.min((float) fortronTile.getFortronEnergy() / fortronTile.getFortronCapacity(), 1));
+        }
+    }
 
 }
