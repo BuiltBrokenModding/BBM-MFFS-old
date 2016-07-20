@@ -1,67 +1,71 @@
-package mffs.production
+package mffs.production;
 
-import mffs.ModularForceFieldSystem
-import mffs.base.{GuiMFFS, TilePacketType}
-import net.minecraft.client.gui.GuiButton
-import net.minecraft.entity.player.EntityPlayer
-import org.lwjgl.opengl.GL11
+import com.builtbroken.jlib.data.science.units.UnitDisplay;
+import com.builtbroken.mc.core.Engine;
+import com.builtbroken.mc.core.network.packet.PacketTile;
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import com.builtbroken.mc.prefab.gui.EnumGuiIconSheet;
+import com.mojang.realmsclient.gui.ChatFormatting;
+import mffs.base.GuiMFFS;
+import mffs.base.TilePacketType;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
+import org.lwjgl.opengl.GL11;
 
-class GuiCoercionDeriver(player: EntityPlayer, tile: TileCoercionDeriver) extends GuiMFFS(new ContainerCoercionDeriver(player, tile), tile)
-{
-  override def initGui
-  {
-    super.initGui
-    this.buttonList.add(new GuiButton(1, this.width / 2 - 10, this.height / 2 - 35, 58, 20, LanguageUtility.getLocal("gui.deriver.derive")))
-  }
+public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver> {
 
-  override def drawGuiContainerForegroundLayer(x: Int, y: Int)
-  {
-    drawStringCentered(tile.getInventoryName)
-    GL11.glPushMatrix
-    GL11.glRotatef(-90, 0, 0, 1)
-    drawTextWithTooltip("upgrade", -95, 140, x, y)
-    GL11.glPopMatrix
-
-    if (!tile.isInversed)
-    {
-      buttonList.get(1).asInstanceOf[GuiButton].displayString = LanguageUtility.getLocal("gui.deriver.derive")
-    }
-    else
-    {
-      buttonList.get(1).asInstanceOf[GuiButton].displayString = LanguageUtility.getLocal("gui.deriver.integrate")
+    public GuiCoercionDeriver(EntityPlayer player, TileCoercionDeriver tile) {
+        super(new ContainerCoercionDeriver(player, tile), tile);
     }
 
-    drawString(EnumColor.AQUA + "Energy Requirement:", 8, 20)
-    renderUniversalDisplay(8, 30, tile.getPower, x, y, UnitDisplay.Unit.WATT)
-
-    drawTextWithTooltip("progress", "%1: " + (if (this.tile.isActive) LanguageUtility.getLocal("gui.deriver.running") else LanguageUtility.getLocal("gui.deriver.idle")), 8, 60, x, y)
-    drawString("Production: " + (if (this.tile.isInversed) EnumColor.DARK_RED else EnumColor.DARK_GREEN) + new UnitDisplay(UnitDisplay.Unit.LITER, tile.productionRate * 20) + "/s", 8, 100)
-
-    drawFortronText(x, y)
-    super.drawGuiContainerForegroundLayer(x, y)
-  }
-
-  override def drawGuiContainerBackgroundLayer(f: Float, x: Int, y: Int)
-  {
-    super.drawGuiContainerBackgroundLayer(f, x, y)
-
-    //Upgrade slots
-    (0 to 2) foreach (y => drawSlot(153, 46 + y * 18))
-
-    drawSlot(8, 75, SlotType.BATTERY)
-    drawSlot(8 + 20, 75)
-    drawBar(50, 77, 1)
-
-    drawFrequencyGui()
-  }
-
-  override def actionPerformed(guibutton: GuiButton)
-  {
-    super.actionPerformed(guibutton)
-
-    if (guibutton.id == 1)
-    {
-      ModularForceFieldSystem.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.toggleMoe.id: Integer))
+    @Override
+    public void initGui() {
+        super.initGui();
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 10, this.height / 2 - 35, 58, 20, LanguageUtility.getLocal("gui.deriver.derive")));
     }
-  }
+
+    @Override
+    public void drawGuiContainerForegroundLayer(int x, int y) {
+        drawStringCentered(tile.getInventoryName(), this.xSize / 2, 6);
+        GL11.glPushMatrix();
+        GL11.glRotatef(-90, 0, 0, 1);
+        drawTextWithTooltip("upgrade", -95, 140, x, y);
+        GL11.glPopMatrix();
+
+        ((GuiButton) buttonList.get(1)).displayString = LanguageUtility.getLocal(tile.isInversed ? "gui.deriver.integrate" : "gui.deriver.derive");
+
+        drawString(ChatFormatting.AQUA + "Energy Requirement:", 8, 20);
+        renderUniversalDisplay(8, 30, tile.getPower(), x, y, UnitDisplay.Unit.WATT);
+
+        drawTextWithTooltip("progress", "%1: " + LanguageUtility.getLocal(this.tile.isActive() ? "gui.deriver.running" : "gui.deriver.idle"), 8, 60, x, y);
+        drawString("Production: " + (this.tile.isInversed ? ChatFormatting.DARK_RED : ChatFormatting.DARK_GREEN) + new UnitDisplay(UnitDisplay.Unit.LITER, tile.getProductionRate() * 20) + "/s", 8, 100);
+
+
+        drawFortronText(x, y);
+        super.drawGuiContainerForegroundLayer(x, y);
+    }
+
+    @Override
+    public void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+        super.drawGuiContainerBackgroundLayer(f, x, y);
+
+        //Upgrade slots
+        for (int slot = 0; slot <= 2; slot++)
+            drawSlot(153, 46 + slot * 18);
+
+        drawSlot(8, 75, EnumGuiIconSheet.BATTERY);
+        drawSlot(8 + 20, 75);
+        drawBar(50, 77, 1);
+
+        drawFrequencyGui();
+    }
+
+    @Override
+    public void actionPerformed(GuiButton guibutton) {
+        super.actionPerformed(guibutton);
+
+        if (guibutton.id == 1) {
+            Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.toggleMoe.ordinal()));
+        }
+    }
 }

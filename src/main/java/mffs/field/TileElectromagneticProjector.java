@@ -380,7 +380,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
       ((26 until 32) map (getStackInSlot(_)) filter (_ != null)).toSet
     }
 
-  def isInvertedFilter: Boolean = isInverted
+  public boolean isInvertedFilter() { return isInverted;}
 
   /**
    * Rendering

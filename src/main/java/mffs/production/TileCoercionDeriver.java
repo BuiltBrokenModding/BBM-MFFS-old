@@ -21,10 +21,6 @@ object TileCoercionDeriver
   val fuelProcessTime = 10 * 20
   val productionMultiplier = 4
 
-  /**
-   * Ration from UE to Fortron. Multiply J by this value to convert to Fortron.
-   */
-  val ueToFortronRatio = 0.005f
   val energyConversionPercentage = 1
 
   val slotFrequency = 0
@@ -34,13 +30,23 @@ object TileCoercionDeriver
   /**
    * The amount of power (watts) this machine uses.
    */
-  val power = 5000000
 }
 
 public class TileCoercionDeriver extends TileModuleAcceptor
 {
-  var processTime: Int = 0
-  var isInversed = false
+  /**
+   * The amount of power (watts) this machine uses.
+   */
+  public static final int POWER = 5000000;
+
+  /**
+   * Ration from UE to Fortron. Multiply J by this value to convert to Fortron.
+   */
+  public static final float ueToFortronRatio = 0.005f;
+  public static final byte productionMultiplier = 4;
+
+  int processTime = 0;
+  boolean isInversed = false;
 
   //Client
   var animationTween = 0f
@@ -119,26 +125,19 @@ public class TileCoercionDeriver extends TileModuleAcceptor
     }
   }
 
-  /**
-   * @return The Fortron production rate per tick!
-   */
-  def productionRate: Int =
-  {
-    if (this.isActive)
-    {
-      var production = (getPower.asInstanceOf[Float] / 20f * TileCoercionDeriver.ueToFortronRatio * Settings.fortronProductionMultiplier).asInstanceOf[Int]
-
-      if (processTime > 0)
-      {
-        production *= TileCoercionDeriver.productionMultiplier
-      }
-
-      return production
+  public int getProductionRate() {
+    if(this.isActive()) {
+      float production = (float) (getPower() / 20f * Settings.fortronProductionMultiplier * ueToFortronRatio);
+      if(processTime > 0)
+        production *= productionMultiplier;
+      return (int) Math.floor(production);
     }
-    return 0
+    return 0;
   }
 
-  def getPower: Double = TileCoercionDeriver.power + (TileCoercionDeriver.power * (getModuleCount(Content.moduleSpeed) / 8d))
+  public double getPower() {
+    return POWER + (POWER * getModuleCount(ModularForceFieldSystem.moduleSpeed) / 8d);
+  }
 
   override def isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
   {

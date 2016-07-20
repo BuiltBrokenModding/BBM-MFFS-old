@@ -17,9 +17,9 @@ public class GuiIndexedButton extends GuiButton {
     /* Offset of this button */
     Vector2 offset;
     /* The parent gui of this element. */
-    private GuiMFFS mainGui;
+    private GuiMFFS<?> mainGui;
 
-    public GuiIndexedButton(int id, int x, int y, GuiMFFS main, String name, Vector2 offset) {
+    public GuiIndexedButton(int id, int x, int y, GuiMFFS<?> main, String name, Vector2 offset) {
         super(id, x, y, 18, 18, name);
         this.mainGui = main;
         this.offset = offset;

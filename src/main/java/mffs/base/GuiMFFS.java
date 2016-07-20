@@ -11,11 +11,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
-public class GuiMFFS extends GuiContainerBase {
+public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase {
     /* TileEntity associated with this tile */
-    protected TileMFFS tile;
+    protected MACHINE tile;
 
-    public GuiMFFS(Container container, TileMFFS tile) {
+    public GuiMFFS(Container container, MACHINE tile) {
         super(container);
         ySize = 217;
         this.tile = tile;
@@ -56,7 +56,7 @@ public class GuiMFFS extends GuiContainerBase {
     protected void drawFortronText(int x, int y) {
         if (tile instanceof TileFortron) {
             TileFortron fortronTile = (TileFortron) tile;
-            drawTextWithTooltip("fortron", ChatFormatting.WHITE + "" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronEnergy()).symbol() + "/" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronCapacity()).symbol(), 35, 119, x, y)
+            drawTextWithTooltip("fortron", ChatFormatting.WHITE + "" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronEnergy()).symbol() + "/" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronCapacity()).symbol(), 35, 119, x, y);
         }
     }
 

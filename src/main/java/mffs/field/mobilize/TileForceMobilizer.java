@@ -1,5 +1,7 @@
 package mffs.field.mobilize
 
+import com.builtbroken.mc.lib.transform.vector.Location;
+import com.builtbroken.mc.lib.transform.vector.Point;
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import io.netty.buffer.ByteBuf
 import mffs.base.{TileFieldMatrix, TilePacketType}
@@ -23,20 +25,20 @@ import scala.collection.convert.wrapAll._
 import scala.collection.mutable
 import scala.math._
 
-public class TileForceMobilizer extends TileFieldMatrix with IEffectController
+public class TileForceMobilizer extends TileFieldMatrix implements IEffectController
 {
   val packetRange = 60
   val animationTime = 20
 
   val failedPositions = mutable.Set.empty[Vector3]
-  var anchor = new Vector3()
+  public Location anchor = new Location(this.worldObj, 0, 0, 0);
 
   /**
    * The display mode. 0 = none, 1 = minimal, 2 = maximal.
    */
-  var previewMode = 1
-  var doAnchor = true
-  var clientMoveTime = 0
+  public byte previewMode = 1;
+  public boolean doAnchor = true;
+  public int clientMoveTime = 0;
   var performingMove = false
   /**
    * Marking failures

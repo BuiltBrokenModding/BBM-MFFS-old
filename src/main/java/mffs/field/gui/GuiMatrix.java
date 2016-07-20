@@ -1,73 +1,85 @@
-package mffs.field.gui
+package mffs.field.gui;
 
-import mffs.base.{GuiMFFS, TileFieldMatrix}
+import com.builtbroken.mc.lib.transform.region.Rectangle;
+import com.builtbroken.mc.lib.transform.vector.Point;
+import com.builtbroken.mc.prefab.gui.GuiSlotType;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import mffs.base.GuiMFFS;
+import mffs.base.TileFieldMatrix;
 
 /**
  * Anything that has a field matrix within it.
+ *
  * @author Calclavia
  */
-abstract class GuiMatrix(container: ContainerMatrix, tile: TileFieldMatrix) extends GuiMFFS(container, tile)
-{
-  val matrixCenter = container.matrixCenter
+public abstract class GuiMatrix<T extends TileFieldMatrix> extends GuiMFFS<T> {
 
-  def setupTooltips()
-  {
+    /* This should really not be needed, try static of container class */
+    Point center = null;
+
+    public GuiMatrix(ContainerMatrix matrix, T tile) {
+        super(matrix, tile);
+        this.center = matrix.matrixCenter;
+    }
+
     /**
-     * Tooltips
+     * Creates the tooltips to be used.
      */
-    val north = LanguageUtility.getLocal("gui.projector." + (if (tile.absoluteDirection) "north" else "front"))
-    val south = LanguageUtility.getLocal("gui.projector." + (if (tile.absoluteDirection) "south" else "back"))
-    val west = LanguageUtility.getLocal("gui.projector." + (if (tile.absoluteDirection) "west" else "left"))
-    val east = LanguageUtility.getLocal("gui.projector." + (if (tile.absoluteDirection) "east" else "right"))
-    val up = LanguageUtility.getLocal("gui.projector.up")
-    val down = LanguageUtility.getLocal("gui.projector.down")
+    public void setupTooltips() {
+        String north = LanguageRegistry.instance().getStringLocalization("gui.projector." + (tile.absoluteDirection ? "north" : "front"));
+        String south = LanguageRegistry.instance().getStringLocalization("gui.projector." + (tile.absoluteDirection ? "south" : "back"));
+        String west = LanguageRegistry.instance().getStringLocalization("gui.projector." + (tile.absoluteDirection ? "west" : "left"));
+        String east = LanguageRegistry.instance().getStringLocalization("gui.projector" + (tile.absoluteDirection ? "east" : "right"));
+        String up = LanguageRegistry.instance().getStringLocalization("gui.projector.up");
+        String down = LanguageRegistry.instance().getStringLocalization("gui.projector.down");
 
-    //Mode
-    drawSlot(matrixCenter.xi, matrixCenter.yi, SlotType.NONE, 1f, 0.4f, 0.4f)
-    tooltips.put(new Rectangle(matrixCenter, 18), LanguageUtility.getLocal("gui.projector.mode"))
+        for (int i = 1; i <= 2; i++)
+            tooltips.put(new Rectangle(new Point(center.x(), center.y() - 18 * i), 18), north);
 
-    //NORTH
-    (1 to 2) foreach (i => tooltips.put(new Rectangle(new Vector2(matrixCenter.xi, matrixCenter.yi - 18 * i), 18), north))
-    //SOUTH
-    (1 to 2) foreach (i => tooltips.put(new Rectangle(new Vector2(matrixCenter.xi, matrixCenter.yi + 18 * i), 18), south))
-    //EAST
-    (1 to 2) foreach (i => tooltips.put(new Rectangle(new Vector2(matrixCenter.xi + 18 * i, matrixCenter.yi), 18), east))
-    //WEST
-    (1 to 2) foreach (i => tooltips.put(new Rectangle(new Vector2(matrixCenter.xi - 18 * i, matrixCenter.yi), 18), west))
+        for (int i = 1; i <= 2; i++)
+            tooltips.put(new Rectangle(new Point(center.x(), center.y() + 18 * i), 18), south);
 
-    //UP
-    tooltips.put(new Rectangle(new Vector2(matrixCenter.xi - 18, matrixCenter.yi - 18), 18), up)
-    tooltips.put(new Rectangle(new Vector2(matrixCenter.xi + 18, matrixCenter.yi - 18), 18), up)
+        for (int i = 1; i <= 2; i++)
+            tooltips.put(new Rectangle(new Point(center.x() + 18 * i, center.y()), 18), east);
 
-    //DOWN
-    tooltips.put(new Rectangle(new Vector2(matrixCenter.xi - 18, matrixCenter.yi + 18), 18), down)
-    tooltips.put(new Rectangle(new Vector2(matrixCenter.xi + 18, matrixCenter.yi + 18), 18), down)
-  }
+        for (int i = 1; i <= 2; i++)
+            tooltips.put(new Rectangle(new Point(center.x() - 18 * i, center.y()), 18), west);
 
-  def drawMatrix()
-  {
-    //Mode
-    drawSlot(matrixCenter.xi, matrixCenter.yi, SlotType.NONE, 1f, 0.4f, 0.4f)
+        this.tooltips.put(new Rectangle(center, 18), LanguageRegistry.instance().getStringLocalization("gui.projector.mode"));
 
-    //NORTH
-    (1 to 2) foreach (i => drawSlot(matrixCenter.xi, matrixCenter.yi - 18 * i, SlotType.ARR_UP))
-    //SOUTH
-    (1 to 2) foreach (i => drawSlot(matrixCenter.xi, matrixCenter.yi + 18 * i, SlotType.ARR_DOWN))
-    //EAST
-    (1 to 2) foreach (i => drawSlot(matrixCenter.xi + 18 * i, matrixCenter.yi, SlotType.ARR_RIGHT))
-    //WEST
-    (1 to 2) foreach (i => drawSlot(matrixCenter.xi - 18 * i, matrixCenter.yi, SlotType.ARR_LEFT))
+        tooltips.put(new Rectangle(new Point(center.x() - 18, center.y() - 18), 18), up);
+        tooltips.put(new Rectangle(new Point(center.x() + 18, center.y() - 18), 18), up);
 
-    //UP
-    drawSlot(matrixCenter.xi - 18, matrixCenter.yi - 18, SlotType.ARR_UP_LEFT)
-    drawSlot(matrixCenter.xi + 18, matrixCenter.yi - 18, SlotType.ARR_UP_RIGHT)
-    //DOWN
-    drawSlot(matrixCenter.xi - 18, matrixCenter.yi + 18, SlotType.ARR_DOWN_LEFT)
-    drawSlot(matrixCenter.xi + 18, matrixCenter.yi + 18, SlotType.ARR_DOWN_RIGHT)
+        tooltips.put(new Rectangle(new Point(center.x() - 18, center.y() + 18), 18), down);
+        tooltips.put(new Rectangle(new Point(center.x() + 18, center.y() + 18), 18), down);
+    }
 
-    //Draw non-directional slots
-    for (x <- -2 to 2; y <- -2 to 2)
-      if (new Vector2(x, y).magnitude > 2)
-        drawSlot(matrixCenter.xi + 18 * x, matrixCenter.yi + 18 * y)
-  }
+    public void drawMatrix() {
+
+        drawSlot((int) center.x(), (int) center.y(), GuiSlotType.NONE, 1, 0.4F, 0.4F);
+
+        for (int i = 1; i <= 2; i++)
+            drawSlot((int) center.x(), (int) center.y() - 18 * i, GuiSlotType.ARR_UP);
+
+        for (int i = 1; i <= 2; i++)
+            drawSlot((int) center.x(), (int) center.y() + 18 * i, GuiSlotType.ARR_DOWN);
+
+        for (int i = 1; i <= 2; i++)
+            drawSlot((int) center.x() + 18 * i, (int) center.y(), GuiSlotType.ARR_RIGHT);
+
+        for (int i = 1; i <= 2; i++)
+            drawSlot((int) center.x() - 18 * i, (int) center.y(), GuiSlotType.ARR_LEFT);
+
+        //UP
+        drawSlot((int) center.x() - 18, (int) center.y() - 18, GuiSlotType.ARR_UP_LEFT);
+        drawSlot((int) center.x() + 18, (int) center.y() - 18, GuiSlotType.ARR_UP_RIGHT);
+        //DOWN
+        drawSlot((int) center.x() - 18, (int) center.y() + 18, GuiSlotType.ARR_DOWN_LEFT);
+        drawSlot((int) center.x() + 18, (int) center.y() + 18, GuiSlotType.ARR_DOWN_RIGHT);
+
+        for (int i = -2; i <= 2; i++)
+            for (int i2 = -2; i2 <= 2; i2++)
+                if (Math.sqrt(i * i + i2 * i2) > 2)
+                    drawSlot((int) center.x() + 18 * i, (int) center.y() + 18 * i2);
+    }
 }

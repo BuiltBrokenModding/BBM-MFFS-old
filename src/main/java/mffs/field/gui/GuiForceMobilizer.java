@@ -1,83 +1,90 @@
-package mffs.field.gui
+package mffs.field.gui;
 
-import mffs.ModularForceFieldSystem
-import mffs.base.TilePacketType
-import mffs.field.mobilize.TileForceMobilizer
-import mffs.render.button.GuiIcon
-import net.minecraft.client.gui.GuiButton
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.init.{Blocks, Items}
-import net.minecraft.item.ItemStack
+import com.builtbroken.jlib.data.science.units.UnitDisplay;
+import com.builtbroken.mc.core.Engine;
+import com.builtbroken.mc.core.network.packet.PacketTile;
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import com.mojang.realmsclient.gui.ChatFormatting;
+import mffs.base.TilePacketType;
+import mffs.field.mobilize.TileForceMobilizer;
+import mffs.render.button.GuiIcon;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
-class GuiForceMobilizer(player: EntityPlayer, tile: TileForceMobilizer) extends GuiMatrix(new ContainerMatrix(player, tile), tile)
-{
-  override def initGui
-  {
-    super.initGui
-    buttonList.add(new GuiIcon(1, width / 2 - 110, height / 2 - 16, new ItemStack(Items.clock)))
-    buttonList.add(new GuiIcon(2, width / 2 - 110, height / 2 - 82, null, new ItemStack(Items.redstone), new ItemStack(Blocks.redstone_block)))
-    buttonList.add(new GuiIcon(3, width / 2 - 110, height / 2 - 60, null, new ItemStack(Blocks.anvil)))
-    buttonList.add(new GuiIcon(4, width / 2 - 110, height / 2 - 38, null, new ItemStack(Items.compass)))
+public class GuiForceMobilizer extends GuiMatrix<TileForceMobilizer> {
+    boolean absoluteCache;
 
-    setupTooltips()
-  }
 
-  override def updateScreen
-  {
-    super.updateScreen
-    buttonList.get(2).asInstanceOf[GuiIcon].setIndex(tile.previewMode)
-    buttonList.get(3).asInstanceOf[GuiIcon].setIndex(if (tile.doAnchor) 1 else 0)
-
-    if (buttonList.get(4).asInstanceOf[GuiIcon].setIndex(if (tile.absoluteDirection) 1 else 0))
-    {
-      setupTooltips()
+    public GuiForceMobilizer(EntityPlayer player, TileForceMobilizer tile) {
+        super(new ContainerMatrix(player, tile), tile);
     }
-  }
 
-  override def drawGuiContainerBackgroundLayer(f: Float, x: Int, y: Int)
-  {
-    super.drawGuiContainerBackgroundLayer(f, x, y)
-    drawMatrix()
-    drawFrequencyGui()
-  }
-
-  override def actionPerformed(guiButton: GuiButton)
-  {
-    super.actionPerformed(guiButton)
-    if (guiButton.id == 1)
-    {
-
-      ModularForceFieldSystem.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMoe.id: Integer))
+    @Override
+    public void initGui() {
+        super.initGui();
+        buttonList.add(new GuiIcon(1, width / 2 - 110, height / 2 - 16, new ItemStack(Items.clock)));
+        buttonList.add(new GuiIcon(2, width / 2 - 110, height / 2 - 82, null, new ItemStack(Items.redstone), new ItemStack(Blocks.redstone_block)));
+        buttonList.add(new GuiIcon(3, width / 2 - 110, height / 2 - 60, null, new ItemStack(Blocks.anvil)));
+        buttonList.add(new GuiIcon(4, width / 2 - 110, height / 2 - 38, null, new ItemStack(Items.compass)));
+        absoluteCache = tile.absoluteDirection;
+        setupTooltips();
     }
-    else if (guiButton.id == 2)
-    {
-      ModularForceFieldSystem.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode2.id: Integer))
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        ((GuiIcon) buttonList.get(2)).setIndex(tile.previewMode);
+        ((GuiIcon) buttonList.get(3)).setIndex(tile.doAnchor ? 1 : 0);
+
+        //Caching so we do not need to constantly add.
+        if (absoluteCache && !tile.absoluteDirection || !absoluteCache && tile.absoluteDirection) {
+            ((GuiIcon) buttonList.get(4)).setIndex(!absoluteCache ? 1 : 0);
+            absoluteCache = !absoluteCache;
+            setupTooltips();
+        }
     }
-    else if (guiButton.id == 3)
-    {
-      ModularForceFieldSystem.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode3.id: Integer))
+
+    @Override
+    public void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+        super.drawGuiContainerBackgroundLayer(f, x, y);
+        drawMatrix();
+        drawFrequencyGui();
     }
-    else if (guiButton.id == 4)
-    {
-      ModularForceFieldSystem.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode4.id: Integer))
+
+    @Override
+    protected void actionPerformed(GuiButton guiButton) {
+        super.actionPerformed(guiButton);
+        if (guiButton.id == 1) {
+
+            Engine.instance.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMoe.ordinal()));
+        } else if (guiButton.id == 2) {
+            Engine.instance.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode2.ordinal()));
+        } else if (guiButton.id == 3) {
+            Engine.instance.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode3.ordinal()));
+        } else if (guiButton.id == 4) {
+            Engine.instance.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode4.ordinal()));
+        }
     }
-  }
 
-  protected override def drawGuiContainerForegroundLayer(x: Int, y: Int)
-  {
-    drawStringCentered(tile.getInventoryName)
+    @Override
+    public void drawGuiContainerForegroundLayer(int x, int y) {
 
-    drawString(EnumColor.DARK_AQUA + LanguageUtility.getLocal("gui.mobilizer.anchor") + ":", 8, 20)
-    drawString(tile.anchor.xi + ", " + tile.anchor.yi + ", " + tile.anchor.zi, 8, 32)
+        drawStringCentered(tile.getInventoryName(), this.xSize / 2, 6);
 
-    drawString(EnumColor.DARK_AQUA + LanguageUtility.getLocal("gui.direction") + ":", 8, 48)
-    drawString(tile.getDirection.name, 8, 60)
+        drawString(ChatFormatting.DARK_AQUA + LanguageUtility.getLocal("gui.mobilizer.anchor") + ":", 8, 20);
+        drawString(tile.anchor.getX() + ", " + tile.anchor.getY() + ", " + tile.anchor.getZ(), 8, 32);
 
-    drawString(EnumColor.DARK_AQUA + LanguageUtility.getLocal("gui.mobilizer.time") + ":", 8, 75)
-    drawString((tile.clientMoveTime / 20) + "s", 8, 87)
+        drawString(ChatFormatting.DARK_AQUA + LanguageUtility.getLocal("gui.direction") + ":", 8, 48);
+        drawString(tile.getDirection().name(), 8, 60);
 
-    drawTextWithTooltip("fortron", EnumColor.DARK_RED + new UnitDisplay(UnitDisplay.Unit.LITER, tile.getFortronCost * 20).symbol().toString + "/s", 8, 100, x, y)
-    drawFortronText(x, y)
-    super.drawGuiContainerForegroundLayer(x, y)
-  }
+        drawString(ChatFormatting.DARK_AQUA + LanguageUtility.getLocal("gui.mobilizer.time") + ":", 8, 75);
+        drawString((tile.clientMoveTime / 20) + "s", 8, 87);
+
+        drawTextWithTooltip("fortron", ChatFormatting.DARK_RED + new UnitDisplay(UnitDisplay.Unit.LITER, tile.getFortronCost() * 20).symbol().toString() + "/s", 8, 100, x, y);
+        drawFortronText(x, y);
+        super.drawGuiContainerForegroundLayer(x, y);
+    }
 }

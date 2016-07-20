@@ -5,6 +5,7 @@ import java.util.{HashSet => JHashSet, Set => JSet}
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import io.netty.buffer.ByteBuf
 import mffs.Content
+import mffs.ModularForceFieldSystem;
 import mffs.base.{TileModuleAcceptor, TilePacketType}
 import mffs.item.card.ItemCardFrequency
 import mffs.util.TransferMode.TransferMode
@@ -19,7 +20,7 @@ import scala.collection.JavaConversions._
 public class TileFortronCapacitor extends TileModuleAcceptor with IFortronStorage with IFortronCapacitor
 {
   private val tickRate = 10
-  private var transferMode = TransferMode.equalize
+  private TransferMode transferMode = TransferMode.equalize;
 
   capacityBase = 700
   capacityBoost = 10
@@ -62,7 +63,9 @@ public class TileFortronCapacitor extends TileModuleAcceptor with IFortronStorag
     }
   }
 
-  def getTransmissionRate: Int = 300 + 60 * getModuleCount(Content.moduleSpeed)
+  public int getTransmissionRate() {
+    return 300 + 60 * getModuleCount(ModularForceFieldSystem.moduleSpeed);
+  }
 
   override def getAmplifier: Float = 0f
 
@@ -147,7 +150,9 @@ public class TileFortronCapacitor extends TileModuleAcceptor with IFortronStorag
     return true
   }
 
-  def getTransferMode: TransferMode = transferMode
+  public TransferMode getTransferMode() {
+    return transferMode;
+  }
 
   @SideOnly(Side.CLIENT)
   override def renderStatic(renderer: RenderBlocks, pos: Vector3, pass: Int): Boolean =

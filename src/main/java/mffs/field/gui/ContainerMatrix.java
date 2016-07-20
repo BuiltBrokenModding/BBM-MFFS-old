@@ -8,7 +8,7 @@ import mffs.slot.SlotBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 
-class ContainerMatrix extends ContainerBase
+public class ContainerMatrix extends ContainerBase
 {
     Point matrixCenter = new Point(110, 55);
 

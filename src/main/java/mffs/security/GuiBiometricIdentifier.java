@@ -1,29 +1,30 @@
-package mffs.security
+package mffs.security;
 
-import mffs.base.GuiMFFS
-import net.minecraft.entity.player.EntityPlayer
+import com.mojang.realmsclient.gui.ChatFormatting;
+import mffs.base.GuiMFFS;
+import net.minecraft.entity.player.EntityPlayer;
 
-class GuiBiometricIdentifier(player: EntityPlayer, tile: TileBiometricIdentifier) extends GuiMFFS(new ContainerBiometricIdentifier(player, tile), tile)
-{
-  override def initGui
-  {
-    super.initGui
-  }
+public class GuiBiometricIdentifier extends GuiMFFS<TileBiometricIdentifier> {
 
-  protected override def drawGuiContainerForegroundLayer(x: Int, y: Int)
-  {
-    drawStringCentered(tile.getInventoryName)
-    drawStringCentered(EnumColor.AQUA + "id and Group Cards", 20)
-    drawString("Frequency", 40, 118)
-    drawFortronText(x, y)
-    super.drawGuiContainerForegroundLayer(x, y)
-  }
+    public GuiBiometricIdentifier(EntityPlayer player, TileBiometricIdentifier tile) {
+        super(new ContainerBiometricIdentifier(player, tile), tile);
+    }
 
-  protected override def drawGuiContainerBackgroundLayer(f: Float, x: Int, y: Int)
-  {
-    super.drawGuiContainerBackgroundLayer(f, x, y)
-    drawFrequencyGui()
-    for (x <- 0 until 9; y <- 0 until 4)
-      drawSlot(8 + x * 18, 35 + y * 18)
-  }
+    @Override
+    protected void drawGuiContainerForegroundLayer(int x, int y) {
+        drawStringCentered(tile.getInventoryName(), this.xSize / 2, 6);
+        drawStringCentered(ChatFormatting.AQUA + "id and Group Cards", 20, 0);
+        drawString("Frequency", 40, 118);
+        drawFortronText(x, y);
+        super.drawGuiContainerForegroundLayer(x, y);
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+        super.drawGuiContainerBackgroundLayer(f, x, y);
+        drawFrequencyGui();
+        for (int i = 0; i < 9; i++)
+            for (int z = 0; z < 4; z++)
+                drawSlot(8 + i * 18, 35 + z * 18);
+    }
 }

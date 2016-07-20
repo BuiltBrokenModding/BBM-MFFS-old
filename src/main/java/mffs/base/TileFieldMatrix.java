@@ -26,7 +26,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
   /**
    * Are the directions on the GUI absolute values?
    */
-  var absoluteDirection = false
+  public boolean absoluteDirection = false;
   protected var calculatedField: mutable.Set[Pos] = null
   protected var isCalculating = false
 

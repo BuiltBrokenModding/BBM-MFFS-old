@@ -1,16 +1,22 @@
-package mffs.security
+package mffs.security;
 
-import mffs.item.card.ItemCardFrequency
-import mffs.slot.SlotBase
-import net.minecraft.entity.player.EntityPlayer
+import com.builtbroken.mc.prefab.gui.ContainerBase;
+import com.builtbroken.mc.prefab.gui.slot.SlotSpecific;
+import mffs.item.card.ItemCardFrequency;
+import mffs.slot.SlotBase;
+import net.minecraft.entity.player.EntityPlayer;
 
-class ContainerBiometricIdentifier(player: EntityPlayer, tile: TileBiometricIdentifier) extends ContainerBase(tile)
-{
-  //Frequency
-  addSlotToContainer(new SlotSpecific(tile, 0, 8, 114, classOf[ItemCardFrequency]))
+public class ContainerBiometricIdentifier extends ContainerBase {
 
-  for (x <- 0 until 9; y <- 0 until 4)
-    addSlotToContainer(new SlotBase(tile, x + y * 9 + 1, 9 + x * 18, 36 + y * 18))
+    public ContainerBiometricIdentifier(EntityPlayer player, TileBiometricIdentifier tile) {
+        super(tile);
+        //Frequency
+        addSlotToContainer(new SlotSpecific(tile, 0, 8, 114, ItemCardFrequency.class));
 
-  addPlayerInventory(player)
+        for (int x = 0; x < 9; x++)
+            for (int y = 0; y < 4; y++)
+                addSlotToContainer(new SlotBase(tile, x + y * 9 + 1, 9 + x * 18, 36 + y * 18));
+
+        addPlayerInventory(player);
+    }
 }
