@@ -19,7 +19,7 @@ public class GuiTransferModeButton extends GuiIndexedButton
     @Override
   public void drawButton(Minecraft minecraft, int x, int y)
   {
-    displayString = "transferMode." + mode.getTransferMode().toString();
+    displayString = "transferMode." + mode.getTransferMode().name();
     offset.y = 18 * mode.getTransferMode().ordinal();
     super.drawButton(minecraft, x, y);
   }

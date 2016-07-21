@@ -28,7 +28,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
    */
   public boolean absoluteDirection = false;
   protected var calculatedField: mutable.Set[Pos] = null
-  protected var isCalculating = false
+  protected boolean isCalculating = false;
 
   override def update()
   {

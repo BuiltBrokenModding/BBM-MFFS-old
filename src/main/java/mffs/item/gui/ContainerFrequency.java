@@ -1,13 +1,17 @@
-package mffs.item.gui
+package mffs.item.gui;
 
-import mffs.item.card.ItemCardFrequency
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
+import com.builtbroken.mc.prefab.gui.slot.SlotSpecific;
+import mffs.item.card.ItemCardFrequency;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 /**
  * @author Calclavia
  */
-class ContainerFrequency(player: EntityPlayer, itemStack: ItemStack) extends ContainerItem(player, itemStack, new CopyInventory(itemStack, 1))
-{
-  addSlotToContainer(new SlotSpecific(inventory, 0, 81, 101, classOf[ItemCardFrequency]))
+public class ContainerFrequency extends ContainerItem {
+
+    public ContainerFrequency(EntityPlayer player, ItemStack stack) {
+        super(player, stack, new CopyInventory(stack, 1));
+        addSlotToContainer(new SlotSpecific(inventory, 0, 81, 101, ItemCardFrequency.class));
+    }
 }

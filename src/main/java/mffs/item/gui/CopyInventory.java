@@ -1,18 +1,27 @@
-package mffs.item.gui
+package mffs.item.gui;
 
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
+import com.builtbroken.mc.prefab.inventory.ExternalInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * A temporary inventory used by items for copying
+ *
  * @author Calclavia
  */
 
-class CopyInventory(itemStack: ItemStack, slots: Int) extends ExternalInventory(null, slots)
-{
-  override def markDirty
-  {
-    if (itemStack.getTagCompound != null && getStackInSlot(0) != null)
-      getStackInSlot(0).setTagCompound(itemStack.getTagCompound.copy().asInstanceOf[NBTTagCompound])
-  }
+public class CopyInventory extends ExternalInventory {
+
+    private ItemStack copyItem;
+
+    public CopyInventory(ItemStack stack, int slot) {
+        super(null, slot);
+        copyItem = stack;
+    }
+
+    @Override
+    public void markDirty() {
+        if (copyItem.getTagCompound() != null && getStackInSlot(0) != null)
+            getStackInSlot(0).setTagCompound((NBTTagCompound) copyItem.getTagCompound().copy());
+    }
 }

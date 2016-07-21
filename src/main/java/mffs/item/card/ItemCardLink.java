@@ -4,13 +4,13 @@ import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.builtbroken.mc.lib.transform.vector.Location;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import mffs.api.card.ICoordLink;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.World;
-import resonant.api.mffs.card.ICoordLink;
 
 import java.util.List;
 

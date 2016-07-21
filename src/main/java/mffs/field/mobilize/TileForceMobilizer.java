@@ -48,7 +48,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
    * Used ONLY for teleporting.
    */
   private var moveTime = 0
-  private var canRenderMove = true
+  private boolean canRenderMove = true;
 
   def markFailMove() = failedMove = true
 
@@ -649,6 +649,11 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 
     nbt.setInteger("displayMode", previewMode)
     nbt.setBoolean("doAnchor", doAnchor)
+  }
+
+  @Override
+          public boolean canContinueEffect() {
+    return canRenderMove;
   }
 
   def canContinueEffect = canRenderMove
