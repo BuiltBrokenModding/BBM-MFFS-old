@@ -9,7 +9,7 @@ import net.minecraft.world.World
 import org.lwjgl.opengl.GL11
 
 @SideOnly(Side.CLIENT)
-class FXHologram(par1World: World, position: Vector3, red: Float, green: Float, blue: Float, age: Int) extends FXMFFS(par1World, position.x, position.y, position.z)
+public class FXHologram(par1World: World, position: Vector3, red: Float, green: Float, blue: Float, age: Int) extends FXMFFS(par1World, position.x, position.y, position.z)
 {
   private var targetPosition: Vector3 = null
 

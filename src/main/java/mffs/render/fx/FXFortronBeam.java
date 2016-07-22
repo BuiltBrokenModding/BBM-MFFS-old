@@ -1,17 +1,21 @@
-package mffs.render.fx
+package mffs.render.fx;
 
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import mffs.Reference
-import net.minecraft.util.ResourceLocation
-import net.minecraft.world.World
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.Reference;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 /**
  * Based off Thaumcraft's Beam Renderer.
  *
  * @author Calclavia, Azanor
  */
-@SideOnly(Side.CLIENT)
-class FXFortronBeam(world: World, position: Vector3, target: Vector3, red: Float, green: Float, blue: Float, age: Int) extends FXBeam(new ResourceLocation(Reference.domain, Reference.blockDirectory + "fortron.png"), world, position, target, red, green, blue, age)
+
+public class FXFortronBeam extends FXBeam
 {
-  noClip = true
+    public FXFortronBeam(World world, Pos position, Pos target, float red, float green, float blue, int age)
+    {
+        super(new ResourceLocation(Reference.domain, Reference.blockDirectory + "fortron.png"), world, position, target, red, green, blue, age);
+        noClip = true;
+    }
 }

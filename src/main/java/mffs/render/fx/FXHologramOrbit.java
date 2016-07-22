@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11
  * @author Calclavia
  */
 @SideOnly(Side.CLIENT)
-class FXHologramOrbit(par1World: World, orbitPosition: Vector3, position: Vector3, red: Float, green: Float, blue: Float, age: Int, maxSpeed: Float) extends FXHologram(par1World, position, red, green, blue, age)
+public class FXHologramOrbit(par1World: World, orbitPosition: Vector3, position: Vector3, red: Float, green: Float, blue: Float, age: Int, maxSpeed: Float) extends FXHologram(par1World, position, red, green, blue, age)
 {
   private var rotation: Double = 0
 
