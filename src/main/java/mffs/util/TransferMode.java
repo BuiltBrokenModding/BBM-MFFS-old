@@ -3,11 +3,17 @@ package mffs.util;
 /**
  * The force field transfer mode.
  */
-public enum TransferMode {
-	equalize, distribute, drain, fill;
+public enum TransferMode
+{
+    equalize, distribute, drain, fill;
 
-	private TransferMode toggle(TransferMode mode) {
-		return TransferMode.values()[mode.ordinal() + 1 % TransferMode.values().length];
-	}
+    public TransferMode toggle()
+    {
+        return TransferMode.values()[ordinal() + 1 % TransferMode.values().length];
+    }
 
+    public static TransferMode get(int i)
+    {
+        return i >= 0 && i < values().length ? values()[i] : equalize;
+    }
 }

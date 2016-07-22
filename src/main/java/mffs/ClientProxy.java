@@ -4,6 +4,7 @@ import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.client.FMLClientHandler;
 import mffs.render.fx.*;
+import mffs.security.card.RenderIDCard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -40,7 +41,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void renderBeam(World world, Pos position, Pos target, float[] color, int age)
     {
-        FMLClientHandler.instance().getClient().effectRenderer.addEffect(new FXFortronBeam(world, position, target, color[0], color[1], color[2], age))
+        FMLClientHandler.instance().getClient().effectRenderer.addEffect(new FXFortronBeam(world, position, target, color[0], color[1], color[2], age));
     }
 
     @Override

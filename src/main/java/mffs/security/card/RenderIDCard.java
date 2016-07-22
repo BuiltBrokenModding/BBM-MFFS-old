@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL12
  * @author Briman, Calclavia
  */
 @SideOnly(Side.CLIENT)
-class RenderIDCard extends IItemRenderer
+public class RenderIDCard extends IItemRenderer
 {
   def renderItem(renderType: IItemRenderer.ItemRenderType, itemStack: ItemStack, data: AnyRef*)
   {

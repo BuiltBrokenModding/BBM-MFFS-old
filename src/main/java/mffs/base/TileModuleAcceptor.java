@@ -21,8 +21,8 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 
     protected int capacityBase = 500;
     protected int capacityBoost = 5;
-    int startModuleIndex = 1;
-    int endModuleIndex = getSizeInventory() - 1;
+    protected int startModuleIndex = 1;
+    protected int endModuleIndex = getSizeInventory() - 1;
     /**
      * Used for client-side only.
      */

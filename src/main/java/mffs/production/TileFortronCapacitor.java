@@ -1,11 +1,13 @@
 package mffs.production
 
+import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.card.ICoordLink;
+import mffs.api.fortron.FrequencyGridRegistry;
 import mffs.api.fortron.IFortronCapacitor;
 import mffs.api.fortron.IFortronFrequency;
 import mffs.api.fortron.IFortronStorage;
@@ -15,8 +17,10 @@ import mffs.item.card.ItemCardFrequency;
 import mffs.util.FortronUtility;
 import mffs.util.TransferMode;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 
 import java.util.ArrayList;
@@ -52,15 +56,20 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
             /**
              * Draw from input slots and eject from output slots
              */
-            getInputStacks().stream().filter (stack -> stack.getItem() instanceof IFluidContainerItem);
-            foreach(stack = > fortronTank.fill(stack.getItem.asInstanceOf[IFluidContainerItem].drain(stack, Math.min(getFortronEmpty, getTransmissionRate), true), true))
-
-            if (fortronTank.getFluidAmount > 0)
+            if (getFortronEmpty() > 0)
             {
-                val transferFluid = fortronTank.getFluid.copy()
-                transferFluid.amount = Math.min(transferFluid.amount, getTransmissionRate)
-                getOutputStacks filter (_.getItem.isInstanceOf[IFluidContainerItem])
-                foreach(stack = > fortronTank.drain(stack.getItem.asInstanceOf[IFluidContainerItem].fill(stack, transferFluid, true), true))
+                getInputStacks().stream()
+                        .filter(stack -> stack.getItem() instanceof IFluidContainerItem)
+                        .forEach(stack -> fortronTank.fill(((IFluidContainerItem) stack.getItem()).drain(stack, Math.min(getFortronEmpty(), getTransmissionRate()), true), true));
+            }
+
+            if (fortronTank.getFluidAmount() > 0)
+            {
+                FluidStack transferFluid = fortronTank.getFluid().copy();
+                transferFluid.amount = Math.min(transferFluid.amount, getTransmissionRate());
+                getOutputStacks().stream()
+                        .filter(stack -> stack.getItem() instanceof IFluidContainerItem)
+                        .forEach(stack -> fortronTank.drain(((IFluidContainerItem) stack.getItem()).fill(stack, transferFluid, true), true));
             }
 
             if (ticks % tickRate == 0)
@@ -68,13 +77,13 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
                 /**
                  * Transfer based on input/output slots
                  */
-                FortronUtility.transferFortron(this, getInputDevices, TransferMode.fill, getTransmissionRate * tickRate)
-                FortronUtility.transferFortron(this, getOutputDevices, TransferMode.drain, getTransmissionRate * tickRate)
+                FortronUtility.transferFortron(this, getInputDevices(), TransferMode.fill, getTransmissionRate() * tickRate);
+                FortronUtility.transferFortron(this, getOutputDevices(), TransferMode.drain, getTransmissionRate() * tickRate);
 
                 /**
                  * Transfer based on frequency
                  */
-                FortronUtility.transferFortron(this, getFrequencyDevices, transferMode, getTransmissionRate * tickRate)
+                FortronUtility.transferFortron(this, getFrequencyDevices(), transferMode, getTransmissionRate() * tickRate);
             }
         }
     }
@@ -95,50 +104,60 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
      */
 
     @Override
-    public void write(buf:ByteBuf, id:Int)
+    public void write(ByteBuf buf, int id)
     {
-        super.write(buf, id)
+        super.write(buf, id);
 
-        if (id == TilePacketType.description.id)
+        if (id == TilePacketType.description.ordinal())
         {
-            buf << < transferMode.id
+            buf.writeInt(transferMode.ordinal());
         }
     }
 
     @Override
-    public void read(buf:ByteBuf, id:Int, packetType:PacketType)
+    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
     {
-        super.read(buf, id, packetType)
-
-        if (id == TilePacketType.description.id)
+        if (!super.read(buf, id, player, packetType))
         {
-            transferMode = TransferMode(buf.readInt)
+            if (id == TilePacketType.description.ordinal())
+            {
+                transferMode = TransferMode.get(buf.readInt());
+                return true;
+            }
+            else if (id == TilePacketType.toggleMoe.ordinal())
+            {
+                transferMode = transferMode.toggle();
+                return true;
+            }
+            return false;
         }
-        else if (id == TilePacketType.toggleMoe.id)
-        {
-            transferMode = transferMode.toggle
-        }
+        return true;
     }
 
     @Override
-    public void readFromNBT(nbt:NBTTagCompound)
+    public void readFromNBT(NBTTagCompound nbt)
     {
-        super.readFromNBT(nbt)
-        this.transferMode = TransferMode(nbt.getInteger("transferMode"))
+        super.readFromNBT(nbt);
+        this.transferMode = TransferMode.get(nbt.getInteger("transferMode"));
     }
 
     @Override
-    public void writeToNBT(nbttagcompound:NBTTagCompound)
+    public void writeToNBT(NBTTagCompound nbttagcompound)
     {
-        super.writeToNBT(nbttagcompound)
-        nbttagcompound.setInteger("transferMode", this.transferMode.id)
+        super.writeToNBT(nbttagcompound);
+        nbttagcompound.setInteger("transferMode", this.transferMode.ordinal());
     }
 
-    public void getDeviceCount = getFrequencyDevices.size + getInputDevices.size + getOutputDevices.size
+    public int getDeviceCount()
+    {
+        return getFrequencyDevices().size() + getInputDevices().size() + getOutputDevices().size();
+    }
 
     @Override
-    public JSet[IFortronFrequency]getFrequencyDevices
-    :=FrequencyGridRegistry.instance.getNodes(classOf[IFortronFrequency],world,toVector3,getTransmissionRange,getFrequency)
+    public List<IFortronFrequency> getFrequencyDevices()
+    {
+        FrequencyGridRegistry.instance().getNodes(IFortronFrequency.class, world(), toVector3(), getTransmissionRange(), getFrequency());
+    }
 
     public int getTransmissionRange()
     {
@@ -171,8 +190,8 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
         stacks.stream()
                 .filter(stack -> stack.getItem() instanceof ICoordLink)
                 .map(stack -> ((ICoordLink) stack.getItem()).getLink(stack))
-                .filter(link -> link != null && link.getTileEntity(world) instanceof IFortronFrequency)
-                .foreach(link -> devices.add((IFortronFrequency) link.getTileEntity(world)));
+                .filter(link -> link != null && link.getTileEntity(world()) instanceof IFortronFrequency)
+                .forEach(link -> devices.add((IFortronFrequency) link.getTileEntity(world())));
 
         return devices;
     }

@@ -1,6 +1,6 @@
 package mffs.api.fortron;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Applied to the Fortron Capacitor TileEntity. Extends IFortronFrequency
@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public interface IFortronCapacitor
 {
-	public Set<IFortronFrequency> getFrequencyDevices();
+	public List<IFortronFrequency> getFrequencyDevices();
 
 	public int getTransmissionRange();
 
