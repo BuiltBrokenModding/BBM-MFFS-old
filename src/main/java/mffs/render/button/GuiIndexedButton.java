@@ -1,8 +1,8 @@
 package mffs.render.button;
 
 import com.builtbroken.mc.lib.helper.LanguageUtility;
+import com.builtbroken.mc.lib.transform.vector.Point;
 import cpw.mods.fml.client.FMLClientHandler;
-import ic2.core.util.Vector2;
 import mffs.Reference;
 import mffs.base.GuiMFFS;
 import net.minecraft.client.Minecraft;
@@ -15,11 +15,11 @@ public class GuiIndexedButton extends GuiButton {
      */
     boolean stuck = false;
     /* Offset of this button */
-    Vector2 offset;
+    Point offset;
     /* The parent gui of this element. */
     private GuiMFFS<?> mainGui;
 
-    public GuiIndexedButton(int id, int x, int y, GuiMFFS<?> main, String name, Vector2 offset) {
+    public GuiIndexedButton(int id, int x, int y, GuiMFFS<?> main, String name, Point offset) {
         super(id, x, y, 18, 18, name);
         this.mainGui = main;
         this.offset = offset;
@@ -36,7 +36,7 @@ public class GuiIndexedButton extends GuiButton {
             } else {
                 GL11.glColor4f(1, 1, 1, 1);
             }
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, (int) this.offset.x, (int) this.offset.y, this.width, this.height);
+            this.drawTexturedModalRect(this.xPosition, this.yPosition, (int) this.offset.x(), (int) this.offset.y(), this.width, this.height);
             this.mouseDragged(minecraft, x, y);
         }
     }

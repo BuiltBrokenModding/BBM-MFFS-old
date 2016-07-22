@@ -1,174 +1,239 @@
 package mffs.production
 
-import java.util.{HashSet => JHashSet, Set => JSet}
-
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import io.netty.buffer.ByteBuf
-import mffs.Content
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
-import mffs.base.{TileModuleAcceptor, TilePacketType}
-import mffs.item.card.ItemCardFrequency
-import mffs.util.TransferMode.TransferMode
-import mffs.util.{FortronUtility, TransferMode}
-import net.minecraft.client.renderer.RenderBlocks
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
-import net.minecraftforge.fluids.IFluidContainerItem
+import mffs.api.card.ICoordLink;
+import mffs.api.fortron.IFortronCapacitor;
+import mffs.api.fortron.IFortronFrequency;
+import mffs.api.fortron.IFortronStorage;
+import mffs.base.TileModuleAcceptor;
+import mffs.base.TilePacketType;
+import mffs.item.card.ItemCardFrequency;
+import mffs.util.FortronUtility;
+import mffs.util.TransferMode;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.IFluidContainerItem;
 
-import scala.collection.JavaConversions._
+import java.util.ArrayList;
+import java.util.List;
 
-public class TileFortronCapacitor extends TileModuleAcceptor with IFortronStorage with IFortronCapacitor
+public class TileFortronCapacitor extends TileModuleAcceptor implements IFortronStorage, IFortronCapacitor
 {
-  private val tickRate = 10
-  private TransferMode transferMode = TransferMode.equalize;
+    private int tickRate = 10;
+    private TransferMode transferMode = TransferMode.equalize;
 
-  capacityBase = 700
-  capacityBoost = 10
-  startModuleIndex = 1
-
-  override def getSizeInventory = 3 + 4 * 2 + 1
-
-  override def update()
-  {
-    super.update()
-    this.consumeCost()
-
-    if (isActive)
+    public TileFortronCapacitor()
     {
-      /**
-       * Draw from input slots and eject from output slots
-       */
-      getInputStacks filter (_.getItem.isInstanceOf[IFluidContainerItem]) foreach (stack => fortronTank.fill(stack.getItem.asInstanceOf[IFluidContainerItem].drain(stack, Math.min(getFortronEmpty, getTransmissionRate), true), true))
-
-      if (fortronTank.getFluidAmount > 0)
-      {
-        val transferFluid = fortronTank.getFluid.copy()
-        transferFluid.amount = Math.min(transferFluid.amount, getTransmissionRate)
-        getOutputStacks filter (_.getItem.isInstanceOf[IFluidContainerItem]) foreach (stack => fortronTank.drain(stack.getItem.asInstanceOf[IFluidContainerItem].fill(stack, transferFluid, true), true))
-      }
-
-      if (ticks % tickRate == 0)
-      {
-        /**
-         * Transfer based on input/output slots
-         */
-        FortronUtility.transferFortron(this, getInputDevices, TransferMode.fill, getTransmissionRate * tickRate)
-        FortronUtility.transferFortron(this, getOutputDevices, TransferMode.drain, getTransmissionRate * tickRate)
-
-        /**
-         * Transfer based on frequency
-         */
-        FortronUtility.transferFortron(this, getFrequencyDevices, transferMode, getTransmissionRate * tickRate)
-      }
-    }
-  }
-
-  public int getTransmissionRate() {
-    return 300 + 60 * getModuleCount(ModularForceFieldSystem.moduleSpeed);
-  }
-
-  override def getAmplifier: Float = 0f
-
-  /**
-   * Packet Methods
-   */
-
-  override def write(buf: ByteBuf, id: Int)
-  {
-    super.write(buf, id)
-
-    if (id == TilePacketType.description.id)
-    {
-      buf <<< transferMode.id
-    }
-  }
-
-  override def read(buf: ByteBuf, id: Int, packetType: PacketType)
-  {
-    super.read(buf, id, packetType)
-
-    if (id == TilePacketType.description.id)
-    {
-      transferMode = TransferMode(buf.readInt)
-    }
-    else if (id == TilePacketType.toggleMoe.id)
-    {
-      transferMode = transferMode.toggle
-    }
-  }
-
-  override def readFromNBT(nbt: NBTTagCompound)
-  {
-    super.readFromNBT(nbt)
-    this.transferMode = TransferMode(nbt.getInteger("transferMode"))
-  }
-
-  override def writeToNBT(nbttagcompound: NBTTagCompound)
-  {
-    super.writeToNBT(nbttagcompound)
-    nbttagcompound.setInteger("transferMode", this.transferMode.id)
-  }
-
-  def getDeviceCount = getFrequencyDevices.size + getInputDevices.size + getOutputDevices.size
-
-  override def getFrequencyDevices: JSet[IFortronFrequency] = FrequencyGridRegistry.instance.getNodes(classOf[IFortronFrequency], world, toVector3, getTransmissionRange, getFrequency)
-
-  def getTransmissionRange: Int = 15 + getModuleCount(Content.moduleScale)
-
-  def getInputDevices: JSet[IFortronFrequency] = getDevicesFromStacks(getInputStacks)
-
-  def getInputStacks: Set[ItemStack] = ((4 to 7) map (i => getStackInSlot(i)) filter (_ != null)).toSet
-
-  def getDevicesFromStacks(stacks: Set[ItemStack]): JSet[IFortronFrequency] =
-  {
-    val devices = new JHashSet[IFortronFrequency]()
-
-    stacks
-            .filter(_.getItem.isInstanceOf[ICoordLink])
-            .map(itemStack => itemStack.getItem.asInstanceOf[ICoordLink].getLink(itemStack))
-            .filter(linkPosition => linkPosition != null && linkPosition.getTileEntity(world).isInstanceOf[IFortronFrequency])
-            .foreach(linkPosition => devices.add(linkPosition.getTileEntity(world).asInstanceOf[IFortronFrequency]))
-
-    return devices
-  }
-
-  def getOutputDevices: JSet[IFortronFrequency] = getDevicesFromStacks(getOutputStacks)
-
-  def getOutputStacks: Set[ItemStack] = ((8 to 11) map (i => getStackInSlot(i)) filter (_ != null)).toSet
-
-  override def isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
-  {
-    if (slotID == 0)
-    {
-      return itemStack.getItem.isInstanceOf[ItemCardFrequency]
-    }
-    else if (slotID < 4)
-    {
-      return itemStack.getItem.isInstanceOf[IModule]
+        super("FortonCapacitor"); //TODO get actual tile name
+        capacityBase = 700;
+        capacityBoost = 10;
+        startModuleIndex = 1;
     }
 
-    return true
-  }
+    @Override
+    public int getSizeInventory()
+    {
+        return 3 + 4 * 2 + 1;
+    }
 
-  public TransferMode getTransferMode() {
-    return transferMode;
-  }
+    @Override
+    public void update()
+    {
+        super.update();
+        this.consumeCost();
 
-  @SideOnly(Side.CLIENT)
-  override def renderStatic(renderer: RenderBlocks, pos: Vector3, pass: Int): Boolean =
-  {
-    return false
-  }
+        if (isActive())
+        {
+            /**
+             * Draw from input slots and eject from output slots
+             */
+            getInputStacks().stream().filter (stack -> stack.getItem() instanceof IFluidContainerItem);
+            foreach(stack = > fortronTank.fill(stack.getItem.asInstanceOf[IFluidContainerItem].drain(stack, Math.min(getFortronEmpty, getTransmissionRate), true), true))
 
-  @SideOnly(Side.CLIENT)
-  override def renderDynamic(pos: Vector3, frame: Float, pass: Int)
-  {
-    RenderFortronCapacitor.render(this, pos.x, pos.y, pos.z, frame, isActive, false)
-  }
+            if (fortronTank.getFluidAmount > 0)
+            {
+                val transferFluid = fortronTank.getFluid.copy()
+                transferFluid.amount = Math.min(transferFluid.amount, getTransmissionRate)
+                getOutputStacks filter (_.getItem.isInstanceOf[IFluidContainerItem])
+                foreach(stack = > fortronTank.drain(stack.getItem.asInstanceOf[IFluidContainerItem].fill(stack, transferFluid, true), true))
+            }
 
-  @SideOnly(Side.CLIENT)
-  override def renderInventory(itemStack: ItemStack)
-  {
-    RenderFortronCapacitor.render(this, -0.5, -0.5, -0.5, 0, true, true)
-  }
+            if (ticks % tickRate == 0)
+            {
+                /**
+                 * Transfer based on input/output slots
+                 */
+                FortronUtility.transferFortron(this, getInputDevices, TransferMode.fill, getTransmissionRate * tickRate)
+                FortronUtility.transferFortron(this, getOutputDevices, TransferMode.drain, getTransmissionRate * tickRate)
+
+                /**
+                 * Transfer based on frequency
+                 */
+                FortronUtility.transferFortron(this, getFrequencyDevices, transferMode, getTransmissionRate * tickRate)
+            }
+        }
+    }
+
+    public int getTransmissionRate()
+    {
+        return 300 + 60 * getModuleCount(ModularForceFieldSystem.moduleSpeed);
+    }
+
+    @Override
+    public float getAmplifier()
+    {
+        return 0f;
+    }
+
+    /**
+     * Packet Methods
+     */
+
+    @Override
+    public void write(buf:ByteBuf, id:Int)
+    {
+        super.write(buf, id)
+
+        if (id == TilePacketType.description.id)
+        {
+            buf << < transferMode.id
+        }
+    }
+
+    @Override
+    public void read(buf:ByteBuf, id:Int, packetType:PacketType)
+    {
+        super.read(buf, id, packetType)
+
+        if (id == TilePacketType.description.id)
+        {
+            transferMode = TransferMode(buf.readInt)
+        }
+        else if (id == TilePacketType.toggleMoe.id)
+        {
+            transferMode = transferMode.toggle
+        }
+    }
+
+    @Override
+    public void readFromNBT(nbt:NBTTagCompound)
+    {
+        super.readFromNBT(nbt)
+        this.transferMode = TransferMode(nbt.getInteger("transferMode"))
+    }
+
+    @Override
+    public void writeToNBT(nbttagcompound:NBTTagCompound)
+    {
+        super.writeToNBT(nbttagcompound)
+        nbttagcompound.setInteger("transferMode", this.transferMode.id)
+    }
+
+    public void getDeviceCount = getFrequencyDevices.size + getInputDevices.size + getOutputDevices.size
+
+    @Override
+    public JSet[IFortronFrequency]getFrequencyDevices
+    :=FrequencyGridRegistry.instance.getNodes(classOf[IFortronFrequency],world,toVector3,getTransmissionRange,getFrequency)
+
+    public int getTransmissionRange()
+    {
+        return 15 + getModuleCount(ModularForceFieldSystem.moduleScale);
+    }
+
+
+    public List<IFortronFrequency> getInputDevices()
+    {
+        return getDevicesFromStacks(getInputStacks());
+    }
+
+    public List<ItemStack> getInputStacks()
+    {
+        List<ItemStack> list = new ArrayList();
+        for (int i = 4; i <= 7; i++)
+        {
+            if (getStackInSlot(i) != null)
+            {
+                list.add(getStackInSlot(i));
+            }
+        }
+        return list;
+    }
+
+    public List<IFortronFrequency> getDevicesFromStacks(List<ItemStack> stacks)
+    {
+        List<IFortronFrequency> devices = new ArrayList();
+        //TODO optimize as this seems like a waste of CPU time
+        stacks.stream()
+                .filter(stack -> stack.getItem() instanceof ICoordLink)
+                .map(stack -> ((ICoordLink) stack.getItem()).getLink(stack))
+                .filter(link -> link != null && link.getTileEntity(world) instanceof IFortronFrequency)
+                .foreach(link -> devices.add((IFortronFrequency) link.getTileEntity(world)));
+
+        return devices;
+    }
+
+    public List<IFortronFrequency> getOutputDevices()
+    {
+
+        return getDevicesFromStacks(getOutputStacks());
+    }
+
+    public List<ItemStack> getOutputStacks()
+    {
+        List<ItemStack> list = new ArrayList();
+        for (int i = 0; i <= 11; i++)
+        {
+            if (getStackInSlot(i) != null)
+            {
+                list.add(getStackInSlot(i));
+            }
+        }
+        return list;
+    }
+
+
+    @Override
+    public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
+    {
+        if (slotID == 0)
+        {
+            return itemStack.getItem() instanceof ItemCardFrequency;
+        }
+        else if (slotID < 4)
+        {
+            return itemStack.getItem() instanceof IModule;
+        }
+        return true;
+    }
+
+    public TransferMode getTransferMode()
+    {
+        return transferMode;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass)
+    {
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void renderDynamic(Pos pos, float frame, int pass)
+    {
+        RenderFortronCapacitor.render(this, pos.x(), pos.y(), pos.z(), frame, isActive(), false);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void renderInventory(ItemStack itemStack)
+    {
+        RenderFortronCapacitor.render(this, -0.5, -0.5, -0.5, 0, true, true);
+    }
 }

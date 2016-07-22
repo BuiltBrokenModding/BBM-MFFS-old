@@ -6,12 +6,12 @@ import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.google.common.hash.Hashing;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
+import mffs.api.card.IItemFrequency;
 import mffs.item.gui.EnumGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import resonant.api.items.IItemFrequency;
 
 import java.util.List;
 

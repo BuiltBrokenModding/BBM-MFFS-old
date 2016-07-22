@@ -1,26 +1,19 @@
 package mffs.render.button;
 
-import ic2.core.util.Vector2;
+import com.builtbroken.mc.lib.transform.vector.Point;
 import mffs.base.GuiMFFS;
 import mffs.production.TileFortronCapacitor;
-import net.minecraft.client.Minecraft;
 
 public class GuiTransferModeButton extends GuiIndexedButton
 {
-
     /* We need to store the capacitor here. */
     private TileFortronCapacitor mode;
 
-    public GuiTransferModeButton(int id, int x, int y, GuiMFFS<?> mainGui, TileFortronCapacitor tile) {
-            super(id, x, y, mainGui, "", new Vector2());
+    public GuiTransferModeButton(int id, int x, int y, GuiMFFS<?> mainGui, TileFortronCapacitor tile)
+    {
+        super(id, x, y, mainGui, "", new Point());
         this.mode = tile;
-        }
-
-    @Override
-  public void drawButton(Minecraft minecraft, int x, int y)
-  {
-    displayString = "transferMode." + mode.getTransferMode().name();
-    offset.y = 18 * mode.getTransferMode().ordinal();
-    super.drawButton(minecraft, x, y);
-  }
+        displayString = "transferMode." + mode.getTransferMode().name();
+        offset = new Point(offset.x(), 18 * mode.getTransferMode().ordinal());
+    }
 }
