@@ -156,7 +156,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     @Override
     public List<IFortronFrequency> getFrequencyDevices()
     {
-        FrequencyGridRegistry.instance().getNodes(IFortronFrequency.class, world(), toVector3(), getTransmissionRange(), getFrequency());
+        FrequencyGridRegistry.instance().getNodes(IFortronFrequency.class, world(), toPos(), getTransmissionRange(), getFrequency());
     }
 
     public int getTransmissionRange()

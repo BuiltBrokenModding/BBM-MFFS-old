@@ -1,9 +1,9 @@
 package mffs.base;
 
-import com.builtbroken.mc.api.modules.IModule;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
+import mffs.api.modules.IModule;
 import mffs.api.modules.IModuleProvider;
 import mffs.util.TCache;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class TileModuleAcceptor extends TileFortron implements IModuleProvider, TCache {
+public abstract class TileModuleAcceptor extends TileFortron implements IModuleProvider, TCache
+{
 
     protected int capacityBase = 500;
     protected int capacityBoost = 5;
@@ -30,14 +31,18 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     /* Cache mapping */
     private Map<String, Object> cache = new HashMap<String, Object>();
 
-    public TileModuleAcceptor(String name) {
+    public TileModuleAcceptor(String name)
+    {
         super(name);
     }
 
-    public void write(ByteBuf buf, int id) {
+    @Override
+    public void write(ByteBuf buf, int id)
+    {
         //super.write(buf, id);
 
-        if (id == TilePacketType.description.ordinal()) {
+        if (id == TilePacketType.description.ordinal())
+        {
             buf.writeInt(getFortronCost());
         }
     }
@@ -45,39 +50,52 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     /**
      * Returns Fortron cost in ticks.
      */
-    public int getFortronCost() {
-        if (this.worldObj.isRemote) {
+    @Override
+    public int getFortronCost()
+    {
+        if (this.worldObj.isRemote)
+        {
             return this.clientFortronCost;
         }
 
         String cacheID = "getFortronCost";
 
         if (cacheExists(cacheID))
+        {
             return (Integer) getCache(cacheID);
+        }
 
         int result = doGetFortronCost();
         putCache(cacheID, result);
         return result;
     }
 
-    protected int doGetFortronCost() {
+    protected int doGetFortronCost()
+    {
         float cost = 0.0F;
-        for (ItemStack stack : getModuleStacks()) {
-            if (stack != null) {
+        for (ItemStack stack : getModuleStacks())
+        {
+            if (stack != null)
+            {
                 cost += stack.stackSize * ((IModule) stack.getItem()).getFortronCost(getAmplifier());
             }
         }
         return Math.round(cost);
     }
 
-    protected float getAmplifier() {
+    protected float getAmplifier()
+    {
         return 1f;
     }
 
-    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType) {
-        if (!super.read(buf, id, player, packetType)) {
+    @Override
+    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
+    {
+        if (!super.read(buf, id, player, packetType))
+        {
 
-            if (id == TilePacketType.description.ordinal()) {
+            if (id == TilePacketType.description.ordinal())
+            {
                 clientFortronCost = buf.readInt();
                 return true;
             }
@@ -86,22 +104,29 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     }
 
     @Override
-    public void firstTick() {
+    public void firstTick()
+    {
         super.firstTick();
         fortronTank.setCapacity((this.getModuleCount(ModularForceFieldSystem.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME);
     }
 
-    public void consumeCost() {
-        if (getFortronCost() > 0) {
+    public void consumeCost()
+    {
+        if (getFortronCost() > 0)
+        {
             requestFortron(getFortronCost(), true);
         }
     }
 
-    public ItemStack getModule(IModule module) {
+    @Override
+    public ItemStack getModule(IModule module)
+    {
         String cacheID = "getModule_" + module.hashCode();
 
         if (cacheExists(cacheID))
+        {
             return (ItemStack) getCache(cacheID);
+        }
 
         ItemStack returnStack = new ItemStack((Item) module, getModuleCount(module));
 
@@ -109,28 +134,39 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
         return returnStack;
     }
 
-    @SuppressWarnings(Array("unchecked"))
-    public List<IModule> getModules(int... slots) {
+    @Override
+    public List<IModule> getModules(int... slots)
+    {
         String cacheID = "getModules_";
-        if (slots != null) {
+        if (slots != null)
+        {
             cacheID += slots.hashCode();
         }
 
         if (cacheExists(cacheID))
+        {
             return (List<IModule>) getCache(cacheID);
+        }
 
         List<IModule> stacks = new ArrayList<IModule>();
-        if (slots != null && slots.length > 0) {
-            for (int slot : slots) {
+        if (slots != null && slots.length > 0)
+        {
+            for (int slot : slots)
+            {
                 ItemStack stack = getStackInSlot(slot);
-                if (stack != null && stack.getItem() instanceof IModule) {
+                if (stack != null && stack.getItem() instanceof IModule)
+                {
                     stacks.add((IModule) stack.getItem());
                 }
             }
-        } else {
-            for (int i = startModuleIndex; i < endModuleIndex; i++) {
+        }
+        else
+        {
+            for (int i = startModuleIndex; i < endModuleIndex; i++)
+            {
                 ItemStack stack = getStackInSlot(i);
-                if (stack != null && stack.getItem() instanceof IModule) {
+                if (stack != null && stack.getItem() instanceof IModule)
+                {
                     stacks.add((IModule) stack.getItem());
                 }
             }
@@ -141,34 +177,47 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     }
 
     @Override
-    public void markDirty() {
+    public void markDirty()
+    {
         super.markDirty();
         this.fortronTank.setCapacity((this.getModuleCount(ModularForceFieldSystem.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME);
         clearCache();
     }
 
 
-    public int getModuleCount(IModule module, int... slots) {
+    @Override
+    public int getModuleCount(IModule module, int... slots)
+    {
         String cacheID = "getModuleCount_" + module.hashCode();
 
-        if (slots != null) {
+        if (slots != null)
+        {
             cacheID += "_" + slots.hashCode();
         }
 
         if (cacheExists(cacheID))
+        {
             return (Integer) getCache(cacheID);
+        }
 
         int count = 0;
-        if (slots != null && slots.length > 0) {
-            for (int slot : slots) {
+        if (slots != null && slots.length > 0)
+        {
+            for (int slot : slots)
+            {
                 ItemStack stack = getStackInSlot(slot);
-                if (stack != null && stack.getItem() instanceof IModule && stack.getItem() == module) {//would be easier to check if assignable.
+                if (stack != null && stack.getItem() instanceof IModule && stack.getItem() == module)
+                {//would be easier to check if assignable.
                     count += stack.stackSize;
                 }
             }
-        } else {
-            for (ItemStack stack : getModuleStacks()) {
-                if (stack != null && stack.getItem() instanceof IModule && stack.getItem() == module) {
+        }
+        else
+        {
+            for (ItemStack stack : getModuleStacks())
+            {
+                if (stack != null && stack.getItem() instanceof IModule && stack.getItem() == module)
+                {
                     count += stack.stackSize;
                 }
             }
@@ -177,28 +226,39 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     }
 
     @Override
-    public List<ItemStack> getModuleStacks(int... slots) {
+    public List<ItemStack> getModuleStacks(int... slots)
+    {
         String cacheID = "getModuleStacks_";
 
-        if (slots != null) {
+        if (slots != null)
+        {
             cacheID += slots.hashCode();
         }
 
         if (cacheExists(cacheID))
+        {
             return (List<ItemStack>) getCache(cacheID);
+        }
 
         List<ItemStack> stacks = new ArrayList<ItemStack>();
-        if (slots != null && slots.length > 0) {
-            for (int slot : slots) {
+        if (slots != null && slots.length > 0)
+        {
+            for (int slot : slots)
+            {
                 ItemStack stack = getStackInSlot(slot);
-                if (stack != null && stack.getItem() instanceof IModule) {
+                if (stack != null && stack.getItem() instanceof IModule)
+                {
                     stacks.add(stack);
                 }
             }
-        } else {
-            for (int i = startModuleIndex; i < endModuleIndex; i++) {
+        }
+        else
+        {
+            for (int i = startModuleIndex; i < endModuleIndex; i++)
+            {
                 ItemStack stack = getStackInSlot(i);
-                if (stack != null && stack.getItem() instanceof IModule) {
+                if (stack != null && stack.getItem() instanceof IModule)
+                {
                     stacks.add(stack);
                 }
             }
@@ -208,39 +268,46 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     }
 
     @Override
-    public Object getCache(String paramString) {
+    public Object getCache(String paramString)
+    {
         return cache.get(paramString);
     }
 
     @Override
-    public void putCache(String param, Object object) {
+    public void putCache(String param, Object object)
+    {
         cache.put(name, object);
     }
 
     @Override
-    public boolean cacheExists(String param) {
+    public boolean cacheExists(String param)
+    {
         return cache.containsKey(param);
     }
 
     @Override
-    public void clearCache(String paramString) {
+    public void clearCache(String paramString)
+    {
         cache.clear();
     }
 
     @Override
-    public void clearCache() {
+    public void clearCache()
+    {
 
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NBTTagCompound nbt)
+    {
         clearCache();
         super.readFromNBT(nbt);
         this.clientFortronCost = nbt.getInteger("fortronCost");
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public void writeToNBT(NBTTagCompound nbt)
+    {
         super.writeToNBT(nbt);
         nbt.setInteger("fortronCost", this.clientFortronCost);
     }

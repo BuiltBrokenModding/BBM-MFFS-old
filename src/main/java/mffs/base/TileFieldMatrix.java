@@ -1,4 +1,4 @@
-package mffs.base
+package mffs.base;
 
 import com.builtbroken.mc.api.tile.IRotatable;
 import com.builtbroken.mc.core.network.packet.PacketType;
@@ -8,98 +8,122 @@ import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IPermissionProvider;
+import mffs.api.machine.IProjector;
+import mffs.api.modules.IModule;
+import mffs.api.modules.IProjectorMode;
+import mffs.field.mobilize.event.DelayedEvent;
 import mffs.field.mobilize.event.IDelayedEventHandler;
 import mffs.item.card.ItemCard;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import scala.util.Failure;
 import scala.util.Success;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFieldMatrix, IDelayedEventHandler, IRotatable, IPermissionProvider
 {
-  protected final val delayedEvents = new mutable.SynchronizedQueue[DelayedEvent]()
-  val _getModuleSlots = (14 until 25).toArray
-  protected val modeSlotID = 1
+  protected final Queue<DelayedEvent> delayedEvents = new LinkedList();
+
+  public static final int[] _getModuleSlots = new int[]{14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
+  protected int modeSlotID = 1;
   /**
    * Are the directions on the GUI absolute values?
    */
   public boolean absoluteDirection = false;
-  protected var calculatedField: mutable.Set[Pos] = null
+  protected List<Pos> calculatedField = null;
   protected boolean isCalculating = false;
 
-  override def update()
+    public TileFieldMatrix()
+    {
+        super("FieldMatrix");
+    }
+
+    @Override
+  public void update()
   {
-    super.update()
+    super.update();
 
     /**
      * Evaluated queued objects
      */
-    delayedEvents foreach (_.update())
-    delayedEvents.dequeueAll(_.ticks < 0)
+    delayedEvents.forEach (d -> d.update());
+    delayedEvents.removeIf(d -> d.ticks < 0);
   }
 
-  def clearQueue() = delayedEvents.clear()
-
-  override def write(buf: ByteBuf, id: Int)
+  public void clearQueue()
   {
-    super.write(buf, id)
-
-    if (id == TilePacketType.description.id)
-    {
-      buf <<< absoluteDirection
-    }
+      delayedEvents.clear();
   }
 
-  override def read(buf: ByteBuf, id: Int, packetType: PacketType)
+  public void write(ByteBuf buf, int id)
   {
-    super.read(buf, id, packetType)
+    super.write(buf, id);
 
-    if (world.isRemote)
+    if (id == TilePacketType.description.ordinal())
     {
-      if (id == TilePacketType.description.id)
-      {
-        absoluteDirection = buf.readBoolean()
-      }
-    }
-    else
-    {
-      if (id == TilePacketType.toggleMode4.id)
-      {
-        absoluteDirection = !absoluteDirection
-      }
+      buf.writeBoolean(absoluteDirection);
     }
   }
 
-  public boolean isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
+    @Override
+  public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
+  {
+    if(!super.read(buf, id, player, packetType))
+    {
+
+        if (world().isRemote)
+        {
+            if (id == TilePacketType.description.ordinal())
+            {
+                absoluteDirection = buf.readBoolean();
+            }
+        }
+        else
+        {
+            if (id == TilePacketType.toggleMode4.ordinal())
+            {
+                absoluteDirection = !absoluteDirection;
+            }
+        }
+        return false;
+    }
+      return true;
+  }
+
+    @Override
+  public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
   {
     if (slotID == 0)
     {
-      return itemStack.getItem.isInstanceOf[ItemCard]
+      return itemStack.getItem() instanceof ItemCard;
     }
     else if (slotID == modeSlotID)
     {
-      return itemStack.getItem.isInstanceOf[IProjectorMode]
+      return itemStack.getItem() instanceof IProjectorMode;
     }
 
-    return itemStack.getItem.isInstanceOf[IModule]
+    return itemStack.getItem() instanceof IModule;
   }
 
-  def getSidedModuleCount(module: IModule, directions: ForgeDirection*): Int =
+  public int getSidedModuleCount(IModule module, ForgeDirection... directions)
   {
-    var actualDirs = directions
+    ForgeDirection[] actualDirs = directions;
 
     if (directions == null || directions.length > 0)
-      actualDirs = ForgeDirection.VALID_DIRECTIONS
+      actualDirs = ForgeDirection.VALID_DIRECTIONS;
 
     return actualDirs.foldLeft(0)((b, a) => b + getModuleCount(module, getDirectionSlots(a): _*))
   }
 
-  def getPositiveScale: Pos =
+  public Pos getPositiveScale()
   {
-    val cacheID = "getPositiveScale"
+    String cacheID = "getPositiveScale";
 
     if (hasCache(classOf[Pos], cacheID)) return getCache(classOf[Pos], cacheID)
 
@@ -135,7 +159,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     return positiveScale
   }
 
-  def getNegativeScale: Pos =
+  public Pos getNegativeScale()
   {
     val cacheID = "getNegativeScale"
 
@@ -145,38 +169,40 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     var xScaleNeg = 0
     var yScaleNeg = 0
 
-    val direction = getDirection
+    ForgeDirection direction = getDirection();
 
     if (absoluteDirection)
     {
-      zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.NORTH): _*)
-      xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.WEST): _*)
-      yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN): _*)
+      zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.NORTH): _*);
+      xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.WEST): _*);
+      yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN): _*);
     }
     else
     {
-      zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*)
-      xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*)
-      yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN): _*)
+      zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*);
+      xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*);
+      yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN): _*);
     }
 
-    val omnidirectionalScale = this.getModuleCount(ModularForceFieldSystem.moduleScale, getModuleSlots: _*)
-    zScaleNeg += omnidirectionalScale
-    xScaleNeg += omnidirectionalScale
-    yScaleNeg += omnidirectionalScale
+    val omnidirectionalScale = this.getModuleCount(ModularForceFieldSystem.moduleScale, getModuleSlots: _*);
+    zScaleNeg += omnidirectionalScale;
+    xScaleNeg += omnidirectionalScale;
+    yScaleNeg += omnidirectionalScale;
 
-    val negativeScale = new Pos(xScaleNeg, yScaleNeg, zScaleNeg)
+    val negativeScale = new Pos(xScaleNeg, yScaleNeg, zScaleNeg);
 
-    cache(cacheID, negativeScale)
+    cache(cacheID, negativeScale);
 
-    return negativeScale
+    return negativeScale;
   }
 
-  def getModuleSlots: Array[Int] = _getModuleSlots
+  public int[] getModuleSlots(){
+      return _getModuleSlots;
+  }
 
-  override def getDirectionSlots(direction: ForgeDirection): Array[Int] =
+  public int[] getDirectionSlots(ForgeDirection direction)
   {
-    direction match
+    switch (direction)
     {
       case ForgeDirection.UP =>
         return Array(10, 11)
@@ -195,7 +221,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     }
   }
 
-  def getInteriorPoints: JSet[Pos] =
+  public List<Pos> getInteriorPoints()
   {
     val cacheID = "getInteriorPoints"
 
@@ -225,37 +251,35 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     return field
   }
 
-  def getCalculatedField: JSet[Pos] =
+  public List<Pos> getCalculatedField()
   {
     return if (calculatedField != null) calculatedField else mutable.Set.empty[Pos]
   }
 
-  def queueEvent(evt: DelayedEvent)
+  public void queueEvent(DelayedEvent evt)
   {
-    delayedEvents += evt
+    delayedEvents.add(evt);
   }
 
   /**
    * NBT Methods
    */
-  override def readFromNBT(nbt: NBTTagCompound)
+  public void readFromNBT(NBTTagCompound nbt)
   {
-    super.readFromNBT(nbt)
-    absoluteDirection = nbt.getBoolean("isAbsolute")
+    super.readFromNBT(nbt);
+    absoluteDirection = nbt.getBoolean("isAbsolute");
   }
 
-  override def writeToNBT(nbt: NBTTagCompound)
+  public void writeToNBT(NBTTagCompound nbt)
   {
-    super.writeToNBT(nbt)
-    nbt.setBoolean("isAbsolute", absoluteDirection)
+    super.writeToNBT(nbt);
+    nbt.setBoolean("isAbsolute", absoluteDirection);
   }
 
   /**
    * Calculates the force field
-    *
-    * @param callBack - Optional callback
    */
-  protected def calculateField(callBack: () => Unit = null)
+  protected void calculateField()
   {
     if (!worldObj.isRemote && !isCalculating)
     {
@@ -295,7 +319,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
   /**
    * Gets the exterior points of the field based on the matrix.
    */
-  protected def getExteriorPoints: mutable.Set[Pos] =
+  protected List<Pos> getExteriorPoints()
   {
     var field = mutable.Set.empty[Pos]
 
@@ -321,69 +345,72 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     return field
   }
 
-  def getMode: IProjectorMode =
+ public IProjectorMode getMode()
   {
-    if (this.getModeStack != null)
+    if (this.getModeStack() != null)
     {
-      return this.getModeStack.getItem.asInstanceOf[IProjectorMode]
+      return (IProjectorMode)this.getModeStack().getItem();
     }
-    return null
+    return null;
   }
 
-  def getModeStack: ItemStack =
+  public ItemStack getModeStack()
   {
     if (this.getStackInSlot(modeSlotID) != null)
     {
-      if (this.getStackInSlot(modeSlotID).getItem.isInstanceOf[IProjectorMode])
+      if (this.getStackInSlot(modeSlotID).getItem() instanceof IProjectorMode)
       {
-        return this.getStackInSlot(modeSlotID)
+        return this.getStackInSlot(modeSlotID);
       }
     }
-    return null
+    return null;
   }
 
-  def getTranslation: Pos =
+  public Pos getTranslation()
   {
-    val cacheID = "getTranslation"
+    final String cacheID = "getTranslation";
 
-    if (hasCache(classOf[Pos], cacheID)) return getCache(classOf[Pos], cacheID)
+    if (hasCache(Pos.class, cacheID))
+    {
+        return getCache(Pos.class, cacheID)
+    }
 
-    val direction = getDirection
+    ForgeDirection direction = getDirection();
 
-    var zTranslationNeg = 0
-    var zTranslationPos = 0
-    var xTranslationNeg = 0
-    var xTranslationPos = 0
-    var yTranslationPos = 0
-    var yTranslationNeg = 0
+    var zTranslationNeg = 0;
+    var zTranslationPos = 0;
+    var xTranslationNeg = 0;
+    var xTranslationPos = 0;
+    var yTranslationPos = 0;
+    var yTranslationNeg = 0;
 
     if (absoluteDirection)
     {
-      zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.NORTH): _*)
-      zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.SOUTH): _*)
-      xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.WEST): _*)
-      xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.EAST): _*)
-      yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP): _*)
-      yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN): _*)
+      zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.NORTH): _*);
+      zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.SOUTH): _*);
+      xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.WEST): _*);
+      xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.EAST): _*);
+      yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP): _*);
+      yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN): _*);
     }
     else
     {
-      zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*)
-      zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)): _*)
-      xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*)
-      xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)): _*)
-      yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP): _*)
-      yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN): _*)
+      zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)): _*);
+      zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)): _*);
+      xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)): _*);
+      xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)): _*);
+      yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP): _*);
+      yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN): _*);
     }
 
-    val translation = new Pos(xTranslationPos - xTranslationNeg, yTranslationPos - yTranslationNeg, zTranslationPos - zTranslationNeg)
+    val translation = new Pos(xTranslationPos - xTranslationNeg, yTranslationPos - yTranslationNeg, zTranslationPos - zTranslationNeg);
 
-    cache(cacheID, translation)
+    cache(cacheID, translation);
 
-    return translation
+    return translation;
   }
 
-  def getRotationYaw: Int =
+  public int getRotationYaw()
   {
     val cacheID = "getRotationYaw"
     if (hasCache(classOf[Integer], cacheID)) return getCache(classOf[Integer], cacheID)
@@ -407,7 +434,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     return horizontalRotation
   }
 
-  def getRotationPitch: Int =
+  public int getRotationPitch()
   {
     val cacheID = "getRotationPitch"
 
@@ -416,9 +443,9 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     var verticalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.UP): _*) - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.DOWN): _*)
     verticalRotation *= 2
 
-    cache(cacheID, verticalRotation)
+    cache(cacheID, verticalRotation);
 
-    return verticalRotation
+    return verticalRotation;
   }
 
 }

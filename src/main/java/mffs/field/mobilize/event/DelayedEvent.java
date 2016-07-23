@@ -1,19 +1,35 @@
 package mffs.field.mobilize.event;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-class DelayedEvent
+public class DelayedEvent
 {
-    int ticks = 0;
+    public int ticks = 0;
+    Method method;
+    IDelayedEventHandler handler;
 
     public DelayedEvent(IDelayedEventHandler handler, int ticks, Method method)
     {
-
+        this.ticks = ticks;
+        this.method = method;
+        this.handler = handler;
     }
 
     protected void onEvent()
     {
-        evtMethod.apply();
+        try
+        {
+            method.invoke(handler);
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+        catch (InvocationTargetException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void update()
