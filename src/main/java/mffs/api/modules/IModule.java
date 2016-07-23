@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A module for any matrix based machines.
@@ -56,15 +55,15 @@ public interface IModule extends IFortronCost
 	 * Called in this module when it is being calculated by the projector. Called BEFORE
 	 * transformation is applied to the field.
 	 *
-	 * @return False if to prevent this position from being added to the projection que.
+	 * @return False if to prevent this position from being added to the projection add.
 	 */
-	default void onPreCalculate(IFieldMatrix projector, Set<Pos> calculatedField){}
+	default void onPreCalculate(IFieldMatrix projector, List<Pos> calculatedField){}
 	/**
 	 * Called in this module when after being calculated by the projector.
 	 *
-	 * @return False if to prevent this position from being added to the projection que.
+	 * @return False if to prevent this position from being added to the projection add.
 	 */
-	default void onPostCalculate(IFieldMatrix projector, Set<Pos> fieldDefinition){}
+	default void onPostCalculate(IFieldMatrix projector, List<Pos> fieldDefinition){}
 
 	/**
 	 * @param moduleStack

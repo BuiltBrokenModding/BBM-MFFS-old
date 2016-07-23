@@ -29,7 +29,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
      */
     int clientFortronCost = 0;
     /* Cache mapping */
-    private Map<String, Object> cache = new HashMap<String, Object>();
+    public Map<String, Object> cache = new HashMap<String, Object>();
 
     public TileModuleAcceptor(String name)
     {

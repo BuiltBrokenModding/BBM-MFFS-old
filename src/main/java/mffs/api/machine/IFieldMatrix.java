@@ -7,63 +7,66 @@ import mffs.api.modules.IProjectorMode;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.Set;
+import java.util.List;
 
+/**
+ * Applied to the field matrix tile
+ */
 public interface IFieldMatrix extends IModuleProvider, IActivatable, IPermissionProvider
 {
 	/**
 	 * Gets the mode of the projector, mainly the shape and size of it.
 	 */
-	public IProjectorMode getMode();
+	IProjectorMode getMode();
 
-	public ItemStack getModeStack();
+	ItemStack getModeStack();
 
 	/**
 	 * Gets the slot IDs based on the direction given.
 	 */
-	public int[] getDirectionSlots(ForgeDirection direction);
+	int[] getDirectionSlots(ForgeDirection direction);
 
 	/**
 	 * Gets the unspecified, direction-unspecific module slots on the left side of the GUI.
 	 */
-	public int[] getModuleSlots();
+	int[] getModuleSlots();
 
 	/**
 	 * @param module    - The module instance.
 	 * @param direction - The direction facing.
 	 * @return Gets the amount of modules based on the side.
 	 */
-	public int getSidedModuleCount(IModule module, ForgeDirection... direction);
+	int getSidedModuleCount(IModule module, ForgeDirection... direction);
 
 	/**
 	 * Transformation information functions. Returns CACHED information unless the cache is cleared.
 	 * Note that these are all RELATIVE to the projector's position.
 	 */
-	public Pos getTranslation();
+	Pos getTranslation();
 
-	public Pos getPositiveScale();
+	Pos getPositiveScale();
 
-	public Pos getNegativeScale();
+	Pos getNegativeScale();
 
-	public int getRotationYaw();
+	int getRotationYaw();
 
-	public int getRotationPitch();
+	int getRotationPitch();
 
 	/**
 	 * @return Gets all the absolute block coordinates that are occupying the force field. Note that this is a copy of the actual field set.
 	 */
-	public Set<Pos> getCalculatedField();
+	List<Pos> getCalculatedField();
 
 	/**
 	 * Gets the absolute interior points of the projector. This might cause lag so call sparingly.
 	 *
 	 * @return
 	 */
-	public Set<Pos> getInteriorPoints();
+	List<Pos> getInteriorPoints();
 
 	/**
 	 * @return Gets the facing direction. Always returns the front side of the block.
 	 */
-	public ForgeDirection getDirection();
+	ForgeDirection getDirection();
 
 }

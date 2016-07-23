@@ -1,12 +1,16 @@
 package mffs.field.module
 
-import java.util.{HashSet, Set}
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.api.machine.IFieldMatrix;
+import mffs.base.ItemModule;
+import net.minecraftforge.common.util.ForgeDirection;
+import scala.collection.mutable;
 
-import mffs.base.ItemModule
-import net.minecraftforge.common.util.ForgeDirection
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import scala.collection.JavaConversions._
-import scala.collection.mutable
+{HashSet,Set}
 
 public class ItemModuleArray extends ItemModule
 {
@@ -15,7 +19,8 @@ public class ItemModuleArray extends ItemModule
     onPreCalculateInterior(projector, fieldBlocks, fieldBlocks)
   }
 
-  def onPreCalculateInterior(projector: IFieldMatrix, exterior: Set[Vector3], interior: Set[Vector3])
+  @Override
+  public void onPreCalculateInterior(IFieldMatrix projector, List<Pos> exterior, List<Pos> interior)
   {
     val originalField: Set[Vector3] = new HashSet(interior)
     val longestDirectional = getDirectionWidthMap(exterior)
