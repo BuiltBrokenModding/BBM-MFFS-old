@@ -15,16 +15,19 @@ public abstract class ItemMode extends ItemMFFS implements IProjectorMode
         this.setMaxStackSize(1);
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void render(IProjector projector, double x, double y, double z, float f, long ticks)
     {
     }
 
+    @Override
     public boolean isInField(IFieldMatrix projector, Pos position)
     {
         return false;
     }
 
+    @Override
     public float getFortronCost(float amplifier)
     {
         return 8;

@@ -88,6 +88,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
         }
     }
 
+    @Override
     public int getTransmissionRate()
     {
         return 300 + 60 * getModuleCount(ModularForceFieldSystem.moduleSpeed);
@@ -159,6 +160,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
         FrequencyGridRegistry.instance().getNodes(IFortronFrequency.class, world(), toPos(), getTransmissionRange(), getFrequency());
     }
 
+    @Override
     public int getTransmissionRange()
     {
         return 15 + getModuleCount(ModularForceFieldSystem.moduleScale);

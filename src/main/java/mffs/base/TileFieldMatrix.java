@@ -61,6 +61,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         delayedEvents.clear();
     }
 
+    @Override
     public void write(ByteBuf buf, int id)
     {
         super.write(buf, id);
@@ -125,6 +126,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     }
     */
 
+    @Override
     public Pos getPositiveScale()
     {
         String cacheID = "getPositiveScale";
@@ -166,6 +168,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return positiveScale;
     }
 
+    @Override
     public Pos getNegativeScale()
     {
         final String cacheID = "getNegativeScale";
@@ -206,11 +209,13 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return negativeScale;
     }
 
+    @Override
     public int[] getModuleSlots()
     {
         return _getModuleSlots;
     }
 
+    @Override
     public int[] getDirectionSlots(ForgeDirection direction)
     {
         switch (direction)
@@ -253,6 +258,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return new ArrayList();
     }
 
+    @Override
     public void queueEvent(DelayedEvent evt)
     {
         delayedEvents.add(evt);
@@ -387,6 +393,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return field;
     }
 
+    @Override
     public IProjectorMode getMode()
     {
         if (this.getModeStack() != null)
@@ -396,6 +403,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return null;
     }
 
+    @Override
     public ItemStack getModeStack()
     {
         if (this.getStackInSlot(modeSlotID) != null)
@@ -408,6 +416,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return null;
     }
 
+    @Override
     public Pos getTranslation()
     {
         final String cacheID = "getTranslation";
@@ -452,6 +461,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return translation;
     }
 
+    @Override
     public int getRotationYaw()
     {
         final String cacheID = "getRotationYaw";
@@ -485,6 +495,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return horizontalRotation;
     }
 
+    @Override
     public int getRotationPitch()
     {
         final String cacheID = "getRotationPitch";

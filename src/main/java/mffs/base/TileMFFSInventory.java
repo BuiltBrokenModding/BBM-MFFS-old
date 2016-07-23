@@ -24,6 +24,7 @@ public abstract class TileMFFSInventory extends TileMFFS implements IInventory, 
         super(name);
     }
 
+    @Override
     public abstract IInventory getInventory();
 
     @Override

@@ -35,6 +35,7 @@ public class ItemModule extends ItemMFFS implements IModule
         return this;
     }
 
+    @Override
     public ItemModule setMaxStackSize(int par1)
     {
         super.setMaxStackSize(par1);

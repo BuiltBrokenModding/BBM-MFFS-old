@@ -221,6 +221,7 @@ public class ModularForceFieldSystem extends AbstractMod
     }
 
 
+    @Override
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -228,12 +229,14 @@ public class ModularForceFieldSystem extends AbstractMod
 
     }
 
+    @Override
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt)
     {
         super.init(evt);
     }
 
+    @Override
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt)
     {

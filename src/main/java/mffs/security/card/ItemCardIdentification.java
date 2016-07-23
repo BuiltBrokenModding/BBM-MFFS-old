@@ -109,6 +109,7 @@ public class ItemCardIdentification extends ItemCardAccess implements IPacketIDR
         return false;
     }
 
+    @Override
     public AccessUser getAccess(ItemStack itemStack)
     {
         NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);

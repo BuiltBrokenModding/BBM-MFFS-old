@@ -147,6 +147,7 @@ public class ItemRemoteController extends ItemCardFrequency implements ICoordLin
         return itemStack
     }
 
+    @Override
     public Location getLink(ItemStack itemStack)
     {
         if (itemStack.stackTagCompound == null || !itemStack.getTagCompound().hasKey("link"))
@@ -184,6 +185,7 @@ public class ItemRemoteController extends ItemCardFrequency implements ICoordLin
         }
     }
 
+    @Override
     public void setLink(ItemStack itemStack, Location vec)
     {
         if (itemStack.getTagCompound() == null)

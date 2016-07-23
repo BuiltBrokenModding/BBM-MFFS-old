@@ -74,6 +74,7 @@ public class ItemModeCube extends ItemMode
         return region.intersects(relativePosition);
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void render(IProjector projector, double x, double y, double z, float f, long ticks)
     {

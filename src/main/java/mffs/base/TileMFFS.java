@@ -125,6 +125,7 @@ public abstract class TileMFFS extends Tile implements ICamouflageMaterial, IPac
         return false;
     }
 
+    @Override
     public void setActive(boolean flag)
     {
         active = flag;
@@ -163,6 +164,7 @@ public abstract class TileMFFS extends Tile implements ICamouflageMaterial, IPac
         nbt.setBoolean("isRedstoneActive", this.isRedstoneActive);
     }
 
+    @Override
     public boolean isActive()
     {
         return active;

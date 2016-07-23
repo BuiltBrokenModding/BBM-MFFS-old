@@ -44,6 +44,7 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
         animation += 0.1f;
     }
 
+    @Override
     public boolean hasPermission(GameProfile profile, Permission permission)
     {
         if (!isActive || ModularForceFieldSystem.proxy.isOp(profile) && Settings.allowOpOverride)

@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class ItemCardLink extends ItemCard implements ICoordLink
 {
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag)
     {
@@ -49,6 +50,7 @@ public class ItemCardLink extends ItemCard implements ICoordLink
         return getLink(itemStack) != null;
     }
 
+    @Override
     public Location getLink(ItemStack itemStack)
     {
         if (itemStack.stackTagCompound == null || !itemStack.getTagCompound().hasKey("link"))
@@ -74,6 +76,7 @@ public class ItemCardLink extends ItemCard implements ICoordLink
         return true;
     }
 
+    @Override
     public void setLink(ItemStack itemStack, Location vec)
     {
         if (itemStack.getTagCompound() == null)
