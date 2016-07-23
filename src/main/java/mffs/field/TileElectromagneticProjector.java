@@ -2,13 +2,13 @@ package mffs.field;
 
 import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketTile;
+import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
-import mffs.Content;
 import mffs.ModularForceFieldSystem;
 import mffs.Reference;
 import mffs.Settings;
@@ -17,9 +17,11 @@ import mffs.api.modules.IModule;
 import mffs.api.modules.IProjectorMode;
 import mffs.base.TileFieldMatrix;
 import mffs.base.TilePacketType;
+import mffs.field.mode.ItemModeCustom;
 import mffs.item.card.ItemCard;
 import mffs.render.FieldColor;
 import mffs.security.MFFSPermissions;
+import mffs.util.TCache;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,12 +30,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TileElectromagneticProjector extends TileFieldMatrix implements IProjector
 {
@@ -161,83 +164,90 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         }
     }
 
-    public boolean read(buf:ByteBuf, id:Int, packetType:PacketType)
+    @Override
+    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packet)
     {
-        super.read(buf, id, packetType)
-
-        if (worldObj.isRemote)
+        if (!super.read(buf, id, player, packet))
         {
-            if (id == TilePacketType.description.id)
+            if (isClient())
             {
-                isInverted = buf.readBoolean()
-            }
-            else if (id == TilePacketType.effect.id)
-            {
-                val packetType = buf.readInt
-                val vector = new Vector3(buf.readInt, buf.readInt, buf.readInt) + 0.5
-                val root = toVector3 + 0.5
+                if (id == TilePacketType.description.ordinal())
+                {
+                    isInverted = buf.readBoolean();
+                }
+                else if (id == TilePacketType.effect.ordinal())
+                {
+                    int packetType = buf.readInt();
+                    Pos vector = new Pos(buf.readInt(), buf.readInt(), buf.readInt()).add(0.5);
+                    Pos root = toPos().add(0.5);
 
-                if (packetType == 1)
-                {
-                    ModularForceFieldSystem.proxy.renderBeam(this.worldObj, root, vector, FieldColor.blue, 40)
-                    ModularForceFieldSystem.proxy.renderHologramMoving(this.worldObj, vector, FieldColor.blue, 50)
+                    if (packetType == 1)
+                    {
+                        ModularForceFieldSystem.proxy.renderBeam(this.worldObj, root, vector, FieldColor.RED, 40);
+                        ModularForceFieldSystem.proxy.renderHologramMoving(this.worldObj, vector, FieldColor.RED, 50);
+                    }
+                    else if (packetType == 2)
+                    {
+                        ModularForceFieldSystem.proxy.renderBeam(this.worldObj, vector, root, FieldColor.RED, 40);
+                        ModularForceFieldSystem.proxy.renderHologramMoving(this.worldObj, vector, FieldColor.RED, 50);
+                    }
                 }
-                else if (packetType == 2)
+                else if (id == TilePacketType.field.ordinal())
                 {
-                    ModularForceFieldSystem.proxy.renderBeam(this.worldObj, vector, root, FieldColor.red, 40)
-                    ModularForceFieldSystem.proxy.renderHologramMoving(this.worldObj, vector, FieldColor.red, 50)
+                    NBTTagCompound nbt = ByteBufUtils.readTag(buf);
+                    NBTTagList nbtList = nbt.getTagList("blockList", 10);
+                    calculatedField = new ArrayList();
+                    for (int i = 0; i < nbtList.tagCount(); i++)
+                    {
+                        calculatedField.add(new Pos(nbtList.getCompoundTagAt(i)));
+                    }
                 }
             }
-            else if (id == TilePacketType.field.id)
+            else
             {
-                val nbt = ByteBufUtils.readTag(buf)
-                val nbtList = nbt.getTagList("blockList", 10)
-                calculatedField = mutable.Set(((0until nbtList.tagCount)
-                map(i = > new Vector3(nbtList.getCompoundTagAt(i)))).toArray:
-            _ *)
+                if (id == TilePacketType.toggleMode2.ordinal())
+                {
+                    isInverted = !isInverted;
+                }
             }
+            return false;
         }
-        else
-        {
-            if (id == TilePacketType.toggleMode2.id)
-            {
-                isInverted = !isInverted
-            }
-        }
+        return true;
     }
 
+    @Override
     public void update()
     {
-        super.update()
+        super.update();
 
-        if (isActive && getMode != null && requestFortron(getFortronCost, false) >= this.getFortronCost)
+        if (isActive() && getMode() != null && requestFortron(getFortronCost(), false) >= this.getFortronCost())
         {
-            consumeCost()
+            consumeCost();
 
             if (ticks % 10 == 0 || markFieldUpdate || fieldRequireTicks)
             {
                 if (calculatedField == null)
                 {
-                    calculateField(postCalculation)
+                    calculateField();
                 }
                 else
                 {
-                    projectField()
+                    projectField();
                 }
             }
 
-            if (isActive && worldObj.isRemote)
+            if (isActive() && worldObj.isRemote)
             {
-                animation += getFortronCost / 100f
+                animation += getFortronCost() / 100f;
             }
-            if (ticks % (2 * 20) == 0 && getModuleCount(Content.moduleSilence) <= 0)
+            if (ticks % (2 * 20) == 0 && getModuleCount(ModularForceFieldSystem.moduleSilence) <= 0)
             {
-                worldObj.playSoundEffect(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D, Reference.prefix + "field", 0.6f, (1 - this.worldObj.rand.nextFloat * 0.1f))
+                worldObj.playSoundEffect(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D, Reference.prefix + "field", 0.6f, (1 - this.worldObj.rand.nextFloat() * 0.1f));
             }
         }
         else if (!worldObj.isRemote)
         {
-            destroyField()
+            destroyField();
         }
     }
 
@@ -250,94 +260,94 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
         if (!isCalculating)
         {
-            val potentialField = calculatedField
+            List<Pos> potentialField = calculatedField;
 
-            val relevantModules = getModules(getModuleSlots:_ *)
+            List<IModule> relevantModules = getModules(getModuleSlots());
 
-            if (!relevantModules.exists(_.onProject(this, potentialField)))
+            if (!relevantModules.stream().anyMatch(m -> m.onProject(this, potentialField)))
             {
                 if (!isCompleteConstructing || markFieldUpdate || fieldRequireTicks)
                 {
-                    markFieldUpdate = false
+                    markFieldUpdate = false;
 
-                    if (forceFields.size <= 0)
+                    if (forceFields.size() <= 0)
                     {
-                        if (getModeStack.getItem.isInstanceOf[TCache])
+                        if (getModeStack().getItem() instanceof TCache)
                         {
-                            (getModeStack.getItem.asInstanceOf[TCache]).clearCache
+                            ((TCache) getModeStack().getItem()).clearCache();
                         }
                     }
 
-                    val constructionSpeed = Math.min(getProjectionSpeed, Settings.maxForceFieldsPerTick)
+                    int constructionSpeed = Math.min(getProjectionSpeed(), Settings.maxForceFieldsPerTick);
 
+                    final Pos tilePos = toPos();
                     //Creates a collection of positions that will be evaluated
-                    val evaluateField = potentialField
-                            .view.par
-                            .filter(!_.equals(toVector3))
-                            .filter(v = > canReplaceBlock(v, v.getBlock(world)))
-                    .filter(_.getBlock(world) != Content.forceField)
-                        .filter(v = > world.getChunkFromBlockCoords(v.xi, v.zi).isChunkLoaded)
-                    .take(constructionSpeed)
+                    List<Pos> evaluateField = potentialField.stream()
+                            .filter(p -> !p.equals(tilePos))
+                            .filter(v -> canReplaceBlock(v, v.getBlock(world())))
+                            .filter(v -> v.getBlock(world()) != ModularForceFieldSystem.forceField)
+                            .filter(v -> world().getChunkFromBlockCoords(v.xi(), v.zi()).isChunkLoaded).limit(constructionSpeed).collect(Collectors.toList());
 
                     //The collection containing the coordinates to actually place the field blocks.
-                    var constructField = Set.empty[Vector3]
+                    List<Pos> constructField = new ArrayList();
 
-                    val result = evaluateField.forall(
-                            vector = >
+                    boolean result = true;
+                    evaluateField.stream().allMatch(
+                            vector ->
                             {
-                                    var flag = 0
+                                int flag = 0;
 
-                    for (module< -relevantModules)
-                    {
-                        if (flag == 0)
-                        {
-                            flag = module.onProject(this, vector)
-                        }
-                    }
+                                for (IModule module : relevantModules)
+                                {
+                                    if (flag == 0)
+                                    {
+                                        flag = module.onProject(this, vector);
+                                    }
+                                }
 
-                    if (flag != 1 && flag != 2)
-                    {
-                        constructField += vector
-                    }
+                                if (flag != 1 && flag != 2)
+                                {
+                                    constructField.add(vector);
+                                }
 
-                    flag != 2
-                    })
+                                return flag != 2;
+                            });
 
                     if (result)
                     {
-                        constructField.foreach(
-                                vector = >
+                        constructField.forEach(
+                                vector ->
                                 {
-                        /**
-                         * Default force field block placement action.
-                         */
-                        if (!world.isRemote)
-                        {
-                            vector.setBlock(world, Content.forceField)
-                        }
+                                    /**
+                                     * Default force field block placement action.
+                                     */
+                                    if (!world().isRemote)
+                                    {
+                                        vector.setBlock(world(), ModularForceFieldSystem.forceField);
+                                    }
 
-                        forceFields += vector
+                                    forceFields.add(vector);
 
-                        val tileEntity = vector.getTileEntity(world)
+                                    TileEntity tileEntity = vector.getTileEntity(world());
 
-                        if (tileEntity.isInstanceOf[TileForceField])
-                        {
-                            tileEntity.asInstanceOf[TileForceField].setProjector(toVector3)
-                        }
-                        })
+                                    if (tileEntity instanceof TileForceField)
+                                    {
+                                        ((TileForceField)tileEntity).setProjector(toPos());
+                                    }
+                                });
                     }
 
-                    isCompleteConstructing = evaluateField.size == 0
+                    isCompleteConstructing = evaluateField.size() == 0;
                 }
             }
         }
     }
 
-    private boolean canReplaceBlock(vector:Vector3, block:Block)
+    private boolean canReplaceBlock(Pos vector, Block block)
     {
         return block == null ||
-                (getModuleCount(Content.moduleDisintegration) > 0 && block.getBlockHardness(this.worldObj, vector.xi, vector.yi, vector.zi) != -1) ||
-                (block.getMaterial.isLiquid || block == Blocks.snow || block == Blocks.vine || block == Blocks.tallgrass || block == Blocks.deadbush || block.isReplaceable(world, vector.xi, vector.yi, vector.zi))
+                (getModuleCount(ModularForceFieldSystem.moduleDisintegration) > 0 && block.getBlockHardness(this.worldObj, vector.xi(), vector.yi(), vector.zi()) != -1) ||
+                (block.getMaterial().isLiquid() || block == Blocks.snow || block == Blocks.vine || block == Blocks.tallgrass || block == Blocks.deadbush || block.isReplaceable(world(), vector.xi(), vector.yi(), vector.zi()));
     }
 
     public int getProjectionSpeed()
@@ -347,16 +357,16 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
     public void destroyField()
     {
-        if (!world.isRemote && calculatedField != null && !isCalculating)
+        if (!world().isRemote && calculatedField != null && !isCalculating)
         {
-            getModules(getModuleSlots:_ *).forall(!_.onDestroy(this, calculatedField))
+            getModules(getModuleSlots()).forEach(m -> m.onDestroy(this, calculatedField));
             //TODO: Parallelism?
-            calculatedField.view filter (_.getBlock(world) == Content.forceField) foreach(_.setBlock(world, Blocks.air))
+            calculatedField.stream().filter(p -> p.getBlock(world()) == ModularForceFieldSystem.forceField).forEach(p -> p.setBlock(world(), Blocks.air));
 
-            forceFields.clear()
-            calculatedField = null
-            isCompleteConstructing = false
-            fieldRequireTicks = false
+            forceFields.clear();
+            calculatedField = null;
+            isCompleteConstructing = false;
+            fieldRequireTicks = false;
         }
     }
 
@@ -364,7 +374,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     {
         super.markDirty();
 
-        if (world != null)
+        if (world() != null)
         {
             destroyField();
         }
@@ -387,9 +397,10 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         return ticks;
     }
 
-    public boolean isInField(position:Vector3)
-
-    =if(getMode!=null)getMode.isInField(this,position)else false
+    public boolean isInField(Pos position)
+    {
+        return getMode() != null ? getMode().isInField(this, position) : false;
+    }
 
     public boolean isAccessGranted(World checkWorld, Pos checkPos, EntityPlayer player, PlayerInteractEvent.Action action)
     {
@@ -397,17 +408,17 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
         if (action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && checkPos.getTileEntity(checkWorld) != null)
         {
-            if (getModuleCount(Content.moduleBlockAccess) > 0)
+            if (getModuleCount(ModularForceFieldSystem.moduleBlockAccess) > 0)
             {
-                hasPerm = hasPermission(player.getGameProfile, MFFSPermissions.blockAccess)
+                hasPerm = hasPermission(player.getGameProfile(), MFFSPermissions.blockAccess);
             }
         }
 
         if (hasPerm)
         {
-            if (getModuleCount(Content.moduleBlockAlter) > 0 && (player.getCurrentEquippedItem != null || action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK))
+            if (getModuleCount(ModularForceFieldSystem.moduleBlockAlter) > 0 && (player.getCurrentEquippedItem() != null || action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK))
             {
-                hasPerm = hasPermission(player.getGameProfile, MFFSPermissions.blockAlter)
+                hasPerm = hasPermission(player.getGameProfile(), MFFSPermissions.blockAlter);
             }
         }
 
@@ -449,24 +460,22 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
      * Rendering
      */
     @SideOnly(Side.CLIENT)
-    public boolean renderStatic(renderer:RenderBlocks, pos:Vector3, pass:Int)
-
-    :Boolean=
-
+    @Override
+    public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass)
     {
-        return false
+        return false;
     }
 
     @SideOnly(Side.CLIENT)
-    public void renderDynamic(pos:Vector3, frame:Float, pass:Int)
+    public void renderDynamic(Pos pos, float frame, int pass)
     {
-        RenderElectromagneticProjector.render(this, pos.x, pos.y, pos.z, frame, isActive, false)
+        RenderElectromagneticProjector.render(this, pos.x(), pos.y(), pos.z(), frame, isActive(), false);
     }
 
     @SideOnly(Side.CLIENT)
-    public void renderInventory(itemStack:ItemStack)
+    public void renderInventory(ItemStack itemStack)
     {
-        RenderElectromagneticProjector.render(this, -0.5, -0.5, -0.5, 0, true, true)
+        RenderElectromagneticProjector.render(this, -0.5, -0.5, -0.5, 0, true, true);
     }
 
     /**
@@ -474,26 +483,19 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
      */
     protected int doGetFortronCost()
     {
-        if (this.getMode != null)
+        if (this.getMode() != null)
         {
-            return Math.round(super.doGetFortronCost + this.getMode.getFortronCost(this.getAmplifier))
+            return Math.round(super.doGetFortronCost() + this.getMode().getFortronCost(this.getAmplifier()));
         }
-        return 0
+        return 0;
     }
 
     protected float getAmplifier()
     {
-        if (this.getMode.isInstanceOf[ItemModeCustom])
+        if (this.getMode() instanceof ItemModeCustom)
         {
-            return Math.max((this.getMode.asInstanceOf[ItemModeCustom]).getFieldBlocks(this, this.getModeStack).size / 100, 1)
+            return Math.max(((ItemModeCustom) this.getMode()).getFieldBlocks(this, this.getModeStack()).size() / 100, 1);
         }
-        return Math.max(Math.min(( if (calculatedField != null)
-    {
-        calculatedField.size
-    }
-    else
-    {
-        0
-    })/1000, 10),1)
+        return Math.max(Math.min((calculatedField != null ? calculatedField.size() : 0) / 1000, 10), 1);
     }
 }

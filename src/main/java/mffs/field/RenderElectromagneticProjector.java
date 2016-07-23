@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
-final class RenderElectromagneticProjector {
+public final class RenderElectromagneticProjector {
 	private static ResourceLocation textureOn = new ResourceLocation(Reference.domain,
 			Reference.modelPath + "electromagneticProjector_on.png");
 	private static ResourceLocation textureOff = new ResourceLocation(Reference.domain,
@@ -20,7 +20,7 @@ final class RenderElectromagneticProjector {
 	private static IModelCustom model = AdvancedModelLoader
 			.loadModel(new ResourceLocation(Reference.domain, Reference.modelPath + "electromagneticProjector.tcn"));
 
-	public void render(TileElectromagneticProjector tileEntity, Double x, Double y, Double z, Float frame, Boolean isActive, Boolean isItem)
+	public static void render(TileElectromagneticProjector tileEntity, double x, double y, double z, float frame, boolean isActive, boolean isItem)
   {
     glPushMatrix();
     glTranslated(x + 0.5, y + 0.5, z + 0.5);

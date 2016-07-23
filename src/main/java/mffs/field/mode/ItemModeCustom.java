@@ -1,28 +1,34 @@
-package mffs.field.mode
+package mffs.field.mode;
 
-import java.io.File
-import java.util
-import java.util.{Set => JSet}
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import mffs.Content;
+import mffs.Settings;
+import mffs.api.machine.IFieldMatrix;
+import mffs.field.module.ItemModuleArray;
+import net.minecraft.block.Block;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import scala.collection.JavaConversions._;
+import scala.collection.mutable;
 
-import com.builtbroken.mc.lib.transform.vector.Pos
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import mffs.field.module.ItemModuleArray
-import mffs.util.TCache
-import mffs.{Content, Settings}
-import net.minecraft.block.Block
-import net.minecraft.client.gui.GuiScreen
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
-import net.minecraft.server.MinecraftServer
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.ChatComponentText
-import net.minecraft.world.World
-import net.minecraftforge.common.util.ForgeDirection
-import resonant.api.mffs.machine.IFieldMatrix
+import java.io.File;
+import java.util;
+import java.util.List;
 
-import scala.collection.JavaConversions._
-import scala.collection.mutable
+{Set=>JSet}
+        {Side,SideOnly}
+        {Content,Settings}
+        {NBTTagCompound,NBTTagList}
 
 public class ItemModeCustom extends ItemMode with TCache
 {
@@ -227,7 +233,7 @@ public class ItemModeCustom extends ItemMode with TCache
     return this.getFieldBlocks(projector, projector.getModeStack)
   }
 
-  def getFieldBlocks(projector: IFieldMatrix, itemStack: ItemStack): Set[Vector3] =
+  public List<Pos> getFieldBlocks(IFieldMatrix projector, ItemStack itemStack)
   {
     return getFieldBlockMapClean(projector, itemStack).keySet.toSet
   }

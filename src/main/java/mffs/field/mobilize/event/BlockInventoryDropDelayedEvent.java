@@ -7,7 +7,7 @@ import net.minecraft.world.World
 
 import scala.collection.JavaConversions._
 
-class BlockInventoryDropDelayedEvent(handler: IDelayedEventHandler, ticks: Int, block: Block, world: World, position: Vector3, projector: TileMFFSInventory) extends BlockDropDelayedEvent(handler, ticks, block, world, position)
+public class BlockInventoryDropDelayedEvent(handler: IDelayedEventHandler, ticks: Int, block: Block, world: World, position: Vector3, projector: TileMFFSInventory) extends BlockDropDelayedEvent(handler, ticks, block, world, position)
 {
   protected override def onEvent
   {

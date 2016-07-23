@@ -3,7 +3,7 @@ package mffs.render;
 public enum FieldColor {
 	RED(1f, 0f, 0f), GREEN(0f, 1f, 0f), BLUE(0.5f, 0.9f, 1f);
 
-	private float r, g, b;
+	public final float r, g, b;
 
 	private FieldColor(float r, float g, float b) {
 		this.r = r;

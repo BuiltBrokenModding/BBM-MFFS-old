@@ -5,7 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
-class BlockDropDelayedEvent extends DelayedEvent
+public class BlockDropDelayedEvent extends DelayedEvent
 {
     public BlockDropDelayedEvent(IDelayedEventHandler handler, int ticks, Block block, World world, Pos pos)
     {

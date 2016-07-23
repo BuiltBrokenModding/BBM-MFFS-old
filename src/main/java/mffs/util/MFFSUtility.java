@@ -33,12 +33,12 @@ public class MFFSUtility
      * Gets the first itemStack that is an ItemBlock in this TileEntity or in
      * nearby chests.
      */
-    public ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack)
+    public static ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack)
     {
         return getFirstItemBlock(tileEntity, itemStack, true);
     }
 
-    public ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack, Boolean recur)
+    public static ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack, Boolean recur)
     {
         if (tileEntity instanceof IProjector)
         {
@@ -85,7 +85,7 @@ public class MFFSUtility
         return null;
     }
 
-    public ItemStack getFirstItemBlock(int i, IInventory inventory, ItemStack itemStack)
+    public static ItemStack getFirstItemBlock(int i, IInventory inventory, ItemStack itemStack)
     {
         ItemStack checkStack = inventory.getStackInSlot(i);
         if (checkStack != null && checkStack.getItem() instanceof ItemBlock
@@ -96,7 +96,7 @@ public class MFFSUtility
         return null;
     }
 
-    public ItemStack getCamoBlock(IProjector proj, Pos position)
+    public static ItemStack getCamoBlock(IProjector proj, Pos position)
     {
         if (proj instanceof TileElectromagneticProjector)
         {
@@ -132,7 +132,7 @@ public class MFFSUtility
         return null;
     }
 
-    public Block getFilterBlock(ItemStack itemStack)
+    public static Block getFilterBlock(ItemStack itemStack)
     {
         if (itemStack != null)
         {
@@ -142,7 +142,7 @@ public class MFFSUtility
         return null;
     }
 
-    public Block getFilterBlock(Item item)
+    public static Block getFilterBlock(Item item)
     {
         if (item instanceof ItemBlock)
         {
@@ -151,12 +151,12 @@ public class MFFSUtility
         return null;
     }
 
-    public boolean hasPermission(World world, Pos position, Permission permission, EntityPlayer player)
+    public static boolean hasPermission(World world, Pos position, Permission permission, EntityPlayer player)
     {
         return hasPermission(world, position, permission, player.getGameProfile());
     }
 
-    public boolean hasPermission(World world, Pos position, Permission permission, GameProfile profile)
+    public static boolean hasPermission(World world, Pos position, Permission permission, GameProfile profile)
     {
         for(TileElectromagneticProjector projector : getRelevantProjectors(world, position))
         {
@@ -168,7 +168,7 @@ public class MFFSUtility
         return true;
     }
 
-    public boolean hasPermission(World world, Pos position, PlayerInteractEvent.Action action, EntityPlayer player)
+    public static boolean hasPermission(World world, Pos position, PlayerInteractEvent.Action action, EntityPlayer player)
     {
         for(TileElectromagneticProjector projector : getRelevantProjectors(world, position))
         {
@@ -183,7 +183,7 @@ public class MFFSUtility
     /**
      * Gets the set of projectors that have an effect in this position.
      */
-    public List<TileElectromagneticProjector> getRelevantProjectors(World world, Pos position)
+    public static List<TileElectromagneticProjector> getRelevantProjectors(World world, Pos position)
     {
         return FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class);
     }
