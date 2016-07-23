@@ -129,6 +129,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     /**
      * Initiate a field calculation
      */
+    @Override
     protected void calculateField()
     {
         if (!worldObj.isRemote && !isCalculating)
@@ -254,6 +255,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     /**
      * Projects a force field based on the calculations made.
      */
+    @Override
     public void projectField()
     {
         //TODO: We cannot construct a field if it intersects another field with different frequency. Override not allowed.
@@ -350,11 +352,13 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
                 (block.getMaterial().isLiquid() || block == Blocks.snow || block == Blocks.vine || block == Blocks.tallgrass || block == Blocks.deadbush || block.isReplaceable(world(), vector.xi(), vector.yi(), vector.zi()));
     }
 
+    @Override
     public int getProjectionSpeed()
     {
         return 28 + 28 * getModuleCount(ModularForceFieldSystem.moduleSpeed, getModuleSlots());
     }
 
+    @Override
     public void destroyField()
     {
         if (!world().isRemote && calculatedField != null && !isCalculating)
@@ -370,6 +374,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         }
     }
 
+    @Override
     public void markDirty()
     {
         super.markDirty();
@@ -387,11 +392,13 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         super.invalidate();
     }
 
+    @Override
     public List<Pos> getForceFields()
     {
         return forceFields;
     }
 
+    @Override
     public long getTicks()
     {
         return ticks;
@@ -466,12 +473,14 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         return false;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderDynamic(Pos pos, float frame, int pass)
     {
         RenderElectromagneticProjector.render(this, pos.x(), pos.y(), pos.z(), frame, isActive(), false);
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderInventory(ItemStack itemStack)
     {
@@ -481,6 +490,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     /**
      * Returns Fortron cost in ticks.
      */
+    @Override
     protected int doGetFortronCost()
     {
         if (this.getMode() != null)
@@ -490,6 +500,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         return 0;
     }
 
+    @Override
     protected float getAmplifier()
     {
         if (this.getMode() instanceof ItemModeCustom)
