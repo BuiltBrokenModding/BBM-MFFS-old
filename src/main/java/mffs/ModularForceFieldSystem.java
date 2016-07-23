@@ -76,12 +76,12 @@ public class ModularForceFieldSystem extends AbstractMod
     /**
      * Modes
      */
-    public static Item modeCube;
-    public static Item modeSphere;
-    public static Item modeTube;
-    public static Item modeCylinder;
-    public static Item modePyramid;
-    public static Item modeCustom;
+    public static ItemMode modeCube;
+    public static ItemMode modeSphere;
+    public static ItemMode modeTube;
+    public static ItemMode modeCylinder;
+    public static ItemMode modePyramid;
+    public static ItemMode modeCustom;
     public static ItemModule moduleTranslate;
     public static ItemModule moduleScale;
     public static ItemModule moduleRotate;
@@ -94,7 +94,7 @@ public class ModularForceFieldSystem extends AbstractMod
     public static ItemModule moduleDome;
     public static ItemModule moduleCamouflage;
     public static ItemModule moduleApproximation;
-    public static ItemModule moduleArray;
+    public static ItemModuleArray moduleArray;
     public static ItemModule moduleDisintegration;
     public static ItemModule moduleShock;
     public static ItemModule moduleGlow;

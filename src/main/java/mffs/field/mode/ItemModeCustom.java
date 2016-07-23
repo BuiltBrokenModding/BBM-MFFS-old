@@ -1,12 +1,17 @@
 package mffs.field.mode;
 
+import com.builtbroken.jlib.type.Pair;
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import com.builtbroken.mc.lib.helper.NBTUtility;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mffs.Content;
+import mffs.ModularForceFieldSystem;
 import mffs.Settings;
 import mffs.api.machine.IFieldMatrix;
-import mffs.field.module.ItemModuleArray;
+import mffs.api.machine.IProjector;
+import mffs.api.modules.IProjectorMode;
+import mffs.util.TCache;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,297 +23,309 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import scala.collection.JavaConversions._;
-import scala.collection.mutable;
 
 import java.io.File;
-import java.util;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-{Set=>JSet}
-        {Side,SideOnly}
-        {Content,Settings}
-        {NBTTagCompound,NBTTagList}
-
-public class ItemModeCustom extends ItemMode with TCache
+public class ItemModeCustom extends ItemMode implements TCache
 {
-  private final val NBT_ID: String = "id"
-  private final val NBT_MODE: String = "mode"
-  private final val NBT_POINT_1: String = "point1"
-  private final val NBT_POINT_2: String = "point2"
-  private final val NBT_FIELD_BLOCK_LIST: String = "fieldPoints"
-  private final val NBT_FIELD_BLOCK_NAME: String = "blockID"
-  private final val NBT_FIELD_BLOCK_METADATA: String = "blockMetadata"
-  private final val NBT_FIELD_SIZE: String = "fieldSize"
-  private final val NBT_FILE_SAVE_PREFIX: String = "custom_mode_"
+    private final String NBT_ID = "id";
+    private final String NBT_MODE = "mode";
+    private final String NBT_POINT_1 = "point1";
+    private final String NBT_POINT_2 = "point2";
+    private final String NBT_FIELD_BLOCK_LIST = "fieldPoints";
+    private final String NBT_FIELD_BLOCK_NAME = "blockID";
+    private final String NBT_FIELD_BLOCK_METADATA = "blockMetadata";
+    private final String NBT_FIELD_SIZE = "fieldSize";
+    private final String NBT_FILE_SAVE_PREFIX = "custom_mode_";
 
-  val modes = Array(Content.modeCube, Content.modeSphere, Content.modeTube, Content.modePyramid)
+    IProjectorMode[] modes = new IProjectorMode[]{ModularForceFieldSystem.modeCube, ModularForceFieldSystem.modeSphere, ModularForceFieldSystem.modeTube, ModularForceFieldSystem.modePyramid};
 
-  override def addInformation(itemStack: ItemStack, par2EntityPlayer: EntityPlayer, list: util.List[_], par4: Boolean)
-  {
-    val nbt: NBTTagCompound = NBTUtility.getNBTTagCompound(itemStack)
-    list.add(LanguageUtility.getLocal("info.modeCustom.mode") + " " + (if (nbt.getBoolean(NBT_MODE)) LanguageUtility.getLocal("info.modeCustom.substraction") else LanguageUtility.getLocal("info.modeCustom.additive")))
-    val point1: Vector3 = new Vector3(nbt.getCompoundTag(NBT_POINT_1))
-    list.add(LanguageUtility.getLocal("info.modeCustom.point1") + " " + point1.xi + ", " + point1.yi + ", " + point1.zi)
-    val point2: Vector3 = new Vector3(nbt.getCompoundTag(NBT_POINT_2))
-    list.add(LanguageUtility.getLocal("info.modeCustom.point2") + " " + point2.xi + ", " + point2.yi + ", " + point2.zi)
-    val modeID: Int = nbt.getInteger(NBT_ID)
-    if (modeID > 0)
+    public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List list, boolean par4)
     {
-      list.add(LanguageUtility.getLocal("info.modeCustom.modeID") + " " + modeID)
-      val fieldSize: Int = nbt.getInteger(NBT_FIELD_SIZE)
-      if (fieldSize > 0)
-      {
-        list.add(LanguageUtility.getLocal("info.modeCustom.fieldSize") + " " + fieldSize)
-      }
-      else
-      {
-        list.add(LanguageUtility.getLocal("info.modeCustom.notSaved"))
-      }
-    }
-    if (GuiScreen.isShiftKeyDown)
-    {
-      super.addInformation(itemStack, par2EntityPlayer, list, par4)
-    }
-    else
-    {
-      list.add(LanguageUtility.getLocal("info.modeCustom.shift"))
-    }
-  }
-
-  override def onItemRightClick(itemStack: ItemStack, world: World, entityPlayer: EntityPlayer): ItemStack =
-  {
-    if (!world.isRemote)
-    {
-      if (entityPlayer.isSneaking)
-      {
-        val nbt: NBTTagCompound = NBTUtility.getNBTTagCompound(itemStack)
-        if (nbt != null)
+        NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);
+        list.add(LanguageUtility.getLocal("info.modeCustom.mode") + " " + (
+                nbt.getBoolean(NBT_MODE) ? LanguageUtility.getLocal("info.modeCustom.substraction") : LanguageUtility.getLocal("info.modeCustom.additive"));
+        Pos point1 = new Pos(nbt.getCompoundTag(NBT_POINT_1));
+        list.add(LanguageUtility.getLocal("info.modeCustom.point1") + " " + point1.xi() + ", " + point1.yi() + ", " + point1.zi());
+        Pos point2 = new Pos(nbt.getCompoundTag(NBT_POINT_2));
+        list.add(LanguageUtility.getLocal("info.modeCustom.point2") + " " + point2.xi() + ", " + point2.yi() + ", " + point2.zi());
+        int modeID = nbt.getInteger(NBT_ID);
+        if (modeID > 0)
         {
-          val point1 = new Vector3(nbt.getCompoundTag(NBT_POINT_1))
-          val point2 = new Vector3(nbt.getCompoundTag(NBT_POINT_2))
-
-          if (nbt.hasKey(NBT_POINT_1) && nbt.hasKey(NBT_POINT_2) && !(point1 == point2))
-          {
-            if (point1.distance(point2) < Settings.maxForceFieldScale)
+            list.add(LanguageUtility.getLocal("info.modeCustom.modeID") + " " + modeID);
+            int fieldSize = nbt.getInteger(NBT_FIELD_SIZE);
+            if (fieldSize > 0)
             {
-              nbt.removeTag(NBT_POINT_1)
-              nbt.removeTag(NBT_POINT_2)
-              var midPoint = point1.midpoint(point2).floor
-              point1 -= midPoint
-              point2 -= midPoint
-              val minPoint = point1.min(point2)
-              val maxPoint = point1.max(point2)
-
-              var saveNBT = NBTUtility.loadData(getSaveDirectory, NBT_FILE_SAVE_PREFIX + getModeID(itemStack))
-
-              if (saveNBT == null)
-              {
-                saveNBT = new NBTTagCompound
-              }
-
-              var list: NBTTagList = null
-              if (saveNBT.hasKey(NBT_FIELD_BLOCK_LIST))
-              {
-                list = saveNBT.getTag(NBT_FIELD_BLOCK_LIST).asInstanceOf[NBTTagList]
-              }
-              else
-              {
-                list = new NBTTagList
-              }
-
-              for (x <- minPoint.xi to maxPoint.xi; y <- minPoint.yi to maxPoint.yi; z <- minPoint.zi to maxPoint.zi)
-              {
-                val position = new Vector3(x, y, z)
-                val targetCheck = midPoint + position
-                val block = targetCheck.getBlock(world)
-
-                if (!block.isAir(world, targetCheck.xi, targetCheck.yi, targetCheck.zi))
-                {
-                  /**
-                   * Additive and Subtractive modes
-                   */
-                  if (!nbt.getBoolean(NBT_MODE))
-                  {
-                    val vectorTag = position.toNBT
-                    vectorTag.setString(NBT_FIELD_BLOCK_NAME, Block.blockRegistry.getNameForObject(block))
-                    vectorTag.setInteger(NBT_FIELD_BLOCK_METADATA, targetCheck.getBlockMetadata(world))
-                    list.appendTag(vectorTag)
-                  }
-                  else
-                  {
-                    (0 until list.tagCount) filter (i => new Vector3(list.getCompoundTagAt(i)).equals(position)) foreach (list.removeTag(_))
-                  }
-                }
-              }
-
-              saveNBT.setTag(NBT_FIELD_BLOCK_LIST, list)
-              nbt.setInteger(NBT_FIELD_SIZE, list.tagCount)
-              NBTUtility.saveData(getSaveDirectory, NBT_FILE_SAVE_PREFIX + getModeID(itemStack), saveNBT)
-              clearCache()
-              entityPlayer.addChatMessage(new ChatComponentText(LanguageUtility.getLocal("message.modeCustom.saved")))
+                list.add(LanguageUtility.getLocal("info.modeCustom.fieldSize") + " " + fieldSize);
             }
-          }
+            else
+            {
+                list.add(LanguageUtility.getLocal("info.modeCustom.notSaved"));
+            }
         }
-      }
-      else
-      {
-        val nbt = NBTUtility.getNBTTagCompound(itemStack)
-
-        if (nbt != null)
+        if (GuiScreen.isShiftKeyDown())
         {
-          nbt.setBoolean(NBT_MODE, !nbt.getBoolean(NBT_MODE))
-          entityPlayer.addChatMessage(new ChatComponentText(LanguageUtility.getLocal("message.modeCustom.modeChange").replaceAll("#p", (if (nbt.getBoolean(NBT_MODE)) LanguageUtility.getLocal("info.modeCustom.substraction") else LanguageUtility.getLocal("info.modeCustom.additive")))))
-        }
-      }
-    }
-    return itemStack
-  }
-
-  override def onItemUse(itemStack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, par7: Int, par8: Float, par9: Float, par10: Float): Boolean =
-  {
-    if (!world.isRemote)
-    {
-      val nbt: NBTTagCompound = NBTUtility.getNBTTagCompound(itemStack)
-      if (nbt != null)
-      {
-        val point1: Vector3 = new Vector3(nbt.getCompoundTag(NBT_POINT_1))
-        if (!nbt.hasKey(NBT_POINT_1) || (point1 == new Vector3(0, 0, 0)))
-        {
-          nbt.setTag(NBT_POINT_1, new Vector3(x, y, z).toNBT)
-          player.addChatMessage(new ChatComponentText("Set point 1: " + x + ", " + y + ", " + z + "."))
+            super.addInformation(itemStack, par2EntityPlayer, list, par4);
         }
         else
         {
-          nbt.setTag(NBT_POINT_2, new Vector3(x, y, z).toNBT)
-          player.addChatMessage(new ChatComponentText("Set point 2: " + x + ", " + y + ", " + z + "."))
+            list.add(LanguageUtility.getLocal("info.modeCustom.shift"));
         }
-      }
     }
-    return true
-  }
 
-  def getFieldBlockMap(projector: IFieldMatrix, itemStack: ItemStack): util.HashMap[Pos, Pair[Block, Int]] =
-  {
-    val cacheID = "itemStack_" + itemStack.hashCode
-
-    if (hasCache(classOf[mutable.Map[Vector3, (Block, Int)]], cacheID)) return getCache(classOf[mutable.Map[Vector3, (Block, Int)]], cacheID)
-
-    val fieldMap = getFieldBlockMapClean(projector, itemStack)
-
-    if (projector.getModuleCount(Content.moduleArray) > 0)
+    @Override
+    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer)
     {
-      val longestDirectional = (Content.moduleArray.asInstanceOf[ItemModuleArray]).getDirectionWidthMap(fieldMap.keySet)
-
-      for (direction <- ForgeDirection.VALID_DIRECTIONS)
-      {
-        val copyAmount = projector.getSidedModuleCount(Content.moduleArray, direction)
-        val directionalDisplacement = (Math.abs(longestDirectional(direction)) + Math.abs(longestDirectional(direction.getOpposite))) + 1
-
-        (0 until copyAmount) foreach (i =>
+        if (!world.isRemote)
         {
-          val directionalDisplacementScale = directionalDisplacement * (i + 1)
+            if (entityPlayer.isSneaking())
+            {
+                NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);
+                if (nbt != null)
+                {
+                    Pos point1 = new Pos(nbt.getCompoundTag(NBT_POINT_1));
+                    Pos point2 = new Pos(nbt.getCompoundTag(NBT_POINT_2));
 
-          getFieldBlocks(projector, itemStack) foreach (originalVec =>
-          {
-            val newFieldBlock = originalVec.clone + new Vector3(direction) * directionalDisplacementScale
-            fieldMap.put(newFieldBlock, fieldMap(originalVec))
-          })
-        })
-      }
+                    if (nbt.hasKey(NBT_POINT_1) && nbt.hasKey(NBT_POINT_2) && !(point1 == point2))
+                    {
+                        if (point1.distance(point2) < Settings.maxForceFieldScale)
+                        {
+                            nbt.removeTag(NBT_POINT_1);
+                            nbt.removeTag(NBT_POINT_2);
+                            Pos midPoint = point1.midpoint(point2).floor();
+                            point1 = point1.sub(midPoint);
+                            point2 = point2.sub(midPoint);
+                            Pos minPoint = point1.min(point2);
+                            Pos maxPoint = point1.max(point2);
+
+                            NBTTagCompound saveNBT = NBTUtility.loadData(getSaveDirectory(), NBT_FILE_SAVE_PREFIX + getModeID(itemStack));
+
+                            if (saveNBT == null)
+                            {
+                                saveNBT = new NBTTagCompound();
+                            }
+
+                            NBTTagList list = null;
+                            if (saveNBT.hasKey(NBT_FIELD_BLOCK_LIST))
+                            {
+                                list = saveNBT.getTagList(NBT_FIELD_BLOCK_LIST, 10);
+                            }
+                            else
+                            {
+                                list = new NBTTagList();
+                            }
+
+                            for (int x = minPoint.xi(); x <= maxPoint.xi(); x++)
+                            {
+                                for (int y = minPoint.yi(); y <= maxPoint.yi(); y++)
+                                {
+                                    for (int z = minPoint.zi(); z <= maxPoint.zi(); z++)
+                                    {
+                                        Pos position = new Pos(x, y, z);
+                                        Pos targetCheck = midPoint.add(position);
+                                        Block block = targetCheck.getBlock(world);
+
+                                        if (!block.isAir(world, targetCheck.xi(), targetCheck.yi(), targetCheck.zi()))
+                                        {
+                                            /**
+                                             * Additive and Subtractive modes
+                                             */
+                                            if (!nbt.getBoolean(NBT_MODE))
+                                            {
+                                                NBTTagCompound vectorTag = position.toNBT();
+                                                vectorTag.setString(NBT_FIELD_BLOCK_NAME, Block.blockRegistry.getNameForObject(block));
+                                                vectorTag.setInteger(NBT_FIELD_BLOCK_METADATA, targetCheck.getBlockMetadata(world));
+                                                list.appendTag(vectorTag);
+                                            }
+                                            else
+                                            {
+                                                for (int i = 0; i < list.tagCount(); i++)
+                                                {
+                                                    if (new Pos(list.getCompoundTagAt(i)).equals(position))
+                                                    {
+                                                        list.removeTag(i);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            saveNBT.setTag(NBT_FIELD_BLOCK_LIST, list);
+                            nbt.setInteger(NBT_FIELD_SIZE, list.tagCount());
+                            NBTUtility.saveData(getSaveDirectory(), NBT_FILE_SAVE_PREFIX + getModeID(itemStack), saveNBT);
+                            clearCache();
+                            entityPlayer.addChatMessage(new ChatComponentText(LanguageUtility.getLocal("message.modeCustom.saved")));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);
+
+                if (nbt != null)
+                {
+                    nbt.setBoolean(NBT_MODE, !nbt.getBoolean(NBT_MODE));
+                    entityPlayer.addChatMessage(new ChatComponentText(LanguageUtility.getLocal("message.modeCustom.modeChange").replaceAll("#p", (nbt.getBoolean(NBT_MODE) ? LanguageUtility.getLocal("info.modeCustom.substraction") : LanguageUtility.getLocal("info.modeCustom.additive")))));
+                }
+            }
+        }
+        return itemStack;
     }
 
-    cache(cacheID, fieldMap)
-
-    return fieldMap
-  }
-
-  override def getInteriorPoints(projector: IFieldMatrix): JSet[Vector3] =
-  {
-    return this.getExteriorPoints(projector)
-  }
-
-  override def getExteriorPoints(projector: IFieldMatrix): JSet[Vector3] =
-  {
-    return this.getFieldBlocks(projector, projector.getModeStack)
-  }
-
-  public List<Pos> getFieldBlocks(IFieldMatrix projector, ItemStack itemStack)
-  {
-    return getFieldBlockMapClean(projector, itemStack).keySet.toSet
-  }
-
-  def getFieldBlockMapClean(projector: IFieldMatrix, itemStack: ItemStack): mutable.Map[Vector3, (Block, Int)] =
-  {
-    val scale = (projector.getModuleCount(Content.moduleScale) / 3f + 1)
-    val fieldBlocks = mutable.Map.empty[Vector3, (Block, Int)]
-
-    if (getSaveDirectory != null)
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10)
     {
-      val nbt = NBTUtility.loadData(this.getSaveDirectory, NBT_FILE_SAVE_PREFIX + getModeID(itemStack))
-
-      if (nbt != null)
-      {
-        val nbtTagList = nbt.getTagList(NBT_FIELD_BLOCK_LIST, 10)
-
-        (0 until nbtTagList.tagCount)
-          .map(i => nbtTagList.getCompoundTagAt(i))
-          .foreach(vectorTag => fieldBlocks.put(new Vector3(vectorTag) * scale, (Block.blockRegistry.getObject(vectorTag.getString(NBT_FIELD_BLOCK_NAME)).asInstanceOf[Block], vectorTag.getInteger(NBT_FIELD_BLOCK_METADATA))))
-      }
+        if (!world.isRemote)
+        {
+            NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);
+            if (nbt != null)
+            {
+                Pos point1 = new Pos(nbt.getCompoundTag(NBT_POINT_1));
+                if (!nbt.hasKey(NBT_POINT_1) || (point1 == new Pos(0, 0, 0)))
+                {
+                    nbt.setTag(NBT_POINT_1, new Pos(x, y, z).toNBT());
+                    player.addChatMessage(new ChatComponentText("Set point 1: " + x + ", " + y + ", " + z + "."));
+                }
+                else
+                {
+                    nbt.setTag(NBT_POINT_2, new Pos(x, y, z).toNBT());
+                    player.addChatMessage(new ChatComponentText("Set point 2: " + x + ", " + y + ", " + z + "."));
+                }
+            }
+        }
+        return true;
     }
-    return fieldBlocks
-  }
 
-  def getModeID(itemStack: ItemStack): Int =
-  {
-    val nbt = NBTUtility.getNBTTagCompound(itemStack)
-    var id: Int = nbt.getInteger(NBT_ID)
-    if (id <= 0)
+    public Map<Pos, Pair<Block, Integer>> getFieldBlockMap(IFieldMatrix projector, ItemStack itemStack)
     {
-      nbt.setInteger(NBT_ID, getNextAvaliableID)
-      id = nbt.getInteger(NBT_ID)
-    }
-    return id
-  }
+        final String cacheID = "itemStack_" + itemStack.hashCode(); //TODO check if this can overlap
 
-  def getNextAvaliableID: Int =
-  {
-    var i: Int = 1
-    for (fileEntry <- this.getSaveDirectory.listFiles)
+        if (hasCache(classOf[mutable.Map[Vector3, (Block, Int)]],cacheID))
+        {
+            return getCache(classOf[mutable.Map[Vector3, (Block, Int)]],cacheID)
+        }
+
+        Map<Pos, Pair<Block, Integer>> fieldMap = getFieldBlockMapClean(projector, itemStack);
+
+        if (projector.getModuleCount(ModularForceFieldSystem.moduleArray) > 0)
+        {
+            Map<ForgeDirection, Integer> longestDirectional = ModularForceFieldSystem.moduleArray.getDirectionWidthMap(fieldMap.keySet());
+
+            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS)
+            {
+                int copyAmount = projector.getSidedModuleCount(ModularForceFieldSystem.moduleArray, direction);
+                int directionalDisplacement = (Math.abs(longestDirectional.get(direction)) + Math.abs(longestDirectional.get(direction.getOpposite()))) + 1;
+
+                for (int i = 0; i < copyAmount; i++)
+                {
+                    int directionalDisplacementScale = directionalDisplacement * (i + 1);
+
+                    getFieldBlocks(projector, itemStack).forEach(originalVec ->
+                    {
+                        Pos newFieldBlock = originalVec.clone().add(new Pos(direction).multiply(directionalDisplacementScale));
+                        fieldMap.put(newFieldBlock, fieldMap.get(originalVec));
+                    });
+                }
+            }
+        }
+
+        cache(cacheID, fieldMap);
+
+        return fieldMap;
+    }
+
+    public List<Pos> getInteriorPoints(IFieldMatrix projector)
     {
-      i += 1
+        return this.getExteriorPoints(projector);
     }
-    return i
-  }
 
-  def getSaveDirectory: File =
-  {
-    val saveDirectory: File = NBTUtility.getSaveDirectory(MinecraftServer.getServer.getFolderName)
-    if (!saveDirectory.exists)
+    public List<Pos> getExteriorPoints(IFieldMatrix projector)
     {
-      saveDirectory.mkdir
+        return this.getFieldBlocks(projector, projector.getModeStack());
     }
-    val file: File = new File(saveDirectory, "mffs")
-    if (!file.exists)
+
+    public List<Pos> getFieldBlocks(IFieldMatrix projector, ItemStack itemStack)
     {
-      file.mkdir
+        return getFieldBlockMapClean(projector, itemStack).keySet().stream().collect(Collectors.toList());
     }
-    return file
-  }
 
-  override def isInField(projector: IFieldMatrix, position: Vector3): Boolean =
-  {
-    return false
-  }
+    public Map<Pos, Pair<Block, Integer>> getFieldBlockMapClean(IFieldMatrix projector, ItemStack itemStack)
+    {
+        //TODO replace map with data object that uses an int array and get methods (north(), south(), etc)
+        float scale = (projector.getModuleCount(ModularForceFieldSystem.moduleScale) / 3f + 1);
+        Map<Pos, Pair<Block, Integer>> fieldBlocks = new HashMap();
 
-  @SideOnly(Side.CLIENT)
-  override def render(projector: IProjector, x: Double, y: Double, z: Double, f: Float, ticks: Long)
-  {
-    modes((projector.asInstanceOf[TileEntity]).getWorldObj().rand.nextInt(modes.length - 1)).render(projector, x, y, z, f, ticks)
-  }
+        if (getSaveDirectory() != null)
+        {
+            NBTTagCompound nbt = NBTUtility.loadData(this.getSaveDirectory(), NBT_FILE_SAVE_PREFIX + getModeID(itemStack));
 
-  override def getFortronCost(amplifier: Float): Float =
-  {
-    return super.getFortronCost(amplifier) * amplifier
-  }
+            if (nbt != null)
+            {
+                NBTTagList nbtTagList = nbt.getTagList(NBT_FIELD_BLOCK_LIST, 10);
+
+                for (int i = 0; i < nbtTagList.tagCount(); i++)
+                {
+                    NBTTagCompound vectorTag = nbtTagList.getCompoundTagAt(i);
+                    fieldBlocks.put(new Pos(vectorTag).multiply(scale), new Pair((Block.blockRegistry.getObject(vectorTag.getString(NBT_FIELD_BLOCK_NAME))), vectorTag.getInteger(NBT_FIELD_BLOCK_METADATA)));
+                }
+            }
+        }
+        return fieldBlocks;
+    }
+
+    public int getModeID(ItemStack itemStack)
+    {
+        NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);
+        int id = nbt.getInteger(NBT_ID);
+        if (id <= 0)
+        {
+            nbt.setInteger(NBT_ID, getNextAvaliableID());
+            id = nbt.getInteger(NBT_ID);
+        }
+        return id;
+    }
+
+    public int getNextAvaliableID()
+    {
+        //TODO find a better way as this is prone to issues
+        //TODO use time stamp
+        return 1 + this.getSaveDirectory().listFiles().length;
+    }
+
+    public File getSaveDirectory()
+    {
+        File saveDirectory = NBTUtility.getSaveDirectory(MinecraftServer.getServer().getFolderName());
+        if (!saveDirectory.exists())
+        {
+            saveDirectory.mkdir();
+        }
+        File file = new File(saveDirectory, "mffs");
+        if (!file.exists())
+        {
+            file.mkdir();
+        }
+        return file;
+    }
+
+    public boolean isInField(IFieldMatrix projector, Pos position)
+    {
+        return false; //TODO implement?
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void render(IProjector projector, double x, double y, double z, float f, long ticks)
+    {
+        modes[(((TileEntity) projector).getWorldObj().rand.nextInt(modes.length - 1))].render(projector, x, y, z, f, ticks);
+    }
+
+    public float getFortronCost(float amplifier)
+    {
+        return super.getFortronCost(amplifier) * amplifier;
+    }
 }

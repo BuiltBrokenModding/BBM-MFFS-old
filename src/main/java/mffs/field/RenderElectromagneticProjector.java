@@ -1,5 +1,6 @@
 package mffs.field;
 
+import com.builtbroken.mc.lib.render.RenderUtility;
 import cpw.mods.fml.client.FMLClientHandler;
 import mffs.Reference;
 import mffs.Settings;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
+import org.lwjgl.opengl.GL11;
 
 public final class RenderElectromagneticProjector {
 	private static ResourceLocation textureOn = new ResourceLocation(Reference.domain,
@@ -22,8 +24,8 @@ public final class RenderElectromagneticProjector {
 
 	public static void render(TileElectromagneticProjector tileEntity, double x, double y, double z, float frame, boolean isActive, boolean isItem)
   {
-    glPushMatrix();
-    glTranslated(x + 0.5, y + 0.5, z + 0.5);
+    GL11.glPushMatrix();
+    GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
 
     if (isActive)
       FMLClientHandler.instance().getClient().renderEngine.bindTexture(textureOn);
@@ -32,76 +34,76 @@ public final class RenderElectromagneticProjector {
 
     if (!isItem)
     {
-      glRotatef(-90, 0, 1, 0);
+      GL11.glRotatef(-90, 0, 1, 0);
       RenderUtility.rotateBlockBasedOnDirection(tileEntity.getDirection());
     }
 
     model.renderAll();
     //.render(tileEntity.animation, 0.0625F)
-    glPopMatrix();
+    GL11.glPopMatrix();
 
     if (tileEntity.getMode() != null)
     {
       Tessellator tessellator = Tessellator.instance;
       RenderHelper.disableStandardItemLighting();
-      glPushMatrix();
-      glTranslated(x + 0.5, y + 0.5, z + 0.5);
+      GL11.glPushMatrix();
+      GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
       double xDifference = Minecraft.getMinecraft().thePlayer.posX - (tileEntity.xCoord + 0.5);
       double zDifference = Minecraft.getMinecraft().thePlayer.posZ - (tileEntity.zCoord + 0.5);
       float rotatation = (float) Math.toDegrees(Math.atan2(zDifference, xDifference));
-      glRotatef(-rotatation + 27, 0.0F, 1.0F, 0.0F);
-      glDisable(GL_TEXTURE_2D);
-      glShadeModel(GL_SMOOTH);
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-      glDisable(GL_ALPHA_TEST);
-      glEnable(GL_CULL_FACE);
-      glDepthMask(false);
-      glPushMatrix();
+      GL11.glRotatef(-rotatation + 27, 0.0F, 1.0F, 0.0F);
+      GL11.glDisable(GL11.GL_TEXTURE_2D);
+      GL11.glShadeModel(GL11.GL_SMOOTH);
+      GL11.glEnable(GL11.GL_BLEND);
+      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+      GL11.glDisable(GL11.GL_ALPHA_TEST);
+      GL11.glEnable(GL11.GL_CULL_FACE);
+      GL11.glDepthMask(false);
+      GL11.glPushMatrix();
       tessellator.startDrawing(6);
       float height = 2, width = 2;
       tessellator.setColorRGBA(72, 198, 255, 255);
       tessellator.addVertex(0.0D, 0.0D, 0.0D);
       tessellator.setColorRGBA_I(0, 0);
       tessellator.addVertex(-0.866D * width, height, -0.5F * width);
-      tessellator.addVertex(0.866D * width, height, -0.5F * width)
-      tessellator.addVertex(0.0D, height, 1.0F * width)
-      tessellator.addVertex(-0.866D * width, height, -0.5F * width)
+      tessellator.addVertex(0.866D * width, height, -0.5F * width);
+      tessellator.addVertex(0.0D, height, 1.0F * width);
+      tessellator.addVertex(-0.866D * width, height, -0.5F * width);
       tessellator.draw();
-      glPopMatrix();
-      glDepthMask(true);
-      glDisable(GL_CULL_FACE);
-      glDisable(GL_BLEND);
-      glShadeModel(GL_FLAT);
-      glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-      glEnable(GL_TEXTURE_2D);
-      glEnable(GL_ALPHA_TEST);
+      GL11.glPopMatrix();
+      GL11.glDepthMask(true);
+      GL11.glDisable(GL11.GL_CULL_FACE);
+      GL11.glDisable(GL11.GL_BLEND);
+      GL11.glShadeModel(GL11.GL_FLAT);
+      GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+      GL11.glEnable(GL11.GL_TEXTURE_2D);
+      GL11.glEnable(GL11.GL_ALPHA_TEST);
       RenderHelper.enableStandardItemLighting();
-      glPopMatrix();
+      GL11.glPopMatrix();
 
       /**
        * Render hologram
        */
       if (Settings.highGraphics)
       {
-        glPushMatrix();
-        glTranslated(x + 0.5, y + 1.35, z + 0.5);
+        GL11.glPushMatrix();
+        GL11.glTranslated(x + 0.5, y + 1.35, z + 0.5);
 
-        FieldColor color = isActive ? FieldColor.blue : FieldColor.red;
+        FieldColor color = isActive ? FieldColor.BLUE : FieldColor.RED;
         FMLClientHandler.instance().getClient().renderEngine.bindTexture(Reference.hologramTexture);
 
         RenderUtility.enableBlending();
         RenderUtility.disableLighting();
-        glPushMatrix();
-        glColor4d(color._1, color._2, color._3, Math.sin(tileEntity.getTicks() / 10.0) / 2 + 0.8);
-        glTranslatef(0, Math.sin(Math.toRadians(tileEntity.getTicks() * 3)) / 7.0, 0);
-        glRotatef(tileEntity.getTicks() * 4, 0, 1, 0);
-        glRotatef(36f + tileEntity.getTicks() * 4, 0, 1, 1);
+        GL11.glPushMatrix();
+        GL11.glColor4d(color.r, color.g, color.b, Math.sin(tileEntity.getTicks() / 10.0) / 2 + 0.8);
+        GL11.glTranslatef(0, (float) (Math.sin(Math.toRadians(tileEntity.getTicks() * 3)) / 7.0), 0);
+        GL11.glRotatef(tileEntity.getTicks() * 4, 0, 1, 0);
+        GL11.glRotatef(36f + tileEntity.getTicks() * 4, 0, 1, 1);
         tileEntity.getMode().render(tileEntity, x, y, z, frame, tileEntity.getTicks());
-        glPopMatrix();
+        GL11.glPopMatrix();
         RenderUtility.enableLighting();
         RenderUtility.disableBlending();
-        glPopMatrix();
+        GL11.glPopMatrix();
       }
     }
 
