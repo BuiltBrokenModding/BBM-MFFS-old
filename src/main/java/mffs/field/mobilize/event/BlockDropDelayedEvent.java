@@ -1,4 +1,4 @@
-package mffs.field.mobilize.event
+package mffs.field.mobilize.event;
 
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import net.minecraft.block.Block;
@@ -7,9 +7,16 @@ import net.minecraft.world.World;
 
 public class BlockDropDelayedEvent extends DelayedEvent
 {
+    protected World world;
+    protected Block block;
+    protected Pos pos;
+
     public BlockDropDelayedEvent(IDelayedEventHandler handler, int ticks, Block block, World world, Pos pos)
     {
-        super(handler, ticks);
+        super(handler, ticks, null);
+        this.world = world;
+        this.block = block;
+        this.pos = pos;
     }
 
     @Override
@@ -17,10 +24,10 @@ public class BlockDropDelayedEvent extends DelayedEvent
     {
         if (!this.world.isRemote)
         {
-            if (this.position.getBlock(this.world) eq this.block)
+            if (this.pos.getBlock(this.world) == this.block)
             {
-                this.block.dropBlockAsItem(this.world, this.position.xi, this.position.yi, this.position.zi, this.position.getBlockMetadata(world), 0)
-                this.position.setBlock(this.world, Blocks.air)
+                this.block.dropBlockAsItem(this.world, this.pos.xi(), this.pos.yi(), this.pos.zi(), this.pos.getBlockMetadata(world), 0);
+                this.pos.setBlock(this.world, Blocks.air);
             }
         }
     }
