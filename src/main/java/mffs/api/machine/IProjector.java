@@ -4,7 +4,7 @@ import com.builtbroken.mc.lib.transform.vector.Pos;
 import mffs.api.fortron.FrequencyGridRegistry;
 import net.minecraft.inventory.IInventory;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Also extends IDisableable, IFortronFrequency
@@ -38,6 +38,6 @@ public abstract interface IProjector extends IInventory, IFieldMatrix, Frequency
 	 *
 	 * @return The actual force field block coordinates in the world.
 	 */
-	public Set<Pos> getForceFields();
+	public List<Pos> getForceFields();
 
 }
