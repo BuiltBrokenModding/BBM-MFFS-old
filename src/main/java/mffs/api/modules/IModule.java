@@ -1,14 +1,13 @@
 package mffs.api.modules;
 
-import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IProjector;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,23 +22,35 @@ public interface IModule extends IFortronCost
 	 * @param projector
 	 * @return True to stop projecting.
 	 */
-	boolean onProject(IProjector projector, List<Pos> field);
+	default boolean onProject(IProjector projector, List<Pos> field)
+    {
+        return false;
+    }
 
-	boolean onDestroy(IProjector projector, List<Pos> field);
+	default boolean onDestroy(IProjector projector, List<Pos> field)
+    {
+        return false;
+    }
 
 	/**
 	 * Called right before the projector creates a force field block.
 	 *
 	 * @return 0 - Do nothing; 1 - Skip this block and continue; 2 - Cancel rest of projection;
 	 */
-	int onProject(IProjector projector, Pos position);
+	default int onProject(IProjector projector, Pos position)
+	{
+		return 0;
+	}
 
 	/**
 	 * Called when an entity collides with a force field block.
 	 *
 	 * @return False to stop the default process of entity collision.
 	 */
-	boolean onCollideWithForceField(World world, int x, int y, int z, Entity entity, ItemStack moduleStack);
+	default boolean onCollideWithForceField(World world, int x, int y, int z, Entity entity, ItemStack moduleStack)
+	{
+		return true;
+	}
 
 	/**
 	 * Called in this module when it is being calculated by the projector. Called BEFORE
@@ -47,19 +58,22 @@ public interface IModule extends IFortronCost
 	 *
 	 * @return False if to prevent this position from being added to the projection que.
 	 */
-	void onPreCalculate(IFieldMatrix projector, Set<Pos> calculatedField);
+	default void onPreCalculate(IFieldMatrix projector, Set<Pos> calculatedField){}
 	/**
 	 * Called in this module when after being calculated by the projector.
 	 *
 	 * @return False if to prevent this position from being added to the projection que.
 	 */
-	void onPostCalculate(IFieldMatrix projector, Set<Pos> fieldDefinition);
+	default void onPostCalculate(IFieldMatrix projector, Set<Pos> fieldDefinition){}
 
 	/**
 	 * @param moduleStack
 	 * @return Does this module require ticking from the force field projector?
 	 */
-	boolean requireTicks(ItemStack moduleStack);
+	default boolean requireTicks(ItemStack moduleStack)
+    {
+        return false;
+    }
 
 	/**
 	 * DEFUALT:
@@ -69,5 +83,8 @@ public interface IModule extends IFortronCost
 	 * @param projector
 	 * @return
      */
-	List<Entity> getEntitiesInField(IProjector projector);
+	default List<Entity> getEntitiesInField(IProjector projector)
+    {
+        return new ArrayList();
+    }
 }
