@@ -3,7 +3,6 @@ package mffs.field.module;
 import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.lib.transform.vector.Pos;
-import mffs.Content;
 import mffs.ModularForceFieldSystem;
 import mffs.api.Blacklist;
 import mffs.api.machine.IProjector;
@@ -66,11 +65,11 @@ public class ItemModuleDisintegration extends ItemModule
                 return 1;
             }
 
-            Engine.instance.packetHandler.sendToAllInDimension(new PacketTile(proj, TilePacketType.effect.ordinal(), 2, position.xi(), position.yi(), position.zi(), world);
+            Engine.instance.packetHandler.sendToAllInDimension(new PacketTile(proj, TilePacketType.effect.ordinal(), 2, position.xi(), position.yi(), position.zi()), world);
 
             if (projector.getModuleCount(ModularForceFieldSystem.moduleCollection) > 0)
             {
-                proj.queueEvent(new BlockInventoryDropDelayedEvent(((IDelayedEventHandler)projector), 39, block, world, position, projector));
+                proj.queueEvent(new BlockInventoryDropDelayedEvent(((IDelayedEventHandler)projector), 39, block, world, position, (TileMFFSInventory) projector));
             }
             else
             {
