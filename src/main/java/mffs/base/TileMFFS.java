@@ -27,7 +27,7 @@ public abstract class TileMFFS extends Tile implements ICamouflageMaterial, IPac
     /**
      * Used for client side animations.
      */
-    protected float animation = 0f;
+    public float animation = 0f;
     /**
      * Is this machine switched on internally via GUI?
      */

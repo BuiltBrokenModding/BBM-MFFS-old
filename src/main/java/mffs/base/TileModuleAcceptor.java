@@ -288,13 +288,13 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     @Override
     public void clearCache(String paramString)
     {
-        cache.clear();
+        cache.remove(paramString);
     }
 
     @Override
     public void clearCache()
     {
-
+        cache.clear();
     }
 
     @Override

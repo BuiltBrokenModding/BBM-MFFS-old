@@ -1,235 +1,216 @@
-package mffs.production
+package mffs.production;
 
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import io.netty.buffer.ByteBuf
-import mffs.base.{TileModuleAcceptor, TilePacketType}
-import mffs.item.card.ItemCardFrequency
-import mffs.util.FortronUtility
-import mffs.{Content, Settings}
-import net.minecraft.client.renderer.RenderBlocks
-import net.minecraft.init.Items
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
+import com.builtbroken.mc.core.network.packet.PacketType;
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.tile.Tile;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import mffs.Content;
+import mffs.ModularForceFieldSystem;
+import mffs.Settings;
+import mffs.api.card.IItemFrequency;
+import mffs.api.modules.IModule;
+import mffs.base.TileModuleAcceptor;
+import mffs.base.TilePacketType;
+import mffs.util.FortronUtility;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
-/**
- * A TileEntity that extract energy into Fortron.
- *
- * @author Calclavia
- */
-object TileCoercionDeriver
-{
-  val fuelProcessTime = 10 * 20
-  val productionMultiplier = 4
+public class TileCoercionDeriver extends TileModuleAcceptor {
+    /**
+     * The amount of power (watts) this machine uses.
+     */
+    public static final int POWER = 5000000;
 
-  val energyConversionPercentage = 1
+    /* Static slots */
+    public static final byte SLOT_FREQ = 0, SLOT_BATTERY = 1, SLOT_FUEL = 2;
 
-  val slotFrequency = 0
-  val slotBattery = 1
-  val slotFuel = 2
+    /**
+     * Ration from UE to Fortron. Multiply J by this value to convert to Fortron.
+     */
+    public static final float ueToFortronRatio = 0.005f;
+    public static final byte productionMultiplier = 4;
 
-  /**
-   * The amount of power (watts) this machine uses.
-   */
-}
+    /* Amount of time for 1 fuel cycle */
+    public static int fuelProcessTime = 200;
 
-public class TileCoercionDeriver extends TileModuleAcceptor
-{
-  /**
-   * The amount of power (watts) this machine uses.
-   */
-  public static final int POWER = 5000000;
+    /* The percentage at which energy is converted from fortron */
+    public static float energyConversionPercentage = 1F;
 
-  /**
-   * Ration from UE to Fortron. Multiply J by this value to convert to Fortron.
-   */
-  public static final float ueToFortronRatio = 0.005f;
-  public static final byte productionMultiplier = 4;
+    int processTime = 0;
+    boolean isInversed = false;
+    //Client
+    float animationTween = 0f;
 
-  int processTime = 0;
-  boolean isInversed = false;
+    public TileCoercionDeriver(String name) {
+        super(name);
+        capacityBase = 30;
+        startModuleIndex = 3;
+    }
 
-  //Client
-  var animationTween = 0f
+    @Override
+    public int getSizeInventory() {
+        return 6;
+    }
 
-  capacityBase = 30
-  startModuleIndex = 3
+    @Override
+    public void update() {
+        super.update();
 
-  override def getSizeInventory = 6
+        if (!worldObj.isRemote) {
+            if (isActive()) {
+                if (isInversed && Settings.enableElectricity) {
+                    int withdrawnElectricity = (int) (requestFortron(getProductionRate() / 20, true) / TileCoercionDeriver.ueToFortronRatio);
+                    this.getPower() += withdrawnElectricity * TileCoercionDeriver.energyConversionPercentage
 
-  override def update()
-  {
-    super.update()
+                    //          recharge(getStackInSlot(TileCoercionDeriver.slotBattery))
+                } else {
+                    if (getFortronEnergy() < getFortronCapacity()) {
+                        //            discharge(getStackInSlot(TileCoercionDeriver.slotBattery))
+                        energy.max = getPower();
 
-    if (!worldObj.isRemote)
-    {
-      if (isActive)
-      {
-        if (isInversed && Settings.enableElectricity)
-        {
-          val withdrawnElectricity = requestFortron(productionRate / 20, true) / TileCoercionDeriver.ueToFortronRatio
-          energy += withdrawnElectricity * TileCoercionDeriver.energyConversionPercentage
+                        if (energy >= getPower() || (!Settings.enableElectricity && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL)))) {
+                            fortronTank.fill(FortronUtility.getFortron(getProductionRate()), true);
+                            energy -= getPower()
 
-          //          recharge(getStackInSlot(TileCoercionDeriver.slotBattery))
-        }
-        else
-        {
-          if (getFortronEnergy < getFortronCapacity)
-          {
-            //            discharge(getStackInSlot(TileCoercionDeriver.slotBattery))
-            energy.max = getPower
+                            if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL))) {
+                                decrStackSize(TileCoercionDeriver.SLOT_FUEL, 1);
+                                processTime = TileCoercionDeriver.fuelProcessTime * Math.max(this.getModuleCount(Content.moduleScale) / 20, 1);
+                            }
 
-            if (energy >= getPower || (!Settings.enableElectricity && isItemValidForSlot(TileCoercionDeriver.slotFuel, getStackInSlot(TileCoercionDeriver.slotFuel))))
-            {
-              fortronTank.fill(FortronUtility.getFortron(productionRate), true)
-              energy -= getPower
+                            if (processTime > 0) {
+                                processTime -= 1;
 
-              if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.slotFuel, getStackInSlot(TileCoercionDeriver.slotFuel)))
-              {
-                decrStackSize(TileCoercionDeriver.slotFuel, 1)
-                processTime = TileCoercionDeriver.fuelProcessTime * Math.max(this.getModuleCount(Content.moduleScale) / 20, 1)
-              }
-
-              if (processTime > 0)
-              {
-                processTime -= 1
-
-                if (processTime < 1)
-                  processTime = 0
-              }
-              else
-              {
-                processTime = 0
-              }
+                                if (processTime < 1)
+                                    processTime = 0;
+                            } else {
+                                processTime = 0;
+                            }
+                        }
+                    }
+                }
             }
-          }
+        } else {
+            /**
+             * Handle animation
+             */
+            if (isActive()) {
+                animation += 1;
+
+                if (animationTween < 1)
+                    animationTween += 0.01f;
+            } else {
+                if (animationTween > 0)
+                    animationTween -= 0.01f;
+            }
         }
-      }
     }
-    else
+
+    public int getProductionRate() {
+        if (this.isActive()) {
+            float production = (float) (getPower() / 20f * Settings.fortronProductionMultiplier * ueToFortronRatio);
+            if (processTime > 0)
+                production *= productionMultiplier;
+            return (int) Math.floor(production);
+        }
+        return 0;
+    }
+
+    public double getPower() {
+        return POWER + (POWER * getModuleCount(ModularForceFieldSystem.moduleSpeed) / 8d);
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
+
     {
-      /**
-       * Handle animation
-       */
-      if (isActive)
-      {
-        animation += 1
-
-        if (animationTween < 1)
-          animationTween += 0.01f
-      }
-      else
-      {
-        if (animationTween > 0)
-          animationTween -= 0.01f
-      }
+        if (itemStack != null) {
+            if (slotID >= startModuleIndex) {
+                return itemStack.getItem() instanceof IModule;
+            }
+            switch (slotID) {
+                case TileCoercionDeriver.SLOT_FREQ:
+                    return itemStack.getItem() instanceof IItemFrequency;
+                case TileCoercionDeriver.SLOT_BATTERY:
+                    return false; //add battery handler
+                // return Compatibility.isHandler(itemStack.getItem(), null);
+                case TileCoercionDeriver.SLOT_FUEL:
+                    return itemStack.isItemEqual(new ItemStack(Items.dye, 1, 4)) || itemStack.isItemEqual(new ItemStack(Items.quartz));
+            }
+        }
+        return false;
     }
-  }
 
-  public int getProductionRate() {
-    if(this.isActive()) {
-      float production = (float) (getPower() / 20f * Settings.fortronProductionMultiplier * ueToFortronRatio);
-      if(processTime > 0)
-        production *= productionMultiplier;
-      return (int) Math.floor(production);
+    public boolean canConsume() {
+        if (this.isActive() && !this.isInversed) {
+            return FortronUtility.getAmount(this.fortronTank) < this.fortronTank.getCapacity();
+        }
+        return false;
     }
-    return 0;
-  }
 
-  public double getPower() {
-    return POWER + (POWER * getModuleCount(ModularForceFieldSystem.moduleSpeed) / 8d);
-  }
+    @Override
+    public void write(ByteBuf buf, int id) {
+        super.write(buf, id);
 
-  override def isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
-  {
-    if (itemStack != null)
-    {
-      if (slotID >= startModuleIndex)
-      {
-        return itemStack.getItem.isInstanceOf[IModule]
-      }
-      slotID match
-      {
-        case TileCoercionDeriver.slotFrequency =>
-          return itemStack.getItem.isInstanceOf[ItemCardFrequency]
-        case TileCoercionDeriver.slotBattery =>
-          return Compatibility.isHandler(itemStack.getItem, null)
-        case TileCoercionDeriver.slotFuel =>
-          return itemStack.isItemEqual(new ItemStack(Items.dye, 1, 4)) || itemStack.isItemEqual(new ItemStack(Items.quartz))
-      }
+        if (id == TilePacketType.description.ordinal()) {
+            buf.writeBoolean(isInversed);
+            buf.writeInt(processTime);
+        }
     }
-    return false
-  }
 
-  def canConsume: Boolean =
-  {
-    if (this.isActive && !this.isInversed)
-    {
-      return FortronUtility.getAmount(this.fortronTank) < this.fortronTank.getCapacity
+    @Override
+    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType) {
+        super.read(buf, id, player, packetType);
+
+        if (worldObj.isRemote) {
+            if (id == TilePacketType.description.ordinal()) {
+                isInversed = buf.readBoolean();
+                processTime = buf.readInt();
+            }
+        } else {
+            if (id == TilePacketType.toggleMoe.ordinal()) {
+                isInversed = !isInversed;
+            }
+        }
+        return false;
     }
-    return false
-  }
 
-  override def write(buf: ByteBuf, id: Int)
-  {
-    super.write(buf, id)
-
-    if (id == TilePacketType.description.id)
-    {
-      buf <<< isInversed
-      buf <<< processTime
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        processTime = nbt.getInteger("processTime");
+        isInversed = nbt.getBoolean("isInversed");
     }
-  }
 
-  override def read(buf: ByteBuf, id: Int, packetType: PacketType)
-  {
-    super.read(buf, id, packetType)
-
-    if (world.isRemote)
-    {
-      if (id == TilePacketType.description.id)
-      {
-        isInversed = buf.readBoolean()
-        processTime = buf.readInt()
-      }
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setInteger("processT;ime", processTime);
+        nbt.setBoolean("isInversed", isInversed);
     }
-    else
-    {
-      if (id == TilePacketType.toggleMoe.id)
-      {
-        isInversed = !isInversed
-      }
+
+    /**
+     * Rendering
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass) {
+        return false;
     }
-  }
 
-  override def readFromNBT(nbt: NBTTagCompound)
-  {
-    super.readFromNBT(nbt)
-    processTime = nbt.getInteger("processTime")
-    isInversed = nbt.getBoolean("isInversed")
-  }
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderDynamic(Pos pos, float frame, int pass) {
+        RenderCoercionDeriver.render(this, pos.x(), pos.y(), pos.z(), frame, isActive(), false);
+    }
 
-  override def writeToNBT(nbt: NBTTagCompound)
-  {
-    super.writeToNBT(nbt)
-    nbt.setInteger("processTime", processTime)
-    nbt.setBoolean("isInversed", isInversed)
-  }
-
-  @SideOnly(Side.CLIENT)
-  override def renderStatic(renderer: RenderBlocks, pos: Vector3, pass: Int): Boolean =
-  {
-    return false
-  }
-
-  @SideOnly(Side.CLIENT)
-  override def renderDynamic(pos: Vector3, frame: Float, pass: Int)
-  {
-    RenderCoercionDeriver.render(this, pos.x, pos.y, pos.z, frame, isActive, false)
-  }
-
-  @SideOnly(Side.CLIENT)
-  override def renderInventory(itemStack: ItemStack)
-  {
-    RenderCoercionDeriver.render(this, -0.5, -0.5, -0.5, 0, true, true)
-  }
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderInventory(ItemStack itemStack) {
+        RenderCoercionDeriver.render(this, -0.5, -0.5, -0.5, 0, true, true);
+    }
 }
