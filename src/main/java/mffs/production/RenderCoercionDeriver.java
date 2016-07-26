@@ -17,11 +17,7 @@ final class RenderCoercionDeriver {
     static IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation(Reference.domain, Reference.modelPath + "coercionDeriver.tcn"));
 
     public static void render(TileCoercionDeriver tileEntity, double x, double y, double z, float frame, boolean isActive, boolean isItem) {
-        if (isActive) {
-            FMLClientHandler.instance().getClient().renderEngine.bindTexture(textureOn);
-        } else {
-            FMLClientHandler.instance().getClient().renderEngine.bindTexture(textureOff);
-        }
+        FMLClientHandler.instance().getClient().renderEngine.bindTexture(isActive ? textureOn : textureOff);
 
         GL11.glPushMatrix();
         GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);

@@ -13,6 +13,6 @@ public abstract class ItemCardAccess extends ItemCard implements IAccessCard
     @Override
     public void setAccess(ItemStack itemStack, AccessUser access)
     {
-        itemStack.setTagCompound(access.toNBT());
+        itemStack.setTagCompound(access.userData());
     }
 }
