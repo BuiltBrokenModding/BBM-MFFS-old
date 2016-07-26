@@ -269,7 +269,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
                         }
                     }
 
-                    entity.attackEntityFrom(ModularForceFieldSystem.damageFieldShock, 100)
+                    entity.attackEntityFrom(ModularForceFieldSystem.damageFieldShock, 100);
                 }
             }
         }
@@ -311,40 +311,34 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         {
             try
             {
-                return camoStack.getItem().asInstanceOf[ItemBlock].field_150939_a.colorMultiplier(access, xi(), yi(), zi())
+                return ((ItemBlock)camoStack.getItem()).field_150939_a.colorMultiplier(getAccess(), xi(), yi(), zi());
             }
-            catch
-            {
-                case e:
-                    Exception =>
+            catch(Exception e)
                 {
-                    e.printStackTrace
+                    e.printStackTrace();
                 }
-            }
+
         }
-        return super.colorMultiplier
+        return super.colorMultiplier();
     }
 
     public int getLightValue()
     {
         try
         {
-            val projector = getProjectorSafe
+            TileElectromagneticProjector projector = getProjectorSafe();
             if (projector != null)
             {
-                return ((Math.min(projector.getModuleCount(Content.moduleGlow), 64).asInstanceOf[Float] / 64) * 15f).toInt
+                return (int)((float)(Math.min(projector.getModuleCount(ModularForceFieldSystem.moduleGlow), 64) / 64) * 15f);
             }
         }
-        catch
-        {
-            case e:
-                Exception =>
+        catch(Exception e)
             {
-                e.printStackTrace
+                e.printStackTrace();
             }
-        }
 
-        return 0
+
+        return 0;
     }
 
     public float getExplosionResistance(Entity entity)
@@ -429,28 +423,28 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
      */
     public void refreshCamoBlock()
     {
-        if (getProjectorSafe != null)
+        if (getProjectorSafe() != null)
         {
             camoStack = MFFSUtility.getCamoBlock(getProjector(), toPos());
         }
     }
 
-    public void readFromNBT(nbt:NBTTagCompound)
+    public void readFromNBT(NBTTagCompound nbt)
     {
-        super.readFromNBT(nbt)
-        projector = new Vector3(nbt.getCompoundTag("projector"))
+        super.readFromNBT(nbt);
+        projector = new Pos(nbt.getCompoundTag("projector"));
     }
 
     /**
      * Writes a tile entity to NBT.
      */
-    public void writeToNBT(nbt:NBTTagCompound)
+    public void writeToNBT(NBTTagCompound nbt)
     {
-        super.writeToNBT(nbt)
+        super.writeToNBT(nbt);
 
-        if (getProjector != null)
+        if (getProjector() != null)
         {
-            nbt.setTag("projector", projector.toNBT)
+            nbt.setTag("projector", projector.toNBT());
         }
     }
 
