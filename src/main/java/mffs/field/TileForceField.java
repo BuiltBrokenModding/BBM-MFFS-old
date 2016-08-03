@@ -1,6 +1,5 @@
 package mffs.field;
 
-import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
@@ -11,7 +10,6 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
-import mffs.Content;
 import mffs.ModularForceFieldSystem;
 import mffs.api.machine.IForceField;
 import mffs.api.machine.IProjector;
@@ -29,13 +27,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.IBlockAccess;
 
 public class TileForceField extends Tile implements IPacketIDReceiver, IForceField
 {
@@ -50,6 +46,12 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         creativeTab = null;
         isOpaque = false;
         this.renderNormalBlock = false;
+    }
+
+    @Override
+    public Tile newTile()
+    {
+        return new TileForceField();
     }
 
     @Override
@@ -188,13 +190,14 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         return getAccess().getBlock(xi(), yi(), zi()) == getBlockType() ? false : super.shouldSideBeRendered(side);
     }
 
-    public boolean click(EntityPlayer player)
+    @Override
+    public boolean onPlayerLeftClick(EntityPlayer player)
     {
         IProjector projector = getProjector();
 
         if (projector != null)
         {
-            return projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule)stack.getItem()).onCollideWithForceField(world()), xi(), yi(), zi(), player, stack);
+            return projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule)stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), player, stack));
         }
         return true;
     }
@@ -234,36 +237,39 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
 
         if (projector != null)
         {
-            if (!projector.getModuleStacks(projector.getModuleSlots():_ *).
-            forall(stack = > stack.getItem().asInstanceOf[IModule].onCollideWithForceField(world, xi(), yi(), zi(), entity, stack)))
-            return
-
-                    TileBiometricIdentifier biometricIdentifier = projector.getBiometricIdentifier();
-
-            if (center.distance(new Vector3(entity)) < 0.5)
+            if (!projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule)stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), entity, stack)))
             {
-                if (!world.isRemote && entity.isInstanceOf[EntityLiving])
+                return;
+            }
+
+            TileBiometricIdentifier biometricIdentifier = projector.getBiometricIdentifier();
+
+            if (toPos().distance(new Pos(entity)) < 0.5)
+            {
+                if (!world().isRemote && entity instanceof EntityLiving)
                 {
-                    val entityLiving = entity.asInstanceOf[EntityLiving]
+                    EntityLiving entityLiving = (EntityLiving) entity;
 
-                    entityLiving.addPotionEffect(new PotionEffect(Potion.confusion.id, 4 * 20, 3))
-                    entityLiving.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 20, 1))
+                    //TODO move effect to shock damage
+                    //TODO add config for effects to be turned off
+                    entityLiving.addPotionEffect(new PotionEffect(Potion.confusion.id, 4 * 20, 3));
+                    entityLiving.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 20, 1));
 
-                    if (entity.isInstanceOf[EntityPlayer])
+                    if (entity instanceof EntityPlayer)
                     {
-                        val player = entity.asInstanceOf[EntityPlayer]
+                        EntityPlayer player = (EntityPlayer) entity;
 
                         if (player.isSneaking())
                         {
                             if (player.capabilities.isCreativeMode)
                             {
-                                return
+                                return;
                             }
                             else if (biometricIdentifier != null)
                             {
-                                if (biometricIdentifier.hasPermission(player.getGameProfile, MFFSPermissions.forceFieldWarp))
+                                if (biometricIdentifier.hasPermission(player.getGameProfile(), MFFSPermissions.forceFieldWarp))
                                 {
-                                    return
+                                    return;
                                 }
                             }
                         }
@@ -277,7 +283,8 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     }
 
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(IBlockAccess access, int side)
+    @Override
+    public IIcon getIcon(int side)
     {
         if (camoStack != null)
         {
@@ -297,15 +304,11 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
             }
         }
 
-
-        return super.getIcon(access, side);
+        return super.getIcon(side);
     }
 
-    /**
-     * Returns a integer with hex for 0xrrggbb with this color multiplied against the blocks color.
-     * Note only called when first determining what to render.
-     */
-    public int colorMultiplier()
+    @Override
+    public int getColorMultiplier()
     {
         if (camoStack != null)
         {
@@ -319,9 +322,10 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
                 }
 
         }
-        return super.colorMultiplier();
+        return super.getColorMultiplier();
     }
 
+    @Override
     public int getLightValue()
     {
         try
@@ -341,11 +345,13 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         return 0;
     }
 
+    @Override
     public float getExplosionResistance(Entity entity)
     {
         return Float.MAX_VALUE;
     }
 
+    @Override
     public void weakenForceField(int energy)
     {
         IProjector projector = getProjector();
@@ -376,7 +382,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     }
 
     @Override
-    public Packet getDescriptionPacket()
+    public PacketTile getDescPacket()
     {
         if (getProjector() != null)
         {
@@ -384,12 +390,11 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
             {
                 NBTTagCompound nbt = new NBTTagCompound();
                 camoStack.writeToNBT(nbt);
-                return Engine.instance.packetHandler.toMCPacket(new PacketTile(this, projector.xi(), projector.yi(), projector.zi(), true, nbt));
+                return new PacketTile(this, projector.xi(), projector.yi(), projector.zi(), true, nbt);
             }
 
-            return Engine.instance.packetHandler.toMCPacket(new PacketTile(this, projector.xi(), projector.yi(), projector.zi(), false));
+            return new PacketTile(this, projector.xi(), projector.yi(), projector.zi(), false);
         }
-
         return null;
     }
 

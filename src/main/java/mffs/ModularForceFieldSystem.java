@@ -47,7 +47,7 @@ import java.util.UUID;
 public class ModularForceFieldSystem extends AbstractMod
 {
     /** Damage type used by forcefields */
-    public final DamageSource damageFieldShock = new DamageSource("fieldShock").setDamageBypassesArmor();
+    public static final DamageSource damageFieldShock = new DamageSource("fieldShock").setDamageBypassesArmor();
     /** Fake player data used by the mod */
     public final GameProfile fakeProfile = new GameProfile(UUID.randomUUID(), "mffs");
 
