@@ -10,7 +10,7 @@ import net.minecraftforge.common.MinecraftForge
  *
  * @author Calclavia
  */
-class BlockPreMoveDelayedEvent(_handler: IDelayedEventHandler, _ticks: Int, val startPosition: VectorWorld, val newPosition: VectorWorld) extends DelayedEvent(_handler, _ticks)
+public class BlockPreMoveDelayedEvent(_handler: IDelayedEventHandler, _ticks: Int, val startPosition: VectorWorld, val newPosition: VectorWorld) extends DelayedEvent(_handler, _ticks)
 {
   protected override def onEvent
   {

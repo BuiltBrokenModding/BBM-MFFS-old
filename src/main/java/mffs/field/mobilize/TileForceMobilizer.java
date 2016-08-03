@@ -1,36 +1,48 @@
 package mffs.field.mobilize
 
+import com.builtbroken.mc.core.network.packet.PacketType;
+import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Location;
-import com.builtbroken.mc.lib.transform.vector.Point;
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import io.netty.buffer.ByteBuf
-import mffs.base.{TileFieldMatrix, TilePacketType}
-import mffs.field.mobilize.event.{BlockPreMoveDelayedEvent, DelayedEvent}
-import mffs.item.card.ItemCard
-import mffs.render.FieldColor
-import mffs.render.fx.IEffectController
-import mffs.security.MFFSPermissions
-import mffs.util.MFFSUtility
-import mffs.{Content, ModularForceFieldSystem, Reference, Settings}
-import net.minecraft.client.renderer.RenderBlocks
-import net.minecraft.entity.Entity
-import net.minecraft.entity.player.EntityPlayerMP
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.AxisAlignedBB
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.common.util.ForgeDirection
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import mffs.Content;
+import mffs.ModularForceFieldSystem;
+import mffs.Reference;
+import mffs.Settings;
+import mffs.api.card.ICoordLink;
+import mffs.api.modules.IModule;
+import mffs.api.modules.IProjectorMode;
+import mffs.base.TileFieldMatrix;
+import mffs.base.TilePacketType;
+import mffs.field.mobilize.event.BlockPreMoveDelayedEvent;
+import mffs.field.mobilize.event.DelayedEvent;
+import mffs.item.card.ItemCard;
+import mffs.render.FieldColor;
+import mffs.render.fx.IEffectController;
+import mffs.security.MFFSPermissions;
+import mffs.util.MFFSUtility;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 
-import scala.collection.convert.wrapAll._
-import scala.collection.mutable
-import scala.math._
+import java.util.ArrayList;
+import java.util.List;
 
 public class TileForceMobilizer extends TileFieldMatrix implements IEffectController
 {
-  val packetRange = 60
-  val animationTime = 20
+  int packetRange = 60;
+  int animationTime = 20;
 
-  val failedPositions = mutable.Set.empty[Vector3]
+  List<Pos> failedPositions = new ArrayList();
   public Location anchor = new Location(this.worldObj, 0, 0, 0);
 
   /**
@@ -39,24 +51,34 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
   public byte previewMode = 1;
   public boolean doAnchor = true;
   public int clientMoveTime = 0;
-  var performingMove = false
+  boolean performingMove = false;
   /**
    * Marking failures
    */
-  private var failedMove = false
+  private boolean failedMove = false;
   /**
    * Used ONLY for teleporting.
    */
-  private var moveTime = 0
+  private int moveTime = 0;
   private boolean canRenderMove = true;
 
-  def markFailMove() = failedMove = true
+    public TileForceMobilizer()
+    {
+        rotationMask = 63;
+    }
 
-  rotationMask = 63
+  public void markFailMove()
+  {
+    failedMove = true;
+  }
 
-  override def getSizeInventory = 1 + 25
+    @Override
+  public int getSizeInventory()
+  {
+      return 26;
+  }
 
-  override def update()
+  public void update()
   {
     super.update()
 
@@ -77,7 +99,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     }
   }
 
-  def checkActivation()
+  public void checkActivation()
   {
     if (!world.isRemote)
     {
@@ -105,7 +127,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
   /**
    * @return True if we started moving.
    */
-  def executeMovement(): Boolean =
+  public boolean executeMovement()
   {
     /**
      * Check if there is a valid field that has been calculated. If so, we will move this field.
@@ -151,13 +173,13 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
             worldObj.playSoundEffect(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D, Reference.prefix + "fieldmove", 0.6f, 1 - this.worldObj.rand.nextFloat * 0.1f)
           }
 
-          ModularForceFieldSystem.packetHandler.sendToAllAround(packet, world, toVector3, packetRange)
+          ModularForceFieldSystem.packetHandler.sendToAllAround(packet, world, toPos, packetRange)
         }
         else
         {
           packet <<< 2 <<< getMoveTime <<< (getAbsoluteAnchor + 0.5) <<< (getTargetPosition + 0.5) <<< false <<< coordPacketData.size <<< coordPacketData
           moveTime = getMoveTime
-          ModularForceFieldSystem.packetHandler.sendToAllAround(packet, world, toVector3, packetRange)
+          ModularForceFieldSystem.packetHandler.sendToAllAround(packet, world, toPos, packetRange)
         }
       }
 
@@ -171,7 +193,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     return false
   }
 
-  def whileMoving()
+  public void whileMoving()
   {
     if (!worldObj.isRemote && performingMove)
     {
@@ -205,7 +227,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     }
   }
 
-  def executePreviews()
+  public void executePreviews()
   {
     if (!world.isRemote)
     {
@@ -227,11 +249,11 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 
           if (isTeleport)
           {
-            var targetPosition: Vector3 = null
+            var targetPosition: Pos = null
 
             if (getTargetPosition.world == null)
             {
-              targetPosition = new Vector3(getTargetPosition)
+              targetPosition = new Pos(getTargetPosition)
             }
             else
             {
@@ -248,14 +270,14 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 
           packet <<< coordPacketData.size <<< coordPacketData
 
-          ModularForceFieldSystem.packetHandler.sendToAllAround(packet, world, toVector3, packetRange)
+          ModularForceFieldSystem.packetHandler.sendToAllAround(packet, world, toPos, packetRange)
           markDirty()
         }
       }
     }
   }
 
-  def executeFailures()
+ public void executeFailures()
   {
     /**
      * Check if the move failed. If so, we tell the client which positions were the cause of failure.
@@ -270,9 +292,9 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 
       delayedEvents.clear()
       worldObj.playSoundEffect(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D, Reference.prefix + "powerdown", 0.6f, 1 - this.worldObj.rand.nextFloat * 0.1f)
-      val playPoint = toVector3 + anchor + 0.5
+      val playPoint = toPos + anchor + 0.5
       worldObj.playSoundEffect(playPoint.x, playPoint.y, playPoint.z, Reference.prefix + "powerdown", 0.6f, 1 - this.worldObj.rand.nextFloat * 0.1f)
-      ModularForceFieldSystem.packetHandler.sendToAllAround(new PacketTile(this) <<< TilePacketType.render.id, world, toVector3, packetRange)
+      ModularForceFieldSystem.packetHandler.sendToAllAround(new PacketTile(this) <<< TilePacketType.render.id, world, toPos, packetRange)
 
 
       if (failedPositions.size > 0)
@@ -282,7 +304,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
          */
         val coords = failedPositions.toSeq flatMap (_.toIntList)
         val packetTile = new PacketTile(this) <<< TilePacketType.effect.id <<< 3 <<< coords.size <<< coords
-        ModularForceFieldSystem.packetHandler.sendToAllAround(packetTile, world, toVector3, packetRange)
+        ModularForceFieldSystem.packetHandler.sendToAllAround(packetTile, world, toPos, packetRange)
       }
 
       failedMove = false
@@ -290,9 +312,9 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     }
   }
 
-  override def generateCalculatedField: mutable.Set[Vector3] =
+  override def generateCalculatedField: mutable.Set[Pos] =
   {
-    var moveField: mutable.Set[Vector3] = null
+    var moveField: mutable.Set[Pos] = null
 
     if (canMove)
       moveField = getInteriorPoints
@@ -305,7 +327,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
   /**
    * Scan target field area to see if we can move this block. Called on a separate thread.
    */
-  def canMove: Boolean =
+  public boolean canMove()
   {
     val mobilizationPoints = getInteriorPoints
     val targetCenterPosition = getTargetPosition
@@ -333,7 +355,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
    * @param target - The target position
    * @return True if the block can be moved.
    */
-  def canMove(position: VectorWorld, target: VectorWorld): Boolean =
+  public boolean canMove(position: VectorWorld, target: VectorWorld)
   {
     if (Blacklist.mobilizerBlacklist.contains(position.getBlock))
     {
@@ -373,7 +395,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
    *
    * @return A vector of the target position.
    */
-  def getTargetPosition: VectorWorld =
+  public Location getTargetPosition()
   {
     if (isTeleport)
     {
@@ -386,7 +408,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     return new VectorWorld(worldObj, getAbsoluteAnchor + getDirection)
   }
 
-  private def isTeleport: Boolean =
+  private boolean isTeleport()
   {
     if (Settings.allowForceManipulatorTeleport)
     {
@@ -398,7 +420,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     return false
   }
 
-  def getLinkCard: ItemStack =
+  public ItemStack getLinkCard()
   {
     getInventory().getContainedItems filter (_ != null) find (_.getItem.isInstanceOf[ICoordLink]) match
     {
@@ -407,14 +429,17 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     }
   }
 
-  def getAbsoluteAnchor: Vector3 = toVector3.add(this.anchor)
+  public Pos getAbsoluteAnchor()
+  {
+      return toPos().add(this.anchor);
+  }
 
-  def isVisibleToPlayer(position: Vector3): Boolean =
+  public boolean isVisibleToPlayer(position: Pos)
   {
     return (ForgeDirection.VALID_DIRECTIONS count ((dir: ForgeDirection) => (position + dir).getBlock(world).isOpaqueCube)) < 6
   }
 
-  override def write(buf: ByteBuf, id: Int)
+  public void write(buf: ByteBuf, id: Int)
   {
     super.write(buf, id)
 
@@ -427,184 +452,203 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     }
   }
 
-  override def read(buf: ByteBuf, id: Int, packetType: PacketType)
+    @Override
+  public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
   {
-    super.read(buf, id, packetType)
-
-    if (world.isRemote)
+    if(!super.read(buf, id, player, packetType))
     {
-      if (id == TilePacketType.effect.id)
-      {
-        buf.readInt() match
+
+        if (world().isRemote)
         {
-          case 1 =>
-          {
-            /**
-             * If we have more than one block that is visible that was moved, we will tell the client to render it.
-             *
-             * Params: id, Type1, Type2, Size, the coordinate
-             */
-            val isTeleportPacket = buf.readInt()
-            val vecSize = buf.readInt()
-
-            val hologramRenderPoints = ((0 until vecSize) map (i => buf.readInt().toDouble + 0.5)).toList grouped 3 map (new Vector3(_))
-
-            /**
-             * Movement Rendering
-             */
-            val direction = getDirection
-
-            isTeleportPacket match
+            if (id == TilePacketType.effect.ordinal())
             {
-              case 1 => hologramRenderPoints foreach (vector => ModularForceFieldSystem.proxy.renderHologram(world, vector, FieldColor.blue, 30, vector + direction))
-              case 2 => hologramRenderPoints foreach (vector => ModularForceFieldSystem.proxy.renderHologram(world, vector, FieldColor.green, 30, vector + direction))
+                switch (buf.readInt())
+                {
+                    case 1 =>
+                    {
+                        /**
+                         * If we have more than one block that is visible that was moved, we will tell the client to render it.
+                         *
+                         * Params: id, Type1, Type2, Size, the coordinate
+                         */
+                        val isTeleportPacket = buf.readInt();
+                        val vecSize = buf.readInt();
+
+                        val hologramRenderPoints = ((0 until vecSize)map(i = > buf.readInt().toDouble + 0.5)).
+                        toList grouped 3 map(new Pos(_))
+
+                        /**
+                         * Movement Rendering
+                         */
+                        val direction = getDirection
+
+                        isTeleportPacket match
+                        {
+                            case 1 =>hologramRenderPoints foreach (vector = > ModularForceFieldSystem.proxy.renderHologram(world, vector, FieldColor.blue, 30, vector + direction))
+                            case 2 =>hologramRenderPoints foreach (vector = > ModularForceFieldSystem.proxy.renderHologram(world, vector, FieldColor.green, 30, vector + direction))
+                        }
+                    }
+                    case 2 =>
+                    {
+                        /**
+                         * Teleportation Rendering
+                         */
+                        val animationTime = buf.readInt()
+                        val anchorPosition = new Pos(buf)
+                        val targetPosition = new VectorWorld(buf)
+                        val isPreview = buf.readBoolean()
+                        val vecSize = buf.readInt()
+                        val hologramRenderPoints = ((0 until vecSize)map(i = > buf.readInt().toDouble + 0.5)).
+                        toList grouped 3 map(new Pos(_))
+                        val color = if (isPreview) FieldColor.blue
+                    else FieldColor.green
+
+                        hologramRenderPoints foreach (vector = >
+                            {
+                                    //Render teleport start
+                                    ModularForceFieldSystem.proxy.renderHologramOrbit(this, world, anchorPosition, vector, color, animationTime, 30f)
+
+                        if (targetPosition.world != null && targetPosition.world.getChunkProvider.chunkExists(targetPosition.xi, targetPosition.zi))
+                        {
+                            //Render teleport end
+                            val destination = vector - anchorPosition + targetPosition
+                            ModularForceFieldSystem.proxy.renderHologramOrbit(this, targetPosition.world, targetPosition, destination, color, animationTime, 30f)
+                        }
+                        })
+
+                        canRenderMove = true
+                    }
+                    case 3 =>
+                    {
+                        /**
+                         * Fail hologram rendering
+                         */
+                        val vecSize = buf.readInt()
+                        val hologramRenderPoints = ((0 until vecSize)map(i = > buf.readInt().toDouble + 0.5)).
+                        toList grouped 3 map(new Pos(_))
+
+                        hologramRenderPoints foreach
+                        (ModularForceFieldSystem.proxy.renderHologram(world, _, FieldColor.red, 30, null))
+                    }
+                }
             }
-          }
-          case 2 =>
-          {
-            /**
-             * Teleportation Rendering
-             */
-            val animationTime = buf.readInt()
-            val anchorPosition = new Vector3(buf)
-            val targetPosition = new VectorWorld(buf)
-            val isPreview = buf.readBoolean()
-            val vecSize = buf.readInt()
-            val hologramRenderPoints = ((0 until vecSize) map (i => buf.readInt().toDouble + 0.5)).toList grouped 3 map (new Vector3(_))
-            val color = if (isPreview) FieldColor.blue else FieldColor.green
-
-            hologramRenderPoints foreach (vector =>
+            else if (id == TilePacketType.render.ordinal())
             {
-              //Render teleport start
-              ModularForceFieldSystem.proxy.renderHologramOrbit(this, world, anchorPosition, vector, color, animationTime, 30f)
-
-              if (targetPosition.world != null && targetPosition.world.getChunkProvider.chunkExists(targetPosition.xi, targetPosition.zi))
-              {
-                //Render teleport end
-                val destination = vector - anchorPosition + targetPosition
-                ModularForceFieldSystem.proxy.renderHologramOrbit(this, targetPosition.world, targetPosition, destination, color, animationTime, 30f)
-              }
-            })
-
-            canRenderMove = true
-          }
-          case 3 =>
-          {
-            /**
-             * Fail hologram rendering
-             */
-            val vecSize = buf.readInt()
-            val hologramRenderPoints = ((0 until vecSize) map (i => buf.readInt().toDouble + 0.5)).toList grouped 3 map (new Vector3(_))
-
-            hologramRenderPoints foreach (ModularForceFieldSystem.proxy.renderHologram(world, _, FieldColor.red, 30, null))
-          }
+                canRenderMove = false
+            }
+            else if (id == TilePacketType.field.ordinal())
+            {
+                this.moveEntities
+            }
+            else if (id == TilePacketType.description.ordinal())
+            {
+                anchor = new Pos(buf)
+                previewMode = buf.readInt()
+                doAnchor = buf.readBoolean()
+                clientMoveTime = buf.readInt
+            }
         }
-      }
-      else if (id == TilePacketType.render.id)
-      {
-        canRenderMove = false
-      }
-      else if (id == TilePacketType.field.id)
-      {
-        this.moveEntities
-      }
-      else if (id == TilePacketType.description.id)
-      {
-        anchor = new Vector3(buf)
-        previewMode = buf.readInt()
-        doAnchor = buf.readBoolean()
-        clientMoveTime = buf.readInt
-      }
+        else
+        {
+            if (id == TilePacketType.toggleMoe.ordinal())
+            {
+                anchor = new Pos();
+                markDirty();
+            }
+            else if (id == TilePacketType.toggleMode2.ordinal())
+            {
+                previewMode = (previewMode + 1) % 3
+            }
+            else if (id == TilePacketType.toggleMode3.ordinal())
+            {
+                doAnchor = !doAnchor;
+            }
+        }
+        return false;
     }
-    else
+      return true;
+  }
+
+    @Override
+  public void markDirty()
+  {
+    super.markDirty();
+
+    if (world() != null)
     {
-      if (id == TilePacketType.toggleMoe.id)
-      {
-        anchor = new Vector3()
-        markDirty()
-      }
-      else if (id == TilePacketType.toggleMode2.id)
-      {
-        previewMode = (previewMode + 1) % 3
-      }
-      else if (id == TilePacketType.toggleMode3.id)
-      {
-        doAnchor = !doAnchor
-      }
+      clearCache();
+      calculateField();
     }
   }
 
-  override def markDirty()
+  protected void moveEntities()
   {
-    super.markDirty()
-
-    if (world != null)
-    {
-      clearCache()
-      calculateField()
-    }
-  }
-
-  protected def moveEntities
-  {
-    val targetLocation = getTargetPosition
-    val bounds = getSearchBounds
+    Location targetLocation = getTargetPosition();
+    AxisAlignedBB bounds = getSearchBounds();
 
     if (bounds != null)
     {
-      val entities = this.worldObj.getEntitiesWithinAABB(classOf[Entity], bounds)
-      entities map (_.asInstanceOf[Entity]) foreach (entity => moveEntity(entity, targetLocation + 0.5 + new Vector3(entity) - (getAbsoluteAnchor + 0.5)))
+      List<Entity> entities = this.worldObj.getEntitiesWithinAABB(Entity.class, bounds);
+      entities.stream().forEach(entity -> moveEntity(entity, targetLocation.add(0.5).add(new Pos(entity)).sub(getAbsoluteAnchor().add(0.5))));
     }
   }
 
-  def getSearchBounds: AxisAlignedBB =
+  public AxisAlignedBB getSearchBounds()
   {
-    val positiveScale = toVector3 + getTranslation + getPositiveScale + 1
-    val negativeScale = toVector3 + getTranslation - getNegativeScale
-    val minScale = positiveScale.min(negativeScale)
-    val maxScale = positiveScale.max(negativeScale)
-    return new Cuboid(minScale, maxScale).toAABB
+    Pos positiveScale = toPos().add(getTranslation()).add(getPositiveScale()).add(1);
+    Pos negativeScale = toPos().add(getTranslation()).sub(getNegativeScale());
+    Pos minScale = positiveScale.min(negativeScale); //TODO check if needed as cube should auto min max
+    Pos maxScale = positiveScale.max(negativeScale);
+    return new Cube(minScale, maxScale).toAABB();
   }
 
-  override def getTranslation: Vector3 = super.getTranslation + anchor
+  public Pos getTranslation()
+  {
+      return super.getTranslation().add(anchor);
+  }
 
-  protected def moveEntity(entity: Entity, location: VectorWorld)
+  protected void moveEntity(Entity entity, Location location)
   {
     if (entity != null && location != null)
     {
       if (entity.worldObj.provider.dimensionId != location.world.provider.dimensionId)
       {
-        entity.travelToDimension(location.world.provider.dimensionId)
+        entity.travelToDimension(location.world.provider.dimensionId);
       }
-      entity.motionX = 0
-      entity.motionY = 0
-      entity.motionZ = 0
+      entity.motionX = 0;
+      entity.motionY = 0;
+      entity.motionZ = 0;
 
-      if (entity.isInstanceOf[EntityPlayerMP])
+      if (entity instanceof EntityPlayerMP)
       {
-        entity.asInstanceOf[EntityPlayerMP].playerNetServerHandler.setPlayerLocation(location.x, location.y, location.z, entity.rotationYaw, entity.rotationPitch)
+          ((EntityPlayerMP)entity).playerNetServerHandler.setPlayerLocation(location.x(), location.y(), location.z(), entity.rotationYaw, entity.rotationPitch);
       }
       else
       {
-        entity.setPositionAndRotation(location.x, location.y, location.z, entity.rotationYaw, entity.rotationPitch)
+        entity.setPositionAndRotation(location.x(), location.y(), location.z(), entity.rotationYaw, entity.rotationPitch);
       }
     }
   }
 
-  override def doGetFortronCost: Int = round(super.doGetFortronCost + (if (this.anchor != null) this.anchor.magnitude * 1000 else 0)).toInt
+    @Override
+  public int doGetFortronCost()
+{
+    return Math.round(super.doGetFortronCost() + (int)(this.anchor != null ? this.anchor.magnitude() * 1000 : 0));
+}
 
-  override def isItemValidForSlot(slotID: Int, itemStack: ItemStack): Boolean =
+    @Override
+  public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
   {
     if (slotID == 0)
     {
-      return itemStack.getItem.isInstanceOf[ItemCard]
+      return itemStack.getItem() instanceof ItemCard;
     }
     else if (slotID == modeSlotID)
     {
-      return itemStack.getItem.isInstanceOf[IProjectorMode]
+      return itemStack.getItem() instanceof IProjectorMode;
     }
 
-    return itemStack.getItem.isInstanceOf[IModule] || itemStack.getItem.isInstanceOf[ICoordLink]
+    return itemStack.getItem() instanceof IModule || itemStack.getItem() instanceof ICoordLink;
   }
 
   /**
@@ -613,70 +657,68 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
    * @return The time it takes to teleport (using a link card) to another coordinate OR
    *         ANIMATION_TIME for default move.
    */
-  def getMoveTime: Int =
+  public int getMoveTime()
   {
-    if (isTeleport)
+    if (isTeleport())
     {
-      var time = (20 * this.getTargetPosition.distance(this.getAbsoluteAnchor)).toInt
-      if (this.getTargetPosition.world ne this.worldObj)
+      int time = (20 * (int)this.getTargetPosition().distance(this.getAbsoluteAnchor()));
+      if (this.getTargetPosition().world != this.worldObj);
       {
-        time += 20 * 60
+        time += 20 * 60;
       }
-      return time
+      return time;
     }
-    return animationTime
-  }
-
-  /**
-   * NBT Methods
-   */
-  override def readFromNBT(nbt: NBTTagCompound)
-  {
-    super.readFromNBT(nbt)
-    this.anchor = new Vector3(nbt.getCompoundTag("anchor"))
-    this.previewMode = nbt.getInteger("displayMode")
-    this.doAnchor = nbt.getBoolean("doAnchor")
-  }
-
-  override def writeToNBT(nbt: NBTTagCompound)
-  {
-    super.writeToNBT(nbt)
-
-    if (anchor != null)
-    {
-      nbt.setTag("anchor", anchor.toNBT)
-    }
-
-    nbt.setInteger("displayMode", previewMode)
-    nbt.setBoolean("doAnchor", doAnchor)
+    return animationTime;
   }
 
   @Override
-          public boolean canContinueEffect() {
+  public void readFromNBT(NBTTagCompound nbt)
+  {
+    super.readFromNBT(nbt);
+    this.anchor = new Pos(nbt.getCompoundTag("anchor"));
+    this.previewMode = nbt.getInteger("displayMode");
+    this.doAnchor = nbt.getBoolean("doAnchor");
+  }
+
+    @Override
+  public void writeToNBT(NBTTagCompound nbt)
+  {
+    super.writeToNBT(nbt);
+
+    if (anchor != null)
+    {
+      nbt.setTag("anchor", anchor.toNBT());
+    }
+
+    nbt.setInteger("displayMode", previewMode);
+    nbt.setBoolean("doAnchor", doAnchor);
+  }
+
+  @Override
+  public boolean canContinueEffect() {
     return canRenderMove;
   }
 
-  def canContinueEffect = canRenderMove
-
   @SideOnly(Side.CLIENT)
-  override def renderStatic(renderer: RenderBlocks, pos: Vector3, pass: Int): Boolean =
+  @Override
+  public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass)
   {
-    return false
+    return false;
   }
 
-  /*
+  /* TODO figure out what this commented out section is
    def getMethodNames: Array[String] =
   {
     return Array[String]("isActivate", "setActivate", "resetAnchor", "canMove")
   }
 
-  def callMethod(computer: Vector3, context: Vector3, method: Int, arguments: Array[AnyRef]): Array[AnyRef] =
+  def callMethod(computer: Pos, context: Pos, method: Int, arguments: Array[AnyRef]): Array[AnyRef] =
   {
     method match
     {
       case 2 =>
       {
-        this.anchor = new Vector3
+        this.anchor = new Pos
         return null
       }
       case 3 =>
@@ -699,15 +741,15 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 */
 
   @SideOnly(Side.CLIENT)
-  override def renderDynamic(pos: Vector3, frame: Float, pass: Int)
+  public void renderDynamic(Pos pos, float frame, int pass)
   {
-    RenderForceMobilizer.render(this, pos.x, pos.y, pos.z, frame, isActive, false)
+    RenderForceMobilizer.render(this, pos.x(), pos.y(), pos.z(), frame, isActive(), false);
   }
 
   @SideOnly(Side.CLIENT)
-  override def renderInventory(itemStack: ItemStack)
+  public void renderInventory(ItemStack itemStack)
   {
-    RenderForceMobilizer.render(this, -0.5, -0.5, -0.5, 0, true, true)
+    RenderForceMobilizer.render(this, -0.5, -0.5, -0.5, 0, true, true);
   }
 
   /**
@@ -715,21 +757,21 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
    * @param position - The position of the block to be moved.
    * @return True if move is successful.
    */
-  protected def moveBlock(position: Vector3): Boolean =
+  protected boolean moveBlock(Pos position)
   {
-    if (!world.isRemote)
+    if (!world().isRemote)
     {
-      val relativePosition = position - getAbsoluteAnchor
-      val newPosition = getTargetPosition + relativePosition
-      val tileEntity = position.getTileEntity(world)
+      Pos relativePosition = position.sub(getAbsoluteAnchor());
+      Location newPosition = getTargetPosition().add(relativePosition);
+      TileEntity tileEntity = position.getTileEntity(world());
 
-      if (!world.isAirBlock(position.xi, position.yi, position.zi) && tileEntity != this)
+      if (!world().isAirBlock(position.xi(), position.yi(), position.zi()) && tileEntity != this)
       {
-        queueEvent(new BlockPreMoveDelayedEvent(this, getMoveTime, new VectorWorld(world, position), newPosition))
-        return true
+        queueEvent(new BlockPreMoveDelayedEvent(this, getMoveTime(), new Location(world(), position), newPosition));
+        return true;
       }
     }
 
-    return false
+    return false;
   }
 }
