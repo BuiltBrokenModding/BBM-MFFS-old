@@ -1,5 +1,6 @@
 package mffs.field.mobilize.event;
 
+import com.builtbroken.mc.lib.helper.BlockUtility;
 import com.builtbroken.mc.lib.transform.vector.Location;
 import mffs.api.event.EventForceMobilize;
 import mffs.field.mobilize.TileForceMobilizer;
@@ -40,7 +41,7 @@ public class BlockPreMoveDelayedEvent extends DelayedEvent
                 {
                     Block blockID = startPosition.getBlock();
                     int blockMetadata = startPosition.getBlockMetadata();
-                    MovementUtility.setBlockSneaky(startPosition.world, this.startPosition, Blocks.air, 0, null);
+                    BlockUtility.setBlockSneaky(startPosition.world, this.startPosition.toPos(), Blocks.air, 0, null);
                     NBTTagCompound tileData = new NBTTagCompound();
                     if (tileEntity != null)
                     {

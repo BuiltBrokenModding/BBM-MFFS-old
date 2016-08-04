@@ -29,9 +29,9 @@ public class GuiFortronCapacitor extends GuiMFFS<TileFortronCapacitor> {
         GL11.glRotatef(-90, 0, 0, 1);
         drawTextWithTooltip("upgrade", -95, 140, x, y);
         GL11.glPopMatrix();
-        drawTextWithTooltip("linkedDevice", "%1: " + tile.getDeviceCount, 8, 20, x, y);
+        drawTextWithTooltip("linkedDevice", "%1: " + tile.getDeviceCount(), 8, 20, x, y);
         drawTextWithTooltip("transmissionRate", "%1: " + new UnitDisplay(UnitDisplay.Unit.LITER, tile.getTransmissionRate() * 20).symbol() + "/s", 8, 32, x, y);
-        drawTextWithTooltip("range", "%1: " + tile.getTransmissionRange, 8, 44, x, y);
+        drawTextWithTooltip("range", "%1: " + tile.getTransmissionRange(), 8, 44, x, y);
         drawTextWithTooltip("input", ChatFormatting.DARK_GREEN + "%1", 12, 62, x, y);
         drawTextWithTooltip("output", ChatFormatting.RED + "%1", 92, 62, x, y);
         drawFortronText(x, y);

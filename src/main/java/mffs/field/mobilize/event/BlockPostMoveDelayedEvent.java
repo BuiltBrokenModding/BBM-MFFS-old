@@ -1,5 +1,6 @@
 package mffs.field.mobilize.event;
 
+import com.builtbroken.mc.lib.helper.BlockUtility;
 import com.builtbroken.mc.lib.transform.vector.Location;
 import mffs.api.event.EventForceMobilize;
 import net.minecraft.block.Block;
@@ -66,7 +67,7 @@ public class BlockPostMoveDelayedEvent extends DelayedEvent
                         {
                             newTile = TileEntity.createAndLoadEntity(this.tileData);
                         }
-                        MovementUtility.setBlockSneaky(newPosition.world, newPosition, block, this.blockMetadata, newTile);
+                        BlockUtility.setBlockSneaky(newPosition.world, newPosition.toPos(), block, this.blockMetadata, newTile);
                         if (newTile != null && isMultipart)
                         {
                             try
@@ -84,7 +85,7 @@ public class BlockPostMoveDelayedEvent extends DelayedEvent
                     }
                     else
                     {
-                        MovementUtility.setBlockSneaky(this.newPosition.world, this.newPosition, block, this.blockMetadata, null);
+                        BlockUtility.setBlockSneaky(this.newPosition.world, this.newPosition.toPos(), block, this.blockMetadata, null);
                     }
                     this.handler.queueEvent(new BlockNotifyDelayedEvent(this.handler, 0, startPosition.world, startPosition.toPos()));
                     this.handler.queueEvent(new BlockNotifyDelayedEvent(this.handler, 0, newPosition.world, newPosition.toPos()));

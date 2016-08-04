@@ -105,30 +105,34 @@ public class ItemRemoteController extends ItemCardFrequency implements ICoordLin
                     {
                         double requiredEnergy = new Pos(entityPlayer).distance(position) * (FluidContainerRegistry.BUCKET_VOLUME / 100);
                         double receivedEnergy = 0;
-                        Set<IFortronFrequency> fortronTiles = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(IFortronFrequency.class, world, new Pos(entityPlayer), 50, this.getFrequency(itemStack));
+                        List<FrequencyGridRegistry.IBlockFrequency> fortronTiles = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(world, new Pos(entityPlayer), 50, this.getFrequency(itemStack));
 
-                        for (IFortronFrequency fortronTile : fortronTiles)
+                        for (FrequencyGridRegistry.IBlockFrequency tile : fortronTiles)
                         {
-                            double consumedEnergy = fortronTile.requestFortron((int) Math.ceil(requiredEnergy / fortronTiles.size()), true);
-                            if (consumedEnergy > 0)
+                            if (tile instanceof IFortronFrequency)
                             {
-                                if (world.isRemote)
+                                IFortronFrequency fortronTile = (IFortronFrequency) tile;
+                                double consumedEnergy = fortronTile.requestFortron((int) Math.ceil(requiredEnergy / fortronTiles.size()), true);
+                                if (consumedEnergy > 0)
                                 {
-                                    ModularForceFieldSystem.proxy.renderBeam(world, new Pos(entityPlayer).add(new Pos(0, entityPlayer.getEyeHeight() - 0.2, 0)), new Pos((TileEntity)fortronTile).add(0.5), ModularForceFieldSystem.fieldColor, 20);
+                                    if (world.isRemote)
+                                    {
+                                        ModularForceFieldSystem.proxy.renderBeam(world, new Pos(entityPlayer).add(new Pos(0, entityPlayer.getEyeHeight() - 0.2, 0)), new Pos((TileEntity) fortronTile).add(0.5), ModularForceFieldSystem.fieldColor, 20);
+                                    }
+                                    receivedEnergy += consumedEnergy;
                                 }
-                                receivedEnergy += consumedEnergy;
-                            }
-                            if (receivedEnergy >= requiredEnergy)
-                            {
-                                try
+                                if (receivedEnergy >= requiredEnergy)
                                 {
-                                    block.onBlockActivated(world, position.xi(), position.yi(), position.zi(), entityPlayer, 0, 0, 0, 0);
+                                    try
+                                    {
+                                        block.onBlockActivated(world, position.xi(), position.yi(), position.zi(), entityPlayer, 0, 0, 0, 0);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    return itemStack;
                                 }
-                                catch(Exception e)
-                                {
-                                    e.printStackTrace();
-                                }
-                                return itemStack;
                             }
                         }
                         if (!world.isRemote)

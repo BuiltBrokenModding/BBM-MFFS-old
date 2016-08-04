@@ -172,4 +172,9 @@ public abstract class TileMFFSInventory extends TileMFFS implements IInventory, 
     {
         return false;
     }
+
+    public void mergeIntoInventory(ItemStack itemStack)
+    {
+        //TODO implement
+    }
 }
