@@ -49,7 +49,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import java.awt.*;
 import java.util.UUID;
 
-@Mod(modid = Reference.id, name = Reference.name, version = Reference.version, dependencies = "required-after:ResonantEngine", modLanguage = "scala", guiFactory = "mffs.MFFSGuiFactory")
+@Mod(modid = Reference.id, name = Reference.name, version = Reference.version, dependencies = "required-after:VoltzEngine", guiFactory = "mffs.MFFSGuiFactory")
 public class ModularForceFieldSystem extends AbstractMod
 {
     /** Damage type used by forcefields */
