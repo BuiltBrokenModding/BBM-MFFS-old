@@ -7,8 +7,10 @@ import mffs.base.ItemModule;
 import mffs.field.TileElectromagneticProjector;
 import net.minecraft.tileentity.TileEntity;
 
+import java.util.Iterator;
 import java.util.List;
 
+/** Removes overlapping pieces of a field */
 public class ItemModuleFusion extends ItemModule
 {
     public ItemModuleFusion()
@@ -23,18 +25,22 @@ public class ItemModuleFusion extends ItemModule
         TileEntity tile = (TileEntity) projector;
         List<TileElectromagneticProjector> projectors = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class, projector.getFrequency());
 
-        //TOOD: Check threading efficiency
+        //TODO: Check threading efficiency
         for (TileElectromagneticProjector proj : projectors)
         {
-            if (proj.getWorldObj() == tile.getWorldObj() && proj.isActive() && proj.getMode() != null))
+            if (proj.getWorldObj() == tile.getWorldObj() && proj.isActive() && proj.getMode() != null)
             {
-
-                val removeFields = (fieldBlocks.par filter(pos = > checkProjectors
-                exists(proj = > proj.getInteriorPoints.contains(pos) || proj.getMode.isInField(proj, pos)))).seq
-                fieldBlocks-- = removeFields
+                Iterator<Pos> it = field.iterator();
+                while(it.hasNext())
+                {
+                    Pos pos = it.next();
+                    if(proj.getInteriorPoints().contains(pos) || proj.getMode().isInField(proj, pos))
+                    {
+                        it.remove();
+                    }
+                }
             }
         }
-
         return false;
     }
 }
