@@ -1,34 +1,23 @@
 package mffs.field.mobilize.event;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 public class DelayedEvent
 {
     public int ticks = 0;
-    Method method;
+    DelayedAction action;
     IDelayedEventHandler handler;
 
-    public DelayedEvent(IDelayedEventHandler handler, int ticks, Method method)
+    public DelayedEvent(IDelayedEventHandler handler, int ticks, DelayedAction method)
     {
         this.ticks = ticks;
-        this.method = method;
+        this.action = method;
         this.handler = handler;
     }
 
     protected void onEvent()
     {
-        try
+        if(action != null)
         {
-            method.invoke(handler);
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InvocationTargetException e)
-        {
-            e.printStackTrace();
+            action.doAction(handler);
         }
     }
 
@@ -50,5 +39,13 @@ public class DelayedEvent
     public int priority()
     {
         return 0;
+    }
+
+    public static class DelayedAction
+    {
+        public void doAction(IDelayedEventHandler handler)
+        {
+
+        }
     }
 }

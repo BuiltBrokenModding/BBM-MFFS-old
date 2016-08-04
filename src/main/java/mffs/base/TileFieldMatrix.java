@@ -301,9 +301,9 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         }
     }
 
-    public void generateCalculatedField()
+    public List<Pos> generateCalculatedField()
     {
-        getExteriorPoints();
+        return getExteriorPoints();
     }
 
     @Override //This is threaded, so ensure thread safe actions
