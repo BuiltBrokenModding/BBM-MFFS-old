@@ -101,7 +101,7 @@ public class ItemRemoteController extends ItemCardFrequency implements ICoordLin
                 if (block != Blocks.air)
                 {
                     Chunk chunk = world.getChunkFromBlockCoords(position.xi(), position.zi());
-                    if (chunk != null && chunk.isChunkLoaded && (MFFSUtility.hasPermission(world, position, Action.RIGHT_CLICK_BLOCK, entityPlayer) || MFFSUtility.hasPermission(world, position, MFFSPermissions.remoteControl, entityPlayer)))
+                    if (chunk != null && chunk.isChunkLoaded && (MFFSUtility.hasPermission(world, position.toPos(), Action.RIGHT_CLICK_BLOCK, entityPlayer) || MFFSUtility.hasPermission(world, position.toPos(), MFFSPermissions.remoteControl, entityPlayer)))
                     {
                         double requiredEnergy = new Pos(entityPlayer).distance(position) * (FluidContainerRegistry.BUCKET_VOLUME / 100);
                         double receivedEnergy = 0;
@@ -109,7 +109,7 @@ public class ItemRemoteController extends ItemCardFrequency implements ICoordLin
 
                         for (IFortronFrequency fortronTile : fortronTiles)
                         {
-                            double consumedEnergy = fortronTile.requestFortron(Math.ceil(requiredEnergy / fortronTiles.size()), true);
+                            double consumedEnergy = fortronTile.requestFortron((int) Math.ceil(requiredEnergy / fortronTiles.size()), true);
                             if (consumedEnergy > 0)
                             {
                                 if (world.isRemote)
@@ -141,10 +141,10 @@ public class ItemRemoteController extends ItemCardFrequency implements ICoordLin
         }
         else
         {
-            super.onItemRightClick(itemStack, world, entityPlayer)
+            super.onItemRightClick(itemStack, world, entityPlayer);
         }
 
-        return itemStack
+        return itemStack;
     }
 
     @Override

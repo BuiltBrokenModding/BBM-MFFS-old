@@ -1,12 +1,15 @@
 package mffs.util;
 
+import com.builtbroken.jlib.type.Pair;
 import com.builtbroken.mc.lib.access.Permission;
 import com.builtbroken.mc.lib.transform.rotation.EulerAngle;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.mojang.authlib.GameProfile;
+import mffs.ModularForceFieldSystem;
 import mffs.api.fortron.FrequencyGridRegistry;
 import mffs.api.machine.IProjector;
 import mffs.field.TileElectromagneticProjector;
+import mffs.field.mode.ItemModeCustom;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -18,8 +21,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @see <a href=
@@ -38,28 +41,36 @@ public class MFFSUtility
         return getFirstItemBlock(tileEntity, itemStack, true);
     }
 
-    public static ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack, Boolean recur)
+    public static ItemStack getFirstItemBlock(TileEntity tileEntity, ItemStack itemStack, boolean recur)
     {
         if (tileEntity instanceof IProjector)
         {
             IProjector projector = (IProjector) tileEntity;
 
-            projector.getModuleSlots().find(getFirstItemBlock(_, projector, itemStack) != null) match
+            for (int slot : projector.getModuleSlots())
             {
-                case Some(entry) =>return getFirstItemBlock(entry, projector, itemStack)
-                case _ =>
+                ItemStack stack = getFirstItemBlock(slot, projector, itemStack);
+                if (stack != null)
+                {
+                    return stack;
+                }
+
             }
+            return null;
         }
         else if (tileEntity instanceof IInventory)
         {
             IInventory inventory = (IInventory) tileEntity;
 
-            (0 until inventory.getSizeInventory()).view map (getFirstItemBlock(_, inventory, itemStack))
-            headOption match
+            for(int slot = 0; slot < inventory.getSizeInventory(); slot++)
             {
-                case Some(entry) =>return entry
-                case _ =>
+                ItemStack stack = getFirstItemBlock(slot, inventory, itemStack);
+                if(stack != null)
+                {
+                   return stack;
+                }
             }
+            return null;
         }
 
         if (recur)
@@ -67,7 +78,7 @@ public class MFFSUtility
             for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
             {
 
-                Pos vector = new Pos(tileEntity).add(direction);
+                Pos vector = new Pos(tileEntity).add(dir);
                 TileEntity checkTile = vector.getTileEntity(tileEntity.getWorldObj());
 
                 if (checkTile != null)
@@ -108,7 +119,7 @@ public class MFFSUtility
                 {
                     if (projector.getMode() instanceof ItemModeCustom)
                     {
-                        HashMap<Pos, Pair<Block, Integer>> fieldMap = ((ItemModeCustom) projector.getMode()).getFieldBlockMap(projector, projector.getModeStack());
+                        Map<Pos, Pair<Block, Integer>> fieldMap = ((ItemModeCustom) projector.getMode()).getFieldBlockMap(projector, projector.getModeStack());
 
                         if (fieldMap != null)
                         {
@@ -125,7 +136,7 @@ public class MFFSUtility
                         }
                     }
 
-                    return projector.getFilterStacks().size() > 0 ? projector.getFilterStacks().get(0);
+                    return projector.getFilterStacks().size() > 0 ? projector.getFilterStacks().get(0) : null;
                 }
             }
         }
@@ -158,9 +169,9 @@ public class MFFSUtility
 
     public static boolean hasPermission(World world, Pos position, Permission permission, GameProfile profile)
     {
-        for(TileElectromagneticProjector projector : getRelevantProjectors(world, position))
+        for (TileElectromagneticProjector projector : getRelevantProjectors(world, position))
         {
-            if(projector.hasPermission(profile, permission))
+            if (projector.hasPermission(profile, permission))
             {
                 return false;
             }
@@ -170,9 +181,9 @@ public class MFFSUtility
 
     public static boolean hasPermission(World world, Pos position, PlayerInteractEvent.Action action, EntityPlayer player)
     {
-        for(TileElectromagneticProjector projector : getRelevantProjectors(world, position))
+        for (TileElectromagneticProjector projector : getRelevantProjectors(world, position))
         {
-            if(projector.isAccessGranted(world, position, player, action))
+            if (projector.isAccessGranted(world, position, player, action))
             {
                 return false;
             }

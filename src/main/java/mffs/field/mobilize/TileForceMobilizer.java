@@ -1,4 +1,4 @@
-package mffs.field.mobilize
+package mffs.field.mobilize;
 
 import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketTile;

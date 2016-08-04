@@ -1,7 +1,7 @@
 package mffs.security;
 
 import com.builtbroken.mc.api.tile.IRotatable;
-import com.builtbroken.mc.lib.access.AccessProfile;
+import com.builtbroken.mc.lib.access.AccessUser;
 import com.builtbroken.mc.lib.access.Permission;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.mojang.authlib.GameProfile;
@@ -47,18 +47,19 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
     @Override
     public boolean hasPermission(GameProfile profile, Permission permission)
     {
-        if (!isActive || ModularForceFieldSystem.proxy.isOp(profile) && Settings.allowOpOverride)
+        if (!isActive() || ModularForceFieldSystem.proxy.isOp(profile) && Settings.allowOpOverride)
         {
             return true;
         }
         for(ItemStack stack : getCards())
         {
-            AccessProfile access = ((IAccessCard)stack.getItem()).getAccess(stack);
-            if(access != null && access.hasNode(profile.getName(), permission.toString()))
+            AccessUser access = ((IAccessCard)stack.getItem()).getAccess(stack);
+            if(access != null && access.hasNode(permission.toString()))
             {
                 return true;
             }
         }
+        return false;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
         {
             return itemStack.getItem() instanceof ItemCardFrequency;
         }
-        return itemStack.getItem() instanceof  IAccessCard
+        return itemStack.getItem() instanceof  IAccessCard;
     }
 
     @Override
@@ -101,7 +102,7 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
     @SideOnly(Side.CLIENT)
     public void renderDynamic(Pos pos, float frame, int pass)
     {
-        RenderBiometricIdentifier.render(this, pos.xf(), pos.yf(), pos.zf(), frame, isActive, false);
+        RenderBiometricIdentifier.render(this, pos.xf(), pos.yf(), pos.zf(), frame, isActive(), false);
     }
 
     @Override
