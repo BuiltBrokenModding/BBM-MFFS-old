@@ -44,11 +44,19 @@ public class ItemModeCustom extends ItemMode implements TCache
 
     IProjectorMode[] modes = new IProjectorMode[]{ModularForceFieldSystem.modeCube, ModularForceFieldSystem.modeSphere, ModularForceFieldSystem.modeTube, ModularForceFieldSystem.modePyramid};
 
+    private Map<String, Object> cache = new HashMap();
+
+    @Override
+    public Map<String, Object> cache()
+    {
+        return cache;
+    }
+
+    @Override
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List list, boolean par4)
     {
         NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);
-        list.add(LanguageUtility.getLocal("info.modeCustom.mode") + " " + (
-                nbt.getBoolean(NBT_MODE) ? LanguageUtility.getLocal("info.modeCustom.substraction") : LanguageUtility.getLocal("info.modeCustom.additive"));
+        list.add(LanguageUtility.getLocal("info.modeCustom.mode") + " " + ( nbt.getBoolean(NBT_MODE) ? LanguageUtility.getLocal("info.modeCustom.substraction") : LanguageUtility.getLocal("info.modeCustom.additive")));
         Pos point1 = new Pos(nbt.getCompoundTag(NBT_POINT_1));
         list.add(LanguageUtility.getLocal("info.modeCustom.point1") + " " + point1.xi() + ", " + point1.yi() + ", " + point1.zi());
         Pos point2 = new Pos(nbt.getCompoundTag(NBT_POINT_2));
@@ -202,13 +210,15 @@ public class ItemModeCustom extends ItemMode implements TCache
         return true;
     }
 
+
     public Map<Pos, Pair<Block, Integer>> getFieldBlockMap(IFieldMatrix projector, ItemStack itemStack)
     {
-        final String cacheID = "itemStack_" + itemStack.hashCode(); //TODO check if this can overlap
+        final String cacheID = "itemStack_" + itemStack.hashCode();
+        //TODO use better key as this will almost never be the same key out side of one call set
 
-        if (hasCache(classOf[mutable.Map[Vector3, (Block, Int)]],cacheID))
+        if (cacheExists(cacheID))
         {
-            return getCache(classOf[mutable.Map[Vector3, (Block, Int)]],cacheID)
+            return (Map<Pos, Pair<Block, Integer>>) getCache(cacheID);
         }
 
         Map<Pos, Pair<Block, Integer>> fieldMap = getFieldBlockMapClean(projector, itemStack);
@@ -235,16 +245,18 @@ public class ItemModeCustom extends ItemMode implements TCache
             }
         }
 
-        cache(cacheID, fieldMap);
+        putCache(cacheID, fieldMap);
 
         return fieldMap;
     }
 
+    @Override
     public List<Pos> getInteriorPoints(IFieldMatrix projector)
     {
         return this.getExteriorPoints(projector);
     }
 
+    @Override
     public List<Pos> getExteriorPoints(IFieldMatrix projector)
     {
         return this.getFieldBlocks(projector, projector.getModeStack());

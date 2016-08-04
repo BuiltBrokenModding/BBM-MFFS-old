@@ -1,20 +1,41 @@
 package mffs.util;
 
 
+import java.util.Map;
+
 /**
  * For objects that uses caching method to reduce CPU work.
  *
  * @author Calclavia
+ * @deprecated Use an internal Map<String, Object> instead
  */
+@Deprecated
 public interface TCache {
 
-    Object getCache(String paramString);
+    default Object getCache(String paramString)
+    {
+        return cache().get(paramString);
+    }
 
-    void putCache(String param, Object object);
+    default void putCache(String param, Object object)
+    {
+        cache().put(param, object);
+    }
 
-    boolean cacheExists(String param);
+    default boolean cacheExists(String param)
+    {
+        return cache().containsKey(param);
+    }
 
-    void clearCache(String paramString);
+    default void clearCache(String paramString)
+    {
+        cache().remove(paramString);
+    }
 
-    void clearCache();
+    default void clearCache()
+    {
+        cache().clear();
+    }
+
+    Map<String, Object> cache();
 }

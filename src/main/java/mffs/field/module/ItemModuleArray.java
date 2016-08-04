@@ -5,6 +5,7 @@ import mffs.api.machine.IFieldMatrix;
 import mffs.base.ItemModule;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class ItemModuleArray extends ItemModule
         }
     }
 
-    public Map<ForgeDirection, Integer> getDirectionWidthMap(List<Pos> field)
+    public Map<ForgeDirection, Integer> getDirectionWidthMap(Collection<Pos> field)
     {
         //TODO replace with custom data object that uses int array
         Map<ForgeDirection, Integer> longestDirectional = new HashMap();
