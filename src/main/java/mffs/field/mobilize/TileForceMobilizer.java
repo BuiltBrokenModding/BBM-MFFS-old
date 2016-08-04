@@ -7,6 +7,7 @@ import com.builtbroken.mc.lib.helper.DummyPlayer;
 import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Location;
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.tile.Tile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -58,7 +59,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     public byte previewMode = 1;
     public boolean doAnchor = true;
     public int clientMoveTime = 0;
-    boolean performingMove = false;
+    public boolean performingMove = false;
     /**
      * Marking failures
      */
@@ -71,7 +72,13 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 
     public TileForceMobilizer()
     {
-        rotationMask = 63;
+        //rotationMask = 63; TODO ?
+    }
+
+    @Override
+    public Tile newTile()
+    {
+        return new TileForceMobilizer();
     }
 
     public void markFailMove()

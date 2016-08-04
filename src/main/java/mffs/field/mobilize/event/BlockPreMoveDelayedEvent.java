@@ -1,4 +1,4 @@
-package mffs.field.mobilize.event
+package mffs.field.mobilize.event;
 
 import com.builtbroken.mc.lib.transform.vector.Location;
 import mffs.api.event.EventForceMobilize;
