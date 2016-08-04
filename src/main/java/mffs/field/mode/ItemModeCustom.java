@@ -104,7 +104,7 @@ public class ItemModeCustom extends ItemMode implements TCache
                         {
                             nbt.removeTag(NBT_POINT_1);
                             nbt.removeTag(NBT_POINT_2);
-                            Pos midPoint = point1.midpoint(point2).floor();
+                            Pos midPoint = point1.midPoint(point2);
                             point1 = point1.sub(midPoint);
                             point2 = point2.sub(midPoint);
                             Pos minPoint = point1.min(point2);
