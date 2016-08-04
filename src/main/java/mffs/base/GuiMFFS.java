@@ -11,22 +11,28 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
-public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase {
+import java.awt.*;
+
+public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase
+{
     /* TileEntity associated with this tile */
     protected MACHINE tile;
 
-    public GuiMFFS(Container container, MACHINE tile) {
+    public GuiMFFS(Container container, MACHINE tile)
+    {
         super(container);
         ySize = 217;
         this.tile = tile;
     }
 
-    public GuiMFFS(Container container) {
+    public GuiMFFS(Container container)
+    {
         this(container, null);
     }
 
     @Override
-    public void initGui() {
+    public void initGui()
+    {
         super.initGui();
         buttonList.clear();
 
@@ -35,40 +41,48 @@ public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase {
     }
 
     @Override
-    public void updateScreen() {
+    public void updateScreen()
+    {
         super.updateScreen();
 
 
-        if (buttonList.size() > 0 && this.buttonList.get(0) != null) {
+        if (buttonList.size() > 0 && this.buttonList.get(0) != null)
+        {
             ((GuiIcon) buttonList.get(0)).setIndex(tile.isRedstoneActive ? 1 : 0);
         }
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
+    protected void actionPerformed(GuiButton button)
+    {
         super.actionPerformed(button);
 
-        if (tile != null && button.id == 0) {
+        if (tile != null && button.id == 0)
+        {
             Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.toggleActivation.ordinal()));
         }
     }
 
-    protected void drawFortronText(int x, int y) {
-        if (tile instanceof TileFortron) {
+    protected void drawFortronText(int x, int y)
+    {
+        if (tile instanceof TileFortron)
+        {
             TileFortron fortronTile = (TileFortron) tile;
             drawTextWithTooltip("fortron", ChatFormatting.WHITE + "" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronEnergy()).symbol() + "/" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronCapacity()).symbol(), 35, 119, x, y);
         }
     }
 
-    protected void drawFrequencyGui() {
+    protected void drawFrequencyGui()
+    {
         //Frequency Card
         drawSlot(7, 113);
 
-        if (tile instanceof TileFortron) {
+        if (tile instanceof TileFortron)
+        {
             TileFortron fortronTile = (TileFortron) tile;
 
             //Fortron Bar
-            drawLongBlueBar(30, 115, Math.min((float) fortronTile.getFortronEnergy() / fortronTile.getFortronCapacity(), 1));
+            drawBar(30, 115, Math.min((float) fortronTile.getFortronEnergy() / fortronTile.getFortronCapacity(), 1), Color.BLUE);
         }
     }
 

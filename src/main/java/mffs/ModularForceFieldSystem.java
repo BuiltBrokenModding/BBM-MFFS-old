@@ -2,6 +2,7 @@ package mffs;
 
 
 import com.builtbroken.mc.core.registry.ModManager;
+import com.builtbroken.mc.lib.helper.recipe.UniversalRecipe;
 import com.builtbroken.mc.lib.mod.AbstractMod;
 import com.builtbroken.mc.lib.mod.AbstractProxy;
 import com.builtbroken.mc.lib.mod.ModCreativeTab;
@@ -12,6 +13,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
 import mffs.api.Blacklist;
 import mffs.base.ItemMFFS;
 import mffs.base.ItemModule;
@@ -34,11 +36,15 @@ import mffs.security.module.*;
 import mffs.util.FortronUtility;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.awt.*;
 import java.util.UUID;
@@ -182,7 +188,7 @@ public class ModularForceFieldSystem extends AbstractMod
         moduleCamouflage = manager.newItem(new ItemModule()).setCost(1.5f).setMaxStackSize(1);
 
         moduleApproximation = manager.newItem(new ItemModule()).setMaxStackSize(1).setCost(1f);
-        moduleArray = manager.newItem(new ItemModuleArray()).setCost(3f);
+        moduleArray = (ItemModuleArray) manager.newItem(new ItemModuleArray()).setCost(3f);
         moduleDisintegration = manager.newItem(new ItemModuleDisintegration());
         moduleShock = manager.newItem(new ItemModuleShock());
 
@@ -226,21 +232,6 @@ public class ModularForceFieldSystem extends AbstractMod
     public void preInit(FMLPreInitializationEvent event)
     {
         super.preInit(event);
-
-    }
-
-    @Override
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent evt)
-    {
-        super.init(evt);
-    }
-
-    @Override
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt)
-    {
-
         /**
          * Add to black lists
          */
@@ -256,6 +247,7 @@ public class ModularForceFieldSystem extends AbstractMod
 
         Blacklist.mobilizerBlacklist.add(Blocks.bedrock);
         Blacklist.mobilizerBlacklist.add(forceField);
+
         try
         {
             //TODO replace with proxy call to avoid using reflection that will always break
@@ -266,7 +258,69 @@ public class ModularForceFieldSystem extends AbstractMod
         {
             Reference.logger.error("IC2 Explosion white list API not found. Ignoring...", e);
         }
+    }
+
+    @Override
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent evt)
+    {
+        super.init(evt);
+    }
+
+    @Override
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent evt)
+    {
+
         super.postInit(evt);
+        /**
+         * Add recipe.
+         */
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(focusMatrix, 8), "RMR", "MDM", "RMR", 'M', UniversalRecipe.PRIMARY_METAL.get(), 'D', Items.diamond, 'R', Items.redstone));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(remoteController), "WWW", "MCM", "MCM", 'W', UniversalRecipe.WIRE.get(), 'C', UniversalRecipe.BATTERY.get(), 'M', UniversalRecipe.PRIMARY_METAL.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(coercionDeriver), "FMF", "FCF", "FMF", 'C', UniversalRecipe.BATTERY.get(), 'M', UniversalRecipe.PRIMARY_METAL.get(), 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(fortronCapacitor), "MFM", "FCF", "MFM", 'D', Items.diamond, 'C', UniversalRecipe.BATTERY.get(), 'F', focusMatrix, 'M', UniversalRecipe.PRIMARY_METAL.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(electromagneticProjector), " D ", "FFF", "MCM", 'D', Items.diamond, 'C', UniversalRecipe.BATTERY.get(), 'F', focusMatrix, 'M', UniversalRecipe.PRIMARY_METAL.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(biometricIdentifier), "FMF", "MCM", "FMF", 'C', cardBlank, 'M', UniversalRecipe.PRIMARY_METAL.get(), 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(forceMobilizer), "FCF", "TMT", "FCF", 'F', focusMatrix, 'C', UniversalRecipe.MOTOR.get(), 'T', moduleTranslate, 'M', UniversalRecipe.MOTOR.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardBlank), "PPP", "PMP", "PPP", 'P', Items.paper, 'M', UniversalRecipe.PRIMARY_METAL.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardLink), "BWB", 'B', cardBlank, 'W', UniversalRecipe.WIRE.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardFrequency), "WBW", 'B', cardBlank, 'W', UniversalRecipe.WIRE.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardID), "R R", " B ", "R R", 'B', cardBlank, 'R', Items.redstone));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeSphere), " F ", "FFF", " F ", 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeCube), "FFF", "FFF", "FFF", 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeTube), "FFF", "   ", "FFF", 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modePyramid), "F  ", "FF ", "FFF", 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeCylinder), "S", "S", "S", 'S', modeSphere));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeCustom), " C ", "TFP", " S ", 'S', modeSphere, 'C', modeCube, 'T', modeTube, 'P', modePyramid, 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(modeCustom), new ItemStack(modeCustom)));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleSpeed, 1), "FFF", "RRR", "FFF", 'F', focusMatrix, 'R', Items.redstone));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleCapacity, 2), "FCF", 'F', focusMatrix, 'C', UniversalRecipe.BATTERY.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleShock), "FWF", 'F', focusMatrix, 'W', UniversalRecipe.WIRE.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleSponge), "BBB", "BFB", "BBB", 'F', focusMatrix, 'B', Items.water_bucket));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleDisintegration), " W ", "FBF", " W ", 'F', focusMatrix, 'W', UniversalRecipe.WIRE.get(), 'B', UniversalRecipe.BATTERY.get()));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleDome), "F", " ", "F", 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleCamouflage), "WFW", "FWF", "WFW", 'F', focusMatrix, 'W', new ItemStack(Blocks.wool, 1, OreDictionary.WILDCARD_VALUE)));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleFusion), "FJF", 'F', focusMatrix, 'J', moduleShock));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleScale, 2), "FRF", 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleTranslate, 2), "FSF", 'F', focusMatrix, 'S', moduleScale));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleRotate, 4), "F  ", " F ", "  F", 'F', focusMatrix));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleGlow, 4), "GGG", "GFG", "GGG", 'F', focusMatrix, 'G', Blocks.glowstone));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleStabilize), "FDF", "PSA", "FDF", 'F', focusMatrix, 'P', Items.diamond_pickaxe, 'S', Items.diamond_shovel, 'A', Items.diamond_axe, 'D', Items.diamond));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleCollection), "F F", " H ", "F F", 'F', focusMatrix, 'H', Blocks.hopper));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleInvert), "L", "F", "L", 'F', focusMatrix, 'L', Blocks.lapis_block));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleSilence), " N ", "NFN", " N ", 'F', focusMatrix, 'N', Blocks.noteblock));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleApproximation), " N ", "NFN", " N ", 'F', focusMatrix, 'N', Items.golden_pickaxe));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleArray), " F ", "DFD", " F ", 'F', focusMatrix, 'D', Items.diamond));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleRepulsion), "FFF", "DFD", "SFS", 'F', focusMatrix, 'D', Items.diamond, 'S', Items.slime_ball));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleAntiHostile), " R ", "GFB", " S ", 'F', focusMatrix, 'G', Items.gunpowder, 'R', Items.rotten_flesh, 'B', Items.bone, 'S', Items.ghast_tear));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleAntiFriendly), " R ", "GFB", " S ", 'F', focusMatrix, 'G', Items.cooked_porkchop, 'R', new ItemStack(Blocks.wool, 1, OreDictionary.WILDCARD_VALUE), 'B', Items.leather, 'S', Items.slime_ball));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleAntiPersonnel), "BFG", 'F', focusMatrix, 'B', moduleAntiHostile, 'G', moduleAntiFriendly));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleConfiscate), "PEP", "EFE", "PEP", 'F', focusMatrix, 'E', Items.ender_eye, 'P', Items.ender_pearl));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleWarn), "NFN", 'F', focusMatrix, 'N', Blocks.noteblock));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleBlockAccess), " C ", "BFB", " C ", 'F', focusMatrix, 'B', Blocks.iron_block, 'C', Blocks.chest));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleBlockAlter), " G ", "GFG", " G ", 'F', moduleBlockAccess, 'G', Blocks.gold_block));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleAntiSpawn), " H ", "G G", " H ", 'H', moduleAntiHostile, 'G', moduleAntiFriendly));
     }
 
     @Override

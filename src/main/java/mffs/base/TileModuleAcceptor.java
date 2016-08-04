@@ -19,7 +19,6 @@ import java.util.Map;
 
 public abstract class TileModuleAcceptor extends TileFortron implements IModuleProvider, TCache
 {
-
     protected int capacityBase = 500;
     protected int capacityBoost = 5;
     protected int startModuleIndex = 1;
@@ -36,6 +35,11 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
         super(name);
     }
 
+    @Override
+    public Map<String, Object> cache()
+    {
+        return cache;
+    }
     @Override
     public void write(ByteBuf buf, int id)
     {

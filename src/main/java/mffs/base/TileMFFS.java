@@ -15,7 +15,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.List;
 
 /**
  * A base tile class for all MFFS blocks to inherit.
@@ -182,5 +185,11 @@ public abstract class TileMFFS extends Tile implements ICamouflageMaterial, IPac
             openGui(player, ModularForceFieldSystem.instance);
         }
         return super.onPlayerActivated(player, side, hit);
+    }
+
+    @Override
+    public List<ItemStack> getRemovedItems(EntityPlayer entity)
+    {
+        return getDrops(getMetadata(), 0);
     }
 }

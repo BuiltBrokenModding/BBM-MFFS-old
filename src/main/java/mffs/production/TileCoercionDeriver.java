@@ -6,7 +6,6 @@ import com.builtbroken.mc.prefab.tile.Tile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
-import mffs.Content;
 import mffs.ModularForceFieldSystem;
 import mffs.Settings;
 import mffs.api.card.IItemFrequency;
@@ -17,10 +16,15 @@ import mffs.util.FortronUtility;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileCoercionDeriver extends TileModuleAcceptor {
+import java.util.Map;
+
+public class TileCoercionDeriver extends TileModuleAcceptor
+{
     /**
      * The amount of power (watts) this machine uses.
      */
@@ -46,81 +50,118 @@ public class TileCoercionDeriver extends TileModuleAcceptor {
     //Client
     float animationTween = 0f;
 
-    public TileCoercionDeriver(String name) {
-        super(name);
+    int energy = 0;
+
+    public TileCoercionDeriver()
+    {
+        super("coercionDeriver"); //TODO get name
         capacityBase = 30;
         startModuleIndex = 3;
     }
 
     @Override
-    public int getSizeInventory() {
+    public Tile newTile()
+    {
+        return new TileCoercionDeriver();
+    }
+
+    @Override
+    public int getSizeInventory()
+    {
         return 6;
     }
 
     @Override
-    public void update() {
+    public void update()
+    {
         super.update();
 
-        if (!worldObj.isRemote) {
-            if (isActive()) {
-                if (isInversed && Settings.enableElectricity) {
+        if (!worldObj.isRemote)
+        {
+            if (isActive())
+            {
+                if (isInversed && Settings.enableElectricity)
+                {
                     int withdrawnElectricity = (int) (requestFortron(getProductionRate() / 20, true) / TileCoercionDeriver.ueToFortronRatio);
-                    this.getPower() += withdrawnElectricity * TileCoercionDeriver.energyConversionPercentage
+                    this.energy += withdrawnElectricity * TileCoercionDeriver.energyConversionPercentage;
 
                     //          recharge(getStackInSlot(TileCoercionDeriver.slotBattery))
-                } else {
-                    if (getFortronEnergy() < getFortronCapacity()) {
+                }
+                else
+                {
+                    if (getFortronEnergy() < getFortronCapacity())
+                    {
                         //            discharge(getStackInSlot(TileCoercionDeriver.slotBattery))
-                        energy.max = getPower();
 
-                        if (energy >= getPower() || (!Settings.enableElectricity && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL)))) {
+                        if (energy >= getPower() || (!Settings.enableElectricity && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL))))
+                        {
                             fortronTank.fill(FortronUtility.getFortron(getProductionRate()), true);
-                            energy -= getPower()
+                            energy -= getPower();
 
-                            if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL))) {
+                            if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL)))
+                            {
                                 decrStackSize(TileCoercionDeriver.SLOT_FUEL, 1);
-                                processTime = TileCoercionDeriver.fuelProcessTime * Math.max(this.getModuleCount(Content.moduleScale) / 20, 1);
+                                processTime = TileCoercionDeriver.fuelProcessTime * Math.max(this.getModuleCount(ModularForceFieldSystem.moduleScale) / 20, 1);
                             }
 
-                            if (processTime > 0) {
+                            if (processTime > 0)
+                            {
                                 processTime -= 1;
 
                                 if (processTime < 1)
+                                {
                                     processTime = 0;
-                            } else {
+                                }
+                            }
+                            else
+                            {
                                 processTime = 0;
                             }
                         }
                     }
                 }
             }
-        } else {
+        }
+        else
+        {
             /**
              * Handle animation
              */
-            if (isActive()) {
+            if (isActive())
+            {
                 animation += 1;
 
                 if (animationTween < 1)
+                {
                     animationTween += 0.01f;
-            } else {
+                }
+            }
+            else
+            {
                 if (animationTween > 0)
+                {
                     animationTween -= 0.01f;
+                }
             }
         }
     }
 
-    public int getProductionRate() {
-        if (this.isActive()) {
+    public int getProductionRate()
+    {
+        if (this.isActive())
+        {
             float production = (float) (getPower() / 20f * Settings.fortronProductionMultiplier * ueToFortronRatio);
             if (processTime > 0)
+            {
                 production *= productionMultiplier;
+            }
             return (int) Math.floor(production);
         }
         return 0;
     }
 
-    public double getPower() {
+    public double getPower()
+    {
         return POWER + (POWER * getModuleCount(ModularForceFieldSystem.moduleSpeed) / 8d);
     }
 
@@ -128,11 +169,14 @@ public class TileCoercionDeriver extends TileModuleAcceptor {
     public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
 
     {
-        if (itemStack != null) {
-            if (slotID >= startModuleIndex) {
+        if (itemStack != null)
+        {
+            if (slotID >= startModuleIndex)
+            {
                 return itemStack.getItem() instanceof IModule;
             }
-            switch (slotID) {
+            switch (slotID)
+            {
                 case TileCoercionDeriver.SLOT_FREQ:
                     return itemStack.getItem() instanceof IItemFrequency;
                 case TileCoercionDeriver.SLOT_BATTERY:
@@ -145,34 +189,44 @@ public class TileCoercionDeriver extends TileModuleAcceptor {
         return false;
     }
 
-    public boolean canConsume() {
-        if (this.isActive() && !this.isInversed) {
+    public boolean canConsume()
+    {
+        if (this.isActive() && !this.isInversed)
+        {
             return FortronUtility.getAmount(this.fortronTank) < this.fortronTank.getCapacity();
         }
         return false;
     }
 
     @Override
-    public void write(ByteBuf buf, int id) {
+    public void write(ByteBuf buf, int id)
+    {
         super.write(buf, id);
 
-        if (id == TilePacketType.description.ordinal()) {
+        if (id == TilePacketType.description.ordinal())
+        {
             buf.writeBoolean(isInversed);
             buf.writeInt(processTime);
         }
     }
 
     @Override
-    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType) {
+    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
+    {
         super.read(buf, id, player, packetType);
 
-        if (worldObj.isRemote) {
-            if (id == TilePacketType.description.ordinal()) {
+        if (worldObj.isRemote)
+        {
+            if (id == TilePacketType.description.ordinal())
+            {
                 isInversed = buf.readBoolean();
                 processTime = buf.readInt();
             }
-        } else {
-            if (id == TilePacketType.toggleMoe.ordinal()) {
+        }
+        else
+        {
+            if (id == TilePacketType.toggleMoe.ordinal())
+            {
                 isInversed = !isInversed;
             }
         }
@@ -180,14 +234,16 @@ public class TileCoercionDeriver extends TileModuleAcceptor {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void readFromNBT(NBTTagCompound nbt)
+    {
         super.readFromNBT(nbt);
         processTime = nbt.getInteger("processTime");
         isInversed = nbt.getBoolean("isInversed");
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public void writeToNBT(NBTTagCompound nbt)
+    {
         super.writeToNBT(nbt);
         nbt.setInteger("processT;ime", processTime);
         nbt.setBoolean("isInversed", isInversed);
@@ -198,19 +254,22 @@ public class TileCoercionDeriver extends TileModuleAcceptor {
      */
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass) {
+    public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass)
+    {
         return false;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderDynamic(Pos pos, float frame, int pass) {
+    public void renderDynamic(Pos pos, float frame, int pass)
+    {
         RenderCoercionDeriver.render(this, pos.x(), pos.y(), pos.z(), frame, isActive(), false);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderInventory(ItemStack itemStack) {
+    public void renderInventory(ItemStack itemStack)
+    {
         RenderCoercionDeriver.render(this, -0.5, -0.5, -0.5, 0, true, true);
     }
 }

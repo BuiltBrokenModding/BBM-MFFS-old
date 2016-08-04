@@ -40,5 +40,5 @@ public interface IProjector extends IInventory, IFieldMatrix, FrequencyGridRegis
 	 */
 	List<Pos> getForceFields();
 
-	void provideFortron(int energy, boolean b);
+	int provideFortron(int energy, boolean b);
 }

@@ -4,6 +4,7 @@ import com.builtbroken.mc.api.tile.IRotatable;
 import com.builtbroken.mc.lib.access.AccessUser;
 import com.builtbroken.mc.lib.access.Permission;
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.tile.Tile;
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -13,6 +14,7 @@ import mffs.api.card.IAccessCard;
 import mffs.base.TileFrequency;
 import mffs.item.card.ItemCardFrequency;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +28,11 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
      */
     public long lastFlicker = 0L;
 
+    public TileBiometricIdentifier()
+    {
+        super("biometricIdentifier");
+    }
+
     /**
      * 2 slots: Card copying
      * 9 x 4 slots: Access Cards
@@ -35,6 +42,12 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
     public int getSizeInventory()
     {
         return 46;
+    }
+
+    @Override
+    public Tile newTile()
+    {
+        return new TileBiometricIdentifier();
     }
 
     @Override
@@ -110,5 +123,17 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
     public void renderInventory(ItemStack itemStack)
     {
         RenderBiometricIdentifier.render(this, -0.5, -0.5, -0.5, 0, true, true);
+    }
+
+    @Override
+    public void setDirection(ForgeDirection direction)
+    {
+
+    }
+
+    @Override
+    public ForgeDirection getDirection()
+    {
+        return null;
     }
 }

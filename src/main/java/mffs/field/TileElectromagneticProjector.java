@@ -5,6 +5,7 @@ import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.tile.Tile;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -32,6 +33,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     List<Pos> forceFields = new ArrayList();
 
     /** Marks the field for an update call */
-    boolean markFieldUpdate = true;
+    public boolean markFieldUpdate = true;
 
     /**
      * True if the field is done constructing and the projector is simply
@@ -63,6 +65,12 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         bounds = new Cube(0, 0, 0, 1, 0.8, 1);
         capacityBase = 30;
         startModuleIndex = 1;
+    }
+
+    @Override
+    public Tile newTile()
+    {
+        return new TileElectromagneticProjector();
     }
 
     @Override
@@ -508,5 +516,17 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
             return Math.max(((ItemModeCustom) this.getMode()).getFieldBlocks(this, this.getModeStack()).size() / 100, 1);
         }
         return Math.max(Math.min((calculatedField != null ? calculatedField.size() : 0) / 1000, 10), 1);
+    }
+
+    @Override
+    public ForgeDirection getDirection()
+    {
+        return null;
+    }
+
+    @Override
+    public void setDirection(ForgeDirection direction)
+    {
+
     }
 }

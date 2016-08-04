@@ -112,7 +112,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return itemStack.getItem() instanceof IModule;
     }
 
-    /* TODO figure out what this does and update it
+    @Override
     public int getSidedModuleCount(IModule module, ForgeDirection... directions)
     {
         ForgeDirection[] actualDirs = directions;
@@ -121,10 +121,14 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         {
             actualDirs = ForgeDirection.VALID_DIRECTIONS;
         }
+        int count = 0;
+        for (ForgeDirection dir : actualDirs)
+        {
+            count += getModuleCount(module, getDirectionSlots(dir));
+        }
 
-        return actualDirs.foldLeft(0) ((b, a)=>b + getModuleCount(module, getDirectionSlots(a)));
+        return count;
     }
-    */
 
     @Override
     public Pos getPositiveScale()

@@ -3,7 +3,7 @@ package mffs.security.card;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import mffs.Content;
+import mffs.ModularForceFieldSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -68,7 +68,7 @@ public class RenderIDCard implements IItemRenderer {
             GL11.glPushMatrix();
             GL11.glDisable(GL11.GL_CULL_FACE);
             transform(renderType);
-            renderItemIcon(Content.cardID.getIcon(itemStack, 0));
+            renderItemIcon(ModularForceFieldSystem.cardID.getIcon(itemStack, 0));
 
             if (renderType != ItemRenderType.INVENTORY) {
                 GL11.glTranslatef(0f, 0f, -0.0005f);

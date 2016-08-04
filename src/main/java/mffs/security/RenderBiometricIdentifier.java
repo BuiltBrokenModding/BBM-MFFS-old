@@ -1,4 +1,4 @@
-package mffs.security
+package mffs.security;
 
 import com.builtbroken.mc.lib.render.RenderUtility;
 import com.builtbroken.mc.lib.transform.vector.Pos;
@@ -32,15 +32,15 @@ public class RenderBiometricIdentifier
         }
 
         GL11.glPushMatrix();
-        GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5)
+        GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
 
         if (!isItem)
         {
-            GL11.glRotatef(-90, 0, 1, 0)
+            GL11.glRotatef(-90, 0, 1, 0);
             RenderUtility.rotateBlockBasedOnDirection(tile.getDirection());
         }
 
-        model.renderAllExcept("holoScreen")
+        model.renderAllExcept("holoScreen");
 
         if (!isItem)
         {

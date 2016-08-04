@@ -689,6 +689,12 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
         return super.getTranslation().add(anchor);
     }
 
+    @Override
+    public ForgeDirection getDirection()
+    {
+        return null;
+    }
+
     protected void moveEntity(Entity entity, Location location)
     {
         if (entity != null && location != null)
@@ -860,5 +866,11 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
         }
 
         return false;
+    }
+
+    @Override
+    public void setDirection(ForgeDirection direction)
+    {
+
     }
 }

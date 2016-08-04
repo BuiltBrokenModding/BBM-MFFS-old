@@ -1,7 +1,8 @@
-package mffs.production
+package mffs.production;
 
 import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.tile.Tile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -11,6 +12,7 @@ import mffs.api.fortron.FrequencyGridRegistry;
 import mffs.api.fortron.IFortronCapacitor;
 import mffs.api.fortron.IFortronFrequency;
 import mffs.api.fortron.IFortronStorage;
+import mffs.api.modules.IModule;
 import mffs.base.TileModuleAcceptor;
 import mffs.base.TilePacketType;
 import mffs.item.card.ItemCardFrequency;
@@ -18,6 +20,7 @@ import mffs.util.FortronUtility;
 import mffs.util.TransferMode;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
@@ -37,6 +40,12 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
         capacityBase = 700;
         capacityBoost = 10;
         startModuleIndex = 1;
+    }
+
+    @Override
+    public Tile newTile()
+    {
+        return new TileFortronCapacitor();
     }
 
     @Override
@@ -136,6 +145,12 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     }
 
     @Override
+    public IInventory getInventory()
+    {
+        return null;
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
         super.readFromNBT(nbt);
@@ -157,7 +172,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     @Override
     public List<IFortronFrequency> getFrequencyDevices()
     {
-        FrequencyGridRegistry.instance().getNodes(IFortronFrequency.class, world(), toPos(), getTransmissionRange(), getFrequency());
+        return FrequencyGridRegistry.instance().getNodes(IFortronFrequency.class, world(), toPos(), getTransmissionRange(), getFrequency());
     }
 
     @Override

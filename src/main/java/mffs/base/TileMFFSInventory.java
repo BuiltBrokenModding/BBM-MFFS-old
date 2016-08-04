@@ -4,11 +4,13 @@ import com.builtbroken.mc.api.ISave;
 import com.builtbroken.mc.api.tile.IInventoryProvider;
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
 import com.builtbroken.mc.core.network.packet.PacketType;
+import com.builtbroken.mc.prefab.inventory.BasicInventory;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +21,22 @@ import java.util.List;
  */
 public abstract class TileMFFSInventory extends TileMFFS implements IInventory, IPacketIDReceiver, IInventoryProvider
 {
+    protected IInventory inventory;
+
     public TileMFFSInventory(String name)
     {
         super(name);
     }
 
     @Override
-    public abstract IInventory getInventory();
+    public IInventory getInventory()
+    {
+        if (inventory == null)
+        {
+            inventory = new BasicInventory(getInventoryStackLimit());
+        }
+        return inventory;
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt)
@@ -148,5 +159,17 @@ public abstract class TileMFFSInventory extends TileMFFS implements IInventory, 
     public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_)
     {
         return getInventory().isItemValidForSlot(p_94041_1_, p_94041_2_);
+    }
+
+    @Override
+    public boolean canStore(ItemStack stack, int slot, ForgeDirection side)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean canRemove(ItemStack stack, int slot, ForgeDirection side)
+    {
+        return false;
     }
 }

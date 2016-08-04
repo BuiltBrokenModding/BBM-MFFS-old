@@ -1,12 +1,8 @@
 package mffs;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import com.builtbroken.mc.core.asm.ChunkSetBlockEvent;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.mojang.authlib.GameProfile;
-
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -14,6 +10,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mffs.api.event.EventForceMobilize;
 import mffs.api.event.EventStabilize;
 import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.base.TileFortron;
+import mffs.field.TileElectromagneticProjector;
 import mffs.util.FortronUtility;
 import mffs.util.MFFSUtility;
 import net.minecraft.block.BlockSkull;
@@ -29,7 +27,10 @@ import net.minecraft.util.IIcon;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import scala.collection.mutable.Set;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
@@ -141,7 +142,7 @@ public class SubscribeEventHandler
 
         Pos position = new Pos(evt.x, evt.y, evt.z);
 
-        Set<TileElectromagneticProjector> relevantProjectors = MFFSUtility.getRelevantProjectors(evt.entityPlayer.worldObj, position);
+        List<TileElectromagneticProjector> relevantProjectors = MFFSUtility.getRelevantProjectors(evt.entityPlayer.worldObj, position);
 
         //Check if we can sync this block (activate). If not, we cancel the event.
         for(TileElectromagneticProjector projector : relevantProjectors)
@@ -165,12 +166,12 @@ public class SubscribeEventHandler
         {
             Pos vec = new Pos(event.x, event.y, event.z);
 
-            Set<TileElectromagneticProjector> projectorSet = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class);
+            List<TileElectromagneticProjector> projectorSet = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class);
             for(TileElectromagneticProjector projector : projectorSet)
             {
                 if(projector.world() == event.world && projector.getCalculatedField() != null && projector.getCalculatedField().contains(vec))
                 {
-                    projector.markFieldUpdate();
+                    projector.markFieldUpdate = true;
                 }
             }
         }
@@ -181,7 +182,7 @@ public class SubscribeEventHandler
     {
         if (!(evt.entity instanceof EntityPlayer))
         {
-            Set<TileElectromagneticProjector> set = MFFSUtility.getRelevantProjectors(evt.world, new Pos(evt.entityLiving));
+            List<TileElectromagneticProjector> set = MFFSUtility.getRelevantProjectors(evt.world, new Pos(evt.entityLiving));
             for(TileElectromagneticProjector projector : set)
             {
                 if (projector.getModuleCount(ModularForceFieldSystem.moduleAntiSpawn) > 0)
