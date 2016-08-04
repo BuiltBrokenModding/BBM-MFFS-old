@@ -1,21 +1,27 @@
-package mffs.field.module
+package mffs.field.module;
 
-import java.util.Set
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.api.machine.IFieldMatrix;
+import mffs.base.ItemModule;
+import net.minecraft.tileentity.TileEntity;
 
-import mffs.base.ItemModule
-import net.minecraft.tileentity.TileEntity
+import java.util.List;
+import java.util.stream.Collectors;
 
-import scala.collection.convert.wrapAll._
 
 public class ItemModuleDome extends ItemModule
 {
-  setMaxStackSize(1)
+    public ItemModuleDome()
+    {
+        setMaxStackSize(1);
+    }
 
-  override def onPostCalculate(projector: IFieldMatrix, fieldBlocks: Set[Vector3])
-  {
-    val absoluteTranslation = new Vector3(projector.asInstanceOf[TileEntity]) + projector.getTranslation
-    val newField = fieldBlocks.par.filter(_.y > absoluteTranslation.y).seq
-    fieldBlocks.clear()
-    fieldBlocks.addAll(newField)
-  }
+    @Override
+    public void onPostCalculate(IFieldMatrix projector, List<Pos> fieldBlocks)
+    {
+        Pos absoluteTranslation = new Pos((TileEntity) projector).add(projector.getTranslation());
+        List<Pos> newField = fieldBlocks.stream().filter(v -> v.y() > absoluteTranslation.y()).collect(Collectors.toList());
+        fieldBlocks.clear();
+        fieldBlocks.addAll(newField);
+    }
 }
