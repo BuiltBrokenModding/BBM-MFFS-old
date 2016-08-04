@@ -1,69 +1,77 @@
-package mffs.field.module
+package mffs.field.module;
 
-import java.util.{Set => JSet}
+import com.builtbroken.mc.lib.transform.vector.Pos;
+import mffs.api.machine.IProjector;
+import mffs.base.ItemModule;
+import mffs.field.TileElectromagneticProjector;
+import mffs.security.MFFSPermissions;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 
-import mffs.base.ItemModule
-import mffs.field.TileElectromagneticProjector
-import mffs.security.MFFSPermissions
-import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
-import net.minecraft.item.ItemStack
-import net.minecraft.tileentity.TileEntity
+import java.util.List;
 
 public class ItemModuleRepulsion extends ItemModule
 {
-  setCost(8)
+    public ItemModuleRepulsion()
+    {
+        setCost(8);
+    }
 
-  override def onProject(projector: IProjector, fields: JSet[Vector3]): Boolean =
-  {
-    val tile = projector.asInstanceOf[TileEntity]
-    val repulsionVelocity = Math.max(projector.getModuleCount(this) / 20, 1.2)
-    val entities = getEntitiesInField(projector)
+    @Override
+    public boolean onProject(IProjector projector, List<Pos> fields)
+    {
+        double repulsionVelocity = Math.max(projector.getModuleCount(this) / 20, 1.2);
+        List<Entity> entities = getEntitiesInField(projector);
 
-    //TODO: Check parallel
-    entities.par
-            .filter(
-              entity =>
-              {
-                if (fields.contains(new Vector3(entity).floor) || projector.getMode.isInField(projector, new Vector3(entity)))
-                {
-                  if (entity.isInstanceOf[EntityPlayer])
-                  {
-                    val entityPlayer = entity.asInstanceOf[EntityPlayer]
-                    return entityPlayer.capabilities.isCreativeMode || projector.hasPermission(entityPlayer.getGameProfile, MFFSPermissions.forceFieldWarp)
-                  }
-                  return true
-                }
+        //TODO: Check parallel
+        entities.stream()
+                .filter(
+                        entity ->
+                        {
+                            if (fields.contains(new Pos(entity).floor()) || projector.getMode().isInField(projector, new Pos(entity)))
+                            {
+                                if (entity instanceof EntityPlayer)
+                                {
+                                    EntityPlayer entityPlayer = (EntityPlayer) entity;
+                                    return entityPlayer.capabilities.isCreativeMode || projector.hasPermission(entityPlayer.getGameProfile(), MFFSPermissions.forceFieldWarp);
+                                }
+                                return true;
+                            }
 
-                return false
-              })
-            .foreach(
-              entity =>
-              {
-                val repelDirection = new Vector3(entity) - ((new Vector3(entity).floor + 0.5).normalize)
-                entity.motionX = repelDirection.x * Math.max(repulsionVelocity, Math.abs(entity.motionX))
-                entity.motionY = repelDirection.y * Math.max(repulsionVelocity, Math.abs(entity.motionY))
-                entity.motionZ = repelDirection.z * Math.max(repulsionVelocity, Math.abs(entity.motionZ))
-                //TODO: May NOT be thread safe!
-                entity.moveEntity(entity.motionX, entity.motionY, entity.motionZ)
-                entity.onGround = true
+                            return false;
+                        })
+                .forEach(
+                        entity ->
+                        {
+                            Pos repelDirection = new Pos(entity).sub((new Pos(entity).floor().add(0.5)).normalize());
+                            entity.motionX = repelDirection.x() * Math.max(repulsionVelocity, Math.abs(entity.motionX));
+                            entity.motionY = repelDirection.y() * Math.max(repulsionVelocity, Math.abs(entity.motionY));
+                            entity.motionZ = repelDirection.z() * Math.max(repulsionVelocity, Math.abs(entity.motionZ));
+                            //TODO: May NOT be thread safe!
+                            entity.moveEntity(entity.motionX, entity.motionY, entity.motionZ);
+                            entity.onGround = true;
 
-                if (entity.isInstanceOf[EntityPlayerMP])
-                {
-                  entity.asInstanceOf[EntityPlayerMP].playerNetServerHandler.setPlayerLocation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch)
-                }
-              })
+                            if (entity instanceof EntityPlayerMP)
+                            {
+                                ((EntityPlayerMP) entity).playerNetServerHandler.setPlayerLocation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
+                            }
+                        });
 
-    return true
-  }
+        return true;
+    }
 
-  override def onDestroy(projector: IProjector, field: JSet[Vector3]): Boolean =
-  {
-    projector.asInstanceOf[TileElectromagneticProjector].sendFieldToClient
-    return false
-  }
+    @Override
+    public boolean onDestroy(IProjector projector, List<Pos> field)
+    {
+        ((TileElectromagneticProjector) projector).sendFieldToClient();
+        return false;
+    }
 
-  override def requireTicks(moduleStack: ItemStack): Boolean =
-  {
-    return true
-  }
+    @Override
+    public boolean requireTicks(ItemStack moduleStack)
+    {
+        return true;
+    }
 }
