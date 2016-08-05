@@ -55,6 +55,6 @@ public class ContainerMatrix extends ContainerBase
             }
         }
 
-        addPlayerInventory(player);
+        addPlayerInventory(player, 8, 135);
     }
 }

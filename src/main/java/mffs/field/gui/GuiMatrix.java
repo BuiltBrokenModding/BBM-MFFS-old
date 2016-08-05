@@ -1,5 +1,6 @@
 package mffs.field.gui;
 
+import com.builtbroken.mc.core.References;
 import com.builtbroken.mc.lib.transform.region.Rectangle;
 import com.builtbroken.mc.lib.transform.vector.Point;
 import com.builtbroken.mc.prefab.gui.GuiSlotType;
@@ -22,6 +23,7 @@ public abstract class GuiMatrix<T extends TileFieldMatrix> extends GuiMFFS<T>
     {
         super(matrix, tile);
         this.center = matrix.matrixCenter;
+        this.baseTexture = References.GUI_BASE;
     }
 
     /**
@@ -32,7 +34,7 @@ public abstract class GuiMatrix<T extends TileFieldMatrix> extends GuiMFFS<T>
         String north = LanguageRegistry.instance().getStringLocalization("gui.projector." + (tile.absoluteDirection ? "north" : "front"));
         String south = LanguageRegistry.instance().getStringLocalization("gui.projector." + (tile.absoluteDirection ? "south" : "back"));
         String west = LanguageRegistry.instance().getStringLocalization("gui.projector." + (tile.absoluteDirection ? "west" : "left"));
-        String east = LanguageRegistry.instance().getStringLocalization("gui.projector" + (tile.absoluteDirection ? "east" : "right"));
+        String east = LanguageRegistry.instance().getStringLocalization("gui.projector." + (tile.absoluteDirection ? "east" : "right"));
         String up = LanguageRegistry.instance().getStringLocalization("gui.projector.up");
         String down = LanguageRegistry.instance().getStringLocalization("gui.projector.down");
 

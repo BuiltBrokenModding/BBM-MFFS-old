@@ -23,6 +23,6 @@ public class ContainerBiometricIdentifier extends ContainerBase
             }
         }
 
-        addPlayerInventory(player);
+        addPlayerInventory(player, 8, 135);
     }
 }
