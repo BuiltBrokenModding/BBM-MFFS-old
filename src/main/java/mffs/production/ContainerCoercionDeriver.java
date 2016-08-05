@@ -21,12 +21,12 @@ public class ContainerCoercionDeriver extends ContainerBase
         addSlotToContainer(new SlotBase(tileEntity, 2, 9 + 20, 76));
 
         //Upgrade slots
-        for (int y = 0; y < 2; y++)
+        for (int y = 0; y <= 2; y++)
         {
             addSlotToContainer(new SlotBase(tileEntity, y + 3, 154, 47 + y * 18));
         }
 
-        addPlayerInventory(player);
+        addPlayerInventory(player, 8, 135);
     }
 }
 
