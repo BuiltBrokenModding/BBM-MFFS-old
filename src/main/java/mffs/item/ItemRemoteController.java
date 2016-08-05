@@ -10,7 +10,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mffs.ModularForceFieldSystem;
 import mffs.api.card.ICoordLink;
 import mffs.api.event.EventForceMobilize;
-import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.FrequencyGrid;
+import mffs.api.fortron.IBlockFrequency;
 import mffs.api.fortron.IFortronFrequency;
 import mffs.item.card.ItemCardFrequency;
 import mffs.security.MFFSPermissions;
@@ -105,9 +106,9 @@ public class ItemRemoteController extends ItemCardFrequency implements ICoordLin
                     {
                         double requiredEnergy = new Pos(entityPlayer).distance(position) * (FluidContainerRegistry.BUCKET_VOLUME / 100);
                         double receivedEnergy = 0;
-                        List<FrequencyGridRegistry.IBlockFrequency> fortronTiles = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(world, new Pos(entityPlayer), 50, this.getFrequency(itemStack));
+                        List<IBlockFrequency> fortronTiles = FrequencyGrid.instance().getNodes(world, new Pos(entityPlayer), 50, this.getFrequency(itemStack));
 
-                        for (FrequencyGridRegistry.IBlockFrequency tile : fortronTiles)
+                        for (IBlockFrequency tile : fortronTiles)
                         {
                             if (tile instanceof IFortronFrequency)
                             {

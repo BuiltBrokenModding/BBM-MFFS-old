@@ -6,7 +6,7 @@ import com.builtbroken.mc.lib.transform.rotation.EulerAngle;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.mojang.authlib.GameProfile;
 import mffs.ModularForceFieldSystem;
-import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.FrequencyGrid;
 import mffs.api.machine.IProjector;
 import mffs.field.TileElectromagneticProjector;
 import mffs.field.mode.ItemModeCustom;
@@ -196,6 +196,6 @@ public class MFFSUtility
      */
     public static List<TileElectromagneticProjector> getRelevantProjectors(World world, Pos position)
     {
-        return FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class);
+        return FrequencyGrid.instance().getNodes(TileElectromagneticProjector.class);
     }
 }

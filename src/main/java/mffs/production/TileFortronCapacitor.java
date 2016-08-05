@@ -8,7 +8,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.card.ICoordLink;
-import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.FrequencyGrid;
 import mffs.api.fortron.IFortronCapacitor;
 import mffs.api.fortron.IFortronFrequency;
 import mffs.api.fortron.IFortronStorage;
@@ -172,7 +172,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     @Override
     public List<IFortronFrequency> getFrequencyDevices()
     {
-        return FrequencyGridRegistry.instance().getNodes(IFortronFrequency.class, world(), toPos(), getTransmissionRange(), getFrequency());
+        return FrequencyGrid.instance().getNodes(IFortronFrequency.class, world(), toPos(), getTransmissionRange(), getFrequency());
     }
 
     @Override

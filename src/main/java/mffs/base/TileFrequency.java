@@ -6,7 +6,7 @@ import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.mojang.authlib.GameProfile;
 import mffs.Reference;
 import mffs.api.card.ICoordLink;
-import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.FrequencyGrid;
 import mffs.item.card.ItemCardFrequency;
 import mffs.security.MFFSPermissions;
 import mffs.security.TileBiometricIdentifier;
@@ -22,7 +22,7 @@ import java.util.List;
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
  * Created by Dark(DarkGuardsman, Robert) on 4/19/2016.
  */
-public abstract class TileFrequency extends TileMFFSInventory implements FrequencyGridRegistry.IBlockFrequency
+public abstract class TileFrequency extends TileMFFSInventory implements FrequencyGrid.IBlockFrequency
 {
     public int frequencySlot = 0;
 
@@ -35,14 +35,14 @@ public abstract class TileFrequency extends TileMFFSInventory implements Frequen
     @Override
     public void validate()
     {
-        FrequencyGridRegistry.SERVER_INSTANCE.add(this);
+        FrequencyGrid.instance().add(this);
         super.validate();
     }
 
     @Override
     public void invalidate()
     {
-        FrequencyGridRegistry.SERVER_INSTANCE.remove(this);
+        FrequencyGrid.instance().remove(this);
         super.invalidate();
     }
 

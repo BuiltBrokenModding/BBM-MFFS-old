@@ -4,7 +4,7 @@ import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
-import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.FrequencyGrid;
 import mffs.api.fortron.IFortronFrequency;
 import mffs.util.FortronUtility;
 import mffs.util.TransferMode;
@@ -48,7 +48,7 @@ public abstract class TileFortron extends TileFrequency implements IFluidHandler
     {
         if (this.markSendFortron)
         {
-            FortronUtility.transferFortron(this, FrequencyGridRegistry.SERVER_INSTANCE.getNodes(IFortronFrequency.class, worldObj, toPos(), 100, this.getFrequency()), TransferMode.drain, Integer.MAX_VALUE);
+            FortronUtility.transferFortron(this, FrequencyGrid.instance().getNodes(IFortronFrequency.class, worldObj, toPos(), 100, this.getFrequency()), TransferMode.drain, Integer.MAX_VALUE);
         }
         super.invalidate();
     }

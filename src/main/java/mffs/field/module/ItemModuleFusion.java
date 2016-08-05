@@ -1,7 +1,7 @@
 package mffs.field.module;
 
 import com.builtbroken.mc.lib.transform.vector.Pos;
-import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.FrequencyGrid;
 import mffs.api.machine.IProjector;
 import mffs.base.ItemModule;
 import mffs.field.TileElectromagneticProjector;
@@ -23,7 +23,7 @@ public class ItemModuleFusion extends ItemModule
     public boolean onProject(IProjector projector, List<Pos> field)
     {
         TileEntity tile = (TileEntity) projector;
-        List<TileElectromagneticProjector> projectors = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class, projector.getFrequency());
+        List<TileElectromagneticProjector> projectors = FrequencyGrid.instance().getNodes(TileElectromagneticProjector.class, projector.getFrequency());
 
         //TODO: Check threading efficiency
         for (TileElectromagneticProjector proj : projectors)

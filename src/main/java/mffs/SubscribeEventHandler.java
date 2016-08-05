@@ -9,7 +9,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mffs.api.event.EventForceMobilize;
 import mffs.api.event.EventStabilize;
-import mffs.api.fortron.FrequencyGridRegistry;
+import mffs.api.fortron.FrequencyGrid;
 import mffs.base.TileFortron;
 import mffs.field.TileElectromagneticProjector;
 import mffs.util.FortronUtility;
@@ -166,7 +166,7 @@ public class SubscribeEventHandler
         {
             Pos vec = new Pos(event.x, event.y, event.z);
 
-            List<TileElectromagneticProjector> projectorSet = FrequencyGridRegistry.SERVER_INSTANCE.getNodes(TileElectromagneticProjector.class);
+            List<TileElectromagneticProjector> projectorSet = FrequencyGrid.instance().getNodes(TileElectromagneticProjector.class);
             for(TileElectromagneticProjector projector : projectorSet)
             {
                 if(projector.world() == event.world && projector.getCalculatedField() != null && projector.getCalculatedField().contains(vec))
