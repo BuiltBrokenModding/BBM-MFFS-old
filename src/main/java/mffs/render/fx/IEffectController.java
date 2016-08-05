@@ -7,5 +7,5 @@ package mffs.render.fx;
  */
 public interface IEffectController
 {
-	public boolean canContinueEffect();
+    public boolean canContinueEffect();
 }

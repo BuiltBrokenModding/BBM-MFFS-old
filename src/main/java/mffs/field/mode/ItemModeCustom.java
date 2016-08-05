@@ -56,7 +56,7 @@ public class ItemModeCustom extends ItemMode implements TCache
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List list, boolean par4)
     {
         NBTTagCompound nbt = NBTUtility.getNBTTagCompound(itemStack);
-        list.add(LanguageUtility.getLocal("info.modeCustom.mode") + " " + ( nbt.getBoolean(NBT_MODE) ? LanguageUtility.getLocal("info.modeCustom.substraction") : LanguageUtility.getLocal("info.modeCustom.additive")));
+        list.add(LanguageUtility.getLocal("info.modeCustom.mode") + " " + (nbt.getBoolean(NBT_MODE) ? LanguageUtility.getLocal("info.modeCustom.substraction") : LanguageUtility.getLocal("info.modeCustom.additive")));
         Pos point1 = new Pos(nbt.getCompoundTag(NBT_POINT_1));
         list.add(LanguageUtility.getLocal("info.modeCustom.point1") + " " + point1.xi() + ", " + point1.yi() + ", " + point1.zi());
         Pos point2 = new Pos(nbt.getCompoundTag(NBT_POINT_2));

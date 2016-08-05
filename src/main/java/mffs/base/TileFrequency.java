@@ -77,15 +77,15 @@ public abstract class TileFrequency extends TileMFFSInventory implements IBlockF
     public List<TileBiometricIdentifier> getBiometricIdentifiers()
     {
         List<TileBiometricIdentifier> tiles = new ArrayList();
-        for(ItemStack stack : getCards())
+        for (ItemStack stack : getCards())
         {
-            if(stack != null && stack.getItem() instanceof ICoordLink)
+            if (stack != null && stack.getItem() instanceof ICoordLink)
             {
                 Location location = ((ICoordLink) stack.getItem()).getLink(stack);
-                if(location != null)
+                if (location != null)
                 {
                     TileEntity tile = location.getTileEntity();
-                    if(tile instanceof TileBiometricIdentifier)
+                    if (tile instanceof TileBiometricIdentifier)
                     {
                         tiles.add((TileBiometricIdentifier) tile);
                     }

@@ -13,32 +13,32 @@ import java.util.List;
  */
 public interface IProjector extends IInventory, IFieldMatrix, IBlockFrequency
 {
-	/**
-	 * Projects the force field.
-	 */
-	void projectField();
+    /**
+     * Projects the force field.
+     */
+    void projectField();
 
-	/**
-	 * Destroys the force field.
-	 */
-	void destroyField();
+    /**
+     * Destroys the force field.
+     */
+    void destroyField();
 
-	/**
-	 * @return The speed in which a force field is constructed.
-	 */
-	int getProjectionSpeed();
+    /**
+     * @return The speed in which a force field is constructed.
+     */
+    int getProjectionSpeed();
 
-	/**
-	 * @return The amount of ticks this projector has existed in the world.
-	 */
-	long getTicks();
+    /**
+     * @return The amount of ticks this projector has existed in the world.
+     */
+    long getTicks();
 
-	/**
-	 * DO NOT modify this list. Read-only.
-	 *
-	 * @return The actual force field block coordinates in the world.
-	 */
-	List<Pos> getForceFields();
+    /**
+     * DO NOT modify this list. Read-only.
+     *
+     * @return The actual force field block coordinates in the world.
+     */
+    List<Pos> getForceFields();
 
-	int provideFortron(int energy, boolean b);
+    int provideFortron(int energy, boolean b);
 }

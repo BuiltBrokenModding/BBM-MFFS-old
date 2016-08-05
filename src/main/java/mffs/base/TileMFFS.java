@@ -5,7 +5,7 @@ import com.builtbroken.mc.api.tile.IRemovable;
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.vector.Pos;
-import com.builtbroken.mc.prefab.tile.Tile;
+import com.builtbroken.mc.prefab.tile.TileMachine;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.ICamouflageMaterial;
@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author Calclavia
  */
-public abstract class TileMFFS extends Tile implements ICamouflageMaterial, IPacketIDReceiver, IActivatable, IPlayerUsing, IRemovable.ISneakPickup
+public abstract class TileMFFS extends TileMachine implements ICamouflageMaterial, IPacketIDReceiver, IActivatable, IPlayerUsing, IRemovable.ISneakPickup
 {
     /**
      * Used for client side animations.

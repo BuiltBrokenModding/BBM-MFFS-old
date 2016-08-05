@@ -183,7 +183,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
                     packet.data().writeInt(1); //TODO ?
                     packet.data().writeInt(2); //TODO ?
                     packet.data().writeInt(renderBlocks.size());
-                    for(Pos pos : renderBlocks)
+                    for (Pos pos : renderBlocks)
                     {
                         packet.data().writeInt(pos.xi());
                         packet.data().writeInt(pos.yi());
@@ -205,7 +205,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
                     getTargetPosition().add(0.5).writeByteBuf(packet.data());
                     packet.data().writeBoolean(false);
                     packet.data().writeInt(renderBlocks.size());
-                    for(Pos pos : renderBlocks)
+                    for (Pos pos : renderBlocks)
                     {
                         packet.data().writeInt(pos.xi());
                         packet.data().writeInt(pos.yi());
@@ -308,7 +308,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
                     }
 
                     packet.data().writeInt(renderBlocks.size());
-                    for(Pos pos : renderBlocks)
+                    for (Pos pos : renderBlocks)
                     {
                         packet.data().writeInt(pos.xi());
                         packet.data().writeInt(pos.yi());
@@ -348,7 +348,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
                  * Send failure coordinates to client
                  */
                 PacketTile packetTile = new PacketTile(this, TilePacketType.effect.ordinal(), 3, failedPositions.size());
-                for(Pos pos : failedPositions)
+                for (Pos pos : failedPositions)
                 {
                     packetTile.data().writeInt(pos.xi());
                     packetTile.data().writeInt(pos.yi());
@@ -481,10 +481,10 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 
     public ItemStack getLinkCard()
     {
-        for(int slot = 0; slot < getSizeInventory(); slot++)
+        for (int slot = 0; slot < getSizeInventory(); slot++)
         {
             ItemStack stack = getStackInSlot(slot);
-            if(stack != null && stack.getItem() instanceof ICoordLink)
+            if (stack != null && stack.getItem() instanceof ICoordLink)
             {
                 return stack;
             }
@@ -500,9 +500,9 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     public boolean isVisibleToPlayer(Pos position)
     {
         final Pos pos = toPos();
-        for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
+        for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
         {
-            if(!pos.add(dir).getBlock(world()).isOpaqueCube())
+            if (!pos.add(dir).getBlock(world()).isOpaqueCube())
             {
                 return false;
             }
@@ -690,12 +690,6 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
         return super.getTranslation().add(anchor);
     }
 
-    @Override
-    public ForgeDirection getDirection()
-    {
-        return null;
-    }
-
     protected void moveEntity(Entity entity, Location location)
     {
         if (entity != null && location != null)
@@ -867,11 +861,5 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
         }
 
         return false;
-    }
-
-    @Override
-    public void setDirection(ForgeDirection direction)
-    {
-
     }
 }

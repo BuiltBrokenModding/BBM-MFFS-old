@@ -5,10 +5,10 @@ package mffs.api.modules;
  */
 public interface IFortronCost
 {
-	/**
-	 * The amount of Fortron this module consumes per tick.
-	 *
-	 * @return
-	 */
-	float getFortronCost(float amplifier);
+    /**
+     * The amount of Fortron this module consumes per tick.
+     *
+     * @return
+     */
+    float getFortronCost(float amplifier);
 }

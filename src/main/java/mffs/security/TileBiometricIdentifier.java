@@ -1,6 +1,5 @@
 package mffs.security;
 
-import com.builtbroken.mc.api.tile.IRotatable;
 import com.builtbroken.mc.lib.access.AccessUser;
 import com.builtbroken.mc.lib.access.Permission;
 import com.builtbroken.mc.lib.transform.vector.Pos;
@@ -14,13 +13,12 @@ import mffs.api.card.IAccessCard;
 import mffs.base.TileFrequency;
 import mffs.item.card.ItemCardFrequency;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TileBiometricIdentifier extends TileFrequency implements IRotatable
+public class TileBiometricIdentifier extends TileFrequency
 {
     public static final int SLOT_COPY = 12;
     /**
@@ -64,10 +62,10 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
         {
             return true;
         }
-        for(ItemStack stack : getCards())
+        for (ItemStack stack : getCards())
         {
-            AccessUser access = ((IAccessCard)stack.getItem()).getAccess(stack);
-            if(access != null && access.hasNode(permission.toString()))
+            AccessUser access = ((IAccessCard) stack.getItem()).getAccess(stack);
+            if (access != null && access.hasNode(permission.toString()))
             {
                 return true;
             }
@@ -96,7 +94,7 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
         {
             return itemStack.getItem() instanceof ItemCardFrequency;
         }
-        return itemStack.getItem() instanceof  IAccessCard;
+        return itemStack.getItem() instanceof IAccessCard;
     }
 
     @Override
@@ -123,17 +121,5 @@ public class TileBiometricIdentifier extends TileFrequency implements IRotatable
     public void renderInventory(ItemStack itemStack)
     {
         RenderBiometricIdentifier.render(this, -0.5, -0.5, -0.5, 0, true, true);
-    }
-
-    @Override
-    public void setDirection(ForgeDirection direction)
-    {
-
-    }
-
-    @Override
-    public ForgeDirection getDirection()
-    {
-        return null;
     }
 }

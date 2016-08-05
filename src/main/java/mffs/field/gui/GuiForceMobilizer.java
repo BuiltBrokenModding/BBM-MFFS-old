@@ -14,16 +14,19 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-public class GuiForceMobilizer extends GuiMatrix<TileForceMobilizer> {
+public class GuiForceMobilizer extends GuiMatrix<TileForceMobilizer>
+{
     boolean absoluteCache;
 
 
-    public GuiForceMobilizer(EntityPlayer player, TileForceMobilizer tile) {
+    public GuiForceMobilizer(EntityPlayer player, TileForceMobilizer tile)
+    {
         super(new ContainerMatrix(player, tile), tile);
     }
 
     @Override
-    public void initGui() {
+    public void initGui()
+    {
         super.initGui();
         buttonList.add(new GuiIcon(1, width / 2 - 110, height / 2 - 16, new ItemStack(Items.clock)));
         buttonList.add(new GuiIcon(2, width / 2 - 110, height / 2 - 82, null, new ItemStack(Items.redstone), new ItemStack(Blocks.redstone_block)));
@@ -34,13 +37,15 @@ public class GuiForceMobilizer extends GuiMatrix<TileForceMobilizer> {
     }
 
     @Override
-    public void updateScreen() {
+    public void updateScreen()
+    {
         super.updateScreen();
         ((GuiIcon) buttonList.get(2)).setIndex(tile.previewMode);
         ((GuiIcon) buttonList.get(3)).setIndex(tile.doAnchor ? 1 : 0);
 
         //Caching so we do not need to constantly add.
-        if (absoluteCache && !tile.absoluteDirection || !absoluteCache && tile.absoluteDirection) {
+        if (absoluteCache && !tile.absoluteDirection || !absoluteCache && tile.absoluteDirection)
+        {
             ((GuiIcon) buttonList.get(4)).setIndex(!absoluteCache ? 1 : 0);
             absoluteCache = !absoluteCache;
             setupTooltips();
@@ -48,29 +53,39 @@ public class GuiForceMobilizer extends GuiMatrix<TileForceMobilizer> {
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+    public void drawGuiContainerBackgroundLayer(float f, int x, int y)
+    {
         super.drawGuiContainerBackgroundLayer(f, x, y);
         drawMatrix();
         drawFrequencyGui();
     }
 
     @Override
-    protected void actionPerformed(GuiButton guiButton) {
+    protected void actionPerformed(GuiButton guiButton)
+    {
         super.actionPerformed(guiButton);
-        if (guiButton.id == 1) {
+        if (guiButton.id == 1)
+        {
 
             Engine.instance.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMoe.ordinal()));
-        } else if (guiButton.id == 2) {
+        }
+        else if (guiButton.id == 2)
+        {
             Engine.instance.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode2.ordinal()));
-        } else if (guiButton.id == 3) {
+        }
+        else if (guiButton.id == 3)
+        {
             Engine.instance.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode3.ordinal()));
-        } else if (guiButton.id == 4) {
+        }
+        else if (guiButton.id == 4)
+        {
             Engine.instance.packetHandler.sendToAll(new PacketTile(tile, TilePacketType.toggleMode4.ordinal()));
         }
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int x, int y) {
+    public void drawGuiContainerForegroundLayer(int x, int y)
+    {
 
         drawStringCentered(tile.getInventoryName(), this.xSize / 2, 6);
 

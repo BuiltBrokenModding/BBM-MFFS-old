@@ -33,7 +33,7 @@ public abstract class TileMFFSInventory extends TileMFFS implements IInventory, 
     {
         if (inventory == null)
         {
-            inventory = new BasicInventory(getInventoryStackLimit());
+            inventory = new BasicInventory(getSizeInventory());
         }
         return inventory;
     }
@@ -42,7 +42,7 @@ public abstract class TileMFFSInventory extends TileMFFS implements IInventory, 
     public void readFromNBT(NBTTagCompound nbt)
     {
         super.readFromNBT(nbt);
-        if (getInventory() != null && getInventory() instanceof ISave && nbt.hasKey("inventory"))
+        if (getInventory() instanceof ISave && nbt.hasKey("inventory"))
         {
             ((ISave) getInventory()).load(nbt.getCompoundTag("inventory"));
         }
@@ -52,7 +52,7 @@ public abstract class TileMFFSInventory extends TileMFFS implements IInventory, 
     public void writeToNBT(NBTTagCompound nbt)
     {
         super.writeToNBT(nbt);
-        if (getInventory() != null && getInventory() instanceof ISave)
+        if (getInventory() instanceof ISave)
         {
             nbt.setTag("inventory", ((ISave) getInventory()).save(new NBTTagCompound()));
         }
@@ -82,12 +82,8 @@ public abstract class TileMFFSInventory extends TileMFFS implements IInventory, 
         return set;
     }
 
-
     @Override
-    public int getSizeInventory()
-    {
-        return getInventory().getSizeInventory();
-    }
+    public abstract int getSizeInventory();
 
     @Override
     public ItemStack getStackInSlot(int p_70301_1_)

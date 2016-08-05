@@ -10,8 +10,8 @@ import com.mojang.authlib.GameProfile;
  */
 public interface IPermissionProvider
 {
-	/**
-	 * Does this field matrix provide a specific permission?
-	 */
-	public boolean hasPermission(GameProfile profile, Permission permission);
+    /**
+     * Does this field matrix provide a specific permission?
+     */
+    public boolean hasPermission(GameProfile profile, Permission permission);
 }

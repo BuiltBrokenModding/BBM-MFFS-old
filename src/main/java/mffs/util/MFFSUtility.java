@@ -62,12 +62,12 @@ public class MFFSUtility
         {
             IInventory inventory = (IInventory) tileEntity;
 
-            for(int slot = 0; slot < inventory.getSizeInventory(); slot++)
+            for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
             {
                 ItemStack stack = getFirstItemBlock(slot, inventory, itemStack);
-                if(stack != null)
+                if (stack != null)
                 {
-                   return stack;
+                    return stack;
                 }
             }
             return null;

@@ -17,6 +17,7 @@ class GuiScroll
 
     /**
      * Percentage of scroll
+     *
      * @return value between 0 - 1
      */
     public float getCurrent()

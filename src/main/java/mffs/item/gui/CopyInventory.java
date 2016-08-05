@@ -10,18 +10,23 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author Calclavia
  */
 
-public class CopyInventory extends ExternalInventory {
+public class CopyInventory extends ExternalInventory
+{
 
     private ItemStack copyItem;
 
-    public CopyInventory(ItemStack stack, int slot) {
+    public CopyInventory(ItemStack stack, int slot)
+    {
         super(null, slot);
         copyItem = stack;
     }
 
     @Override
-    public void markDirty() {
+    public void markDirty()
+    {
         if (copyItem.getTagCompound() != null && getStackInSlot(0) != null)
+        {
             getStackInSlot(0).setTagCompound((NBTTagCompound) copyItem.getTagCompound().copy());
+        }
     }
 }

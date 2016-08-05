@@ -73,6 +73,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass)
     {
         int renderType = 0;
@@ -197,11 +198,12 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
 
         if (projector != null)
         {
-            return projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule)stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), player, stack));
+            return projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule) stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), player, stack));
         }
         return true;
     }
 
+    @Override
     public Iterable<Cube> getCollisionBoxes(Cube intersect, Entity entity)
     {
         //TODO: Check if the entity filter actually works...
@@ -231,13 +233,14 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         return super.getCollisionBoxes(intersect, entity);
     }
 
-    public void collide(Entity entity)
+    @Override
+    public void onCollide(Entity entity)
     {
         TileElectromagneticProjector projector = getProjector();
 
         if (projector != null)
         {
-            if (!projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule)stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), entity, stack)))
+            if (!projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule) stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), entity, stack)))
             {
                 return;
             }
@@ -274,12 +277,10 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
                             }
                         }
                     }
-
                     entity.attackEntityFrom(ModularForceFieldSystem.damageFieldShock, 100);
                 }
             }
         }
-
     }
 
     @SideOnly(Side.CLIENT)
@@ -314,12 +315,12 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         {
             try
             {
-                return ((ItemBlock)camoStack.getItem()).field_150939_a.colorMultiplier(getAccess(), xi(), yi(), zi());
+                return ((ItemBlock) camoStack.getItem()).field_150939_a.colorMultiplier(getAccess(), xi(), yi(), zi());
             }
-            catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
         }
         return super.getColorMultiplier();
@@ -333,13 +334,13 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
             TileElectromagneticProjector projector = getProjectorSafe();
             if (projector != null)
             {
-                return (int)((float)(Math.min(projector.getModuleCount(ModularForceFieldSystem.moduleGlow), 64) / 64) * 15f);
+                return (int) ((float) (Math.min(projector.getModuleCount(ModularForceFieldSystem.moduleGlow), 64) / 64) * 15f);
             }
         }
-        catch(Exception e)
-            {
-                e.printStackTrace();
-            }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
 
         return 0;

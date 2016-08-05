@@ -10,7 +10,8 @@ import java.util.Map;
  * @deprecated Use an internal Map<String, Object> instead
  */
 @Deprecated
-public interface TCache {
+public interface TCache
+{
 
     default Object getCache(String paramString)
     {

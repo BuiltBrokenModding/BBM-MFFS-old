@@ -31,10 +31,10 @@ public class ItemModuleFusion extends ItemModule
             if (proj.getWorldObj() == tile.getWorldObj() && proj.isActive() && proj.getMode() != null)
             {
                 Iterator<Pos> it = field.iterator();
-                while(it.hasNext())
+                while (it.hasNext())
                 {
                     Pos pos = it.next();
-                    if(proj.getInteriorPoints().contains(pos) || proj.getMode().isInField(proj, pos))
+                    if (proj.getInteriorPoints().contains(pos) || proj.getMode().isInField(proj, pos))
                     {
                         it.remove();
                     }

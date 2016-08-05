@@ -1,6 +1,5 @@
 package mffs.base;
 
-import com.builtbroken.mc.api.tile.IRotatable;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.helper.RotationUtility;
 import com.builtbroken.mc.lib.transform.rotation.EulerAngle;
@@ -26,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFieldMatrix, IDelayedEventHandler, IRotatable, IPermissionProvider
+public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFieldMatrix, IDelayedEventHandler, IPermissionProvider
 {
     protected final Queue<DelayedEvent> delayedEvents = new LinkedList();
 

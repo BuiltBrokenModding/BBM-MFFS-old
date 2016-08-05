@@ -60,7 +60,7 @@ public abstract class GuiAccessCard extends GuiItem
     {
         int index = (int) (scroll.getCurrent() * buttonList.size());
         int maxIndex = index + 3;
-        if(InventoryUtility.stacksMatchExact(stack, player.getCurrentEquippedItem()))
+        if (InventoryUtility.stacksMatchExact(stack, player.getCurrentEquippedItem()))
         {
             AccessUser access = ModularForceFieldSystem.cardID.getAccess(stack);
             if (access != null)

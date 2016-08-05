@@ -53,7 +53,7 @@ public class ItemModuleDisintegration extends ItemModule
             int blockMetadata = position.getBlockMetadata(world);
 
             boolean filterMatch = !proj.getFilterStacks().stream().anyMatch(
-                    itemStack -> MFFSUtility.getFilterBlock(itemStack) != null && (itemStack.isItemEqual(new ItemStack(block, 1, blockMetadata)) || ((ItemBlock)itemStack.getItem()).field_150939_a == block && projector.getModuleCount(ModularForceFieldSystem.moduleApproximation) > 0));
+                    itemStack -> MFFSUtility.getFilterBlock(itemStack) != null && (itemStack.isItemEqual(new ItemStack(block, 1, blockMetadata)) || ((ItemBlock) itemStack.getItem()).field_150939_a == block && projector.getModuleCount(ModularForceFieldSystem.moduleApproximation) > 0));
 
             if (proj.isInvertedFilter() != filterMatch)
             {
@@ -69,11 +69,11 @@ public class ItemModuleDisintegration extends ItemModule
 
             if (projector.getModuleCount(ModularForceFieldSystem.moduleCollection) > 0)
             {
-                proj.queueEvent(new BlockInventoryDropDelayedEvent(((IDelayedEventHandler)projector), 39, block, world, position, (TileMFFSInventory) projector));
+                proj.queueEvent(new BlockInventoryDropDelayedEvent(((IDelayedEventHandler) projector), 39, block, world, position, (TileMFFSInventory) projector));
             }
             else
             {
-                proj.queueEvent(new BlockDropDelayedEvent(((IDelayedEventHandler)projector), 39, block, world, position));
+                proj.queueEvent(new BlockDropDelayedEvent(((IDelayedEventHandler) projector), 39, block, world, position));
             }
 
             blockCount += 1;

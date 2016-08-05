@@ -28,7 +28,7 @@ public class ItemCardLink extends ItemCard implements ICoordLink
 
         if (hasLink(itemstack))
         {
-            Location vec  = getLink(itemstack);
+            Location vec = getLink(itemstack);
             Block block = vec.getBlock(entityplayer.worldObj);
 
             if (block != null)

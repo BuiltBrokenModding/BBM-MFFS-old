@@ -11,19 +11,23 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
-public class GuiFortronCapacitor extends GuiMFFS<TileFortronCapacitor> {
-    public GuiFortronCapacitor(EntityPlayer player, TileFortronCapacitor tile) {
+public class GuiFortronCapacitor extends GuiMFFS<TileFortronCapacitor>
+{
+    public GuiFortronCapacitor(EntityPlayer player, TileFortronCapacitor tile)
+    {
         super(new ContainerFortronCapacitor(player, tile), tile);
     }
 
     @Override
-    public void initGui() {
+    public void initGui()
+    {
         super.initGui();
         this.buttonList.add(new GuiTransferModeButton(1, this.width / 2 - 30, this.height / 2 - 30, this, this.tile));
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y) {
+    protected void drawGuiContainerForegroundLayer(int x, int y)
+    {
         fontRendererObj.drawString(tile.getInventoryName(), this.xSize / 2 - fontRendererObj.getStringWidth(tile.getInventoryName()) / 2, 6, 4210752);
         GL11.glPushMatrix();
         GL11.glRotatef(-90, 0, 0, 1);
@@ -39,31 +43,44 @@ public class GuiFortronCapacitor extends GuiMFFS<TileFortronCapacitor> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
+    {
         super.drawGuiContainerBackgroundLayer(f, x, y);
 
         //Upgrade slots
         for (int slot = 0; slot <= 2; slot++)
+        {
             drawSlot(153, 46 + slot * 18);
+        }
 
         //Input slots
         for (int sX = 0; sX <= 1; sX++)
+        {
             for (int sY = 0; sY <= 1; sY++)
+            {
                 drawSlot(8 + sX * 18, 73 + sY * 18);
+            }
+        }
 
         //Output slots
         for (int sX = 0; sX <= 1; sX++)
+        {
             for (int sY = 0; sY <= 1; sY++)
+            {
                 drawSlot(90 + sX * 18, 73 + sY * 18);
+            }
+        }
 
         drawFrequencyGui();
     }
 
     @Override
-    protected void actionPerformed(GuiButton guiButton) {
+    protected void actionPerformed(GuiButton guiButton)
+    {
         super.actionPerformed(guiButton);
 
-        if (guiButton.id == 1) {
+        if (guiButton.id == 1)
+        {
             Engine.instance.packetHandler.sendToAll(new PacketTile(this.tile, TilePacketType.toggleMoe.ordinal()));
         }
     }

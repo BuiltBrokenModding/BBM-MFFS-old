@@ -33,7 +33,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
@@ -343,7 +342,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
                                     if (tileEntity instanceof TileForceField)
                                     {
-                                        ((TileForceField)tileEntity).setProjector(toPos());
+                                        ((TileForceField) tileEntity).setProjector(toPos());
                                     }
                                 });
                     }
@@ -517,17 +516,5 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
             return Math.max(((ItemModeCustom) this.getMode()).getFieldBlocks(this, this.getModeStack()).size() / 100, 1);
         }
         return Math.max(Math.min((calculatedField != null ? calculatedField.size() : 0) / 1000, 10), 1);
-    }
-
-    @Override
-    public ForgeDirection getDirection()
-    {
-        return null;
-    }
-
-    @Override
-    public void setDirection(ForgeDirection direction)
-    {
-
     }
 }

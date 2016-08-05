@@ -1,6 +1,7 @@
 package mffs.security;
 
 import com.builtbroken.mc.lib.render.RenderUtility;
+import com.builtbroken.mc.lib.render.model.loader.EngineModelLoader;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -9,7 +10,6 @@ import mffs.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import org.lwjgl.opengl.GL11;
 
@@ -18,7 +18,7 @@ public class RenderBiometricIdentifier
 {
     public static ResourceLocation textureOn = new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier_on.png");
     public static ResourceLocation textureOff = new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier_off.png");
-    public static IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier.tcn"));
+    public static IModelCustom model = EngineModelLoader.loadModel(new ResourceLocation(Reference.domain, Reference.modelPath + "biometricIdentifier.tcn"));
 
     public static void render(TileBiometricIdentifier tile, double x, double y, double z, float frame, boolean isActive, boolean isItem)
     {

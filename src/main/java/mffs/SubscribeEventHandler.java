@@ -70,7 +70,7 @@ public class SubscribeEventHandler
 
         if (tileEntity instanceof TileFortron)
         {
-            ((TileFortron)tileEntity).markSendFortron = false;
+            ((TileFortron) tileEntity).markSendFortron = false;
         }
     }
 
@@ -102,19 +102,19 @@ public class SubscribeEventHandler
                     }
                     else if (nbt.hasKey("SkullOwner", 8) && nbt.getString("SkullOwner").length() > 0)
                     {
-                        gameProfile = new GameProfile((UUID)null, nbt.getString("SkullOwner"));
+                        gameProfile = new GameProfile((UUID) null, nbt.getString("SkullOwner"));
                     }
 
                     if (gameProfile != null)
                     {
-                        ((TileEntitySkull)tile).func_152106_a(gameProfile);
+                        ((TileEntitySkull) tile).func_152106_a(gameProfile);
                     }
                     else
                     {
-                        ((TileEntitySkull)tile).func_152107_a(evt.itemStack.getItemDamage());
+                        ((TileEntitySkull) tile).func_152107_a(evt.itemStack.getItemDamage());
                     }
 
-                    ((BlockSkull)Blocks.skull).func_149965_a(evt.world, evt.x, evt.y, evt.z, (TileEntitySkull)tile);
+                    ((BlockSkull) Blocks.skull).func_149965_a(evt.world, evt.x, evt.y, evt.z, (TileEntitySkull) tile);
                 }
             }
 
@@ -145,7 +145,7 @@ public class SubscribeEventHandler
         List<TileElectromagneticProjector> relevantProjectors = MFFSUtility.getRelevantProjectors(evt.entityPlayer.worldObj, position);
 
         //Check if we can sync this block (activate). If not, we cancel the event.
-        for(TileElectromagneticProjector projector : relevantProjectors)
+        for (TileElectromagneticProjector projector : relevantProjectors)
         {
             if (!projector.isAccessGranted(evt.entityPlayer.worldObj, new Pos(evt.x, evt.y, evt.z), evt.entityPlayer, evt.action))
             {
@@ -167,9 +167,9 @@ public class SubscribeEventHandler
             Pos vec = new Pos(event.x, event.y, event.z);
 
             List<TileElectromagneticProjector> projectorSet = FrequencyGrid.instance().getNodes(TileElectromagneticProjector.class);
-            for(TileElectromagneticProjector projector : projectorSet)
+            for (TileElectromagneticProjector projector : projectorSet)
             {
-                if(projector.world() == event.world && projector.getCalculatedField() != null && projector.getCalculatedField().contains(vec))
+                if (projector.world() == event.world && projector.getCalculatedField() != null && projector.getCalculatedField().contains(vec))
                 {
                     projector.markFieldUpdate = true;
                 }
@@ -183,7 +183,7 @@ public class SubscribeEventHandler
         if (!(evt.entity instanceof EntityPlayer))
         {
             List<TileElectromagneticProjector> set = MFFSUtility.getRelevantProjectors(evt.world, new Pos(evt.entityLiving));
-            for(TileElectromagneticProjector projector : set)
+            for (TileElectromagneticProjector projector : set)
             {
                 if (projector.getModuleCount(ModularForceFieldSystem.moduleAntiSpawn) > 0)
                 {

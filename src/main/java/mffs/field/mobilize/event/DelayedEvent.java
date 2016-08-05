@@ -15,7 +15,7 @@ public class DelayedEvent
 
     protected void onEvent()
     {
-        if(action != null)
+        if (action != null)
         {
             action.doAction(handler);
         }

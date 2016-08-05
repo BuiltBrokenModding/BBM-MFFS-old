@@ -12,20 +12,24 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
-public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver> {
+public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver>
+{
 
-    public GuiCoercionDeriver(EntityPlayer player, TileCoercionDeriver tile) {
+    public GuiCoercionDeriver(EntityPlayer player, TileCoercionDeriver tile)
+    {
         super(new ContainerCoercionDeriver(player, tile), tile);
     }
 
     @Override
-    public void initGui() {
+    public void initGui()
+    {
         super.initGui();
         this.buttonList.add(new GuiButton(1, this.width / 2 - 10, this.height / 2 - 35, 58, 20, LanguageUtility.getLocal("gui.deriver.derive")));
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int x, int y) {
+    public void drawGuiContainerForegroundLayer(int x, int y)
+    {
         drawStringCentered(tile.getInventoryName(), this.xSize / 2, 6);
         GL11.glPushMatrix();
         GL11.glRotatef(-90, 0, 0, 1);
@@ -46,12 +50,15 @@ public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver> {
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+    public void drawGuiContainerBackgroundLayer(float f, int x, int y)
+    {
         super.drawGuiContainerBackgroundLayer(f, x, y);
 
         //Upgrade slots
         for (int slot = 0; slot <= 2; slot++)
+        {
             drawSlot(153, 46 + slot * 18);
+        }
 
         drawSlot(8, 75, EnumGuiIconSheet.BATTERY);
         drawSlot(8 + 20, 75);
@@ -61,10 +68,12 @@ public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver> {
     }
 
     @Override
-    public void actionPerformed(GuiButton guibutton) {
+    public void actionPerformed(GuiButton guibutton)
+    {
         super.actionPerformed(guibutton);
 
-        if (guibutton.id == 1) {
+        if (guibutton.id == 1)
+        {
             Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.toggleMoe.ordinal()));
         }
     }

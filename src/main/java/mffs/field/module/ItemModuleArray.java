@@ -20,7 +20,7 @@ public class ItemModuleArray extends ItemModule
 
     public void onPreCalculateInterior(IFieldMatrix projector, List<Pos> exterior, List<Pos> interior)
     {
-        List<Pos> originalField =  interior.stream().collect(Collectors.toList());
+        List<Pos> originalField = interior.stream().collect(Collectors.toList());
         Map<ForgeDirection, Integer> longestDirectional = getDirectionWidthMap(exterior);
 
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS)

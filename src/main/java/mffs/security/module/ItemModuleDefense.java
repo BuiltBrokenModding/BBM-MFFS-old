@@ -9,10 +9,10 @@ import java.util.List;
 
 public class ItemModuleDefense extends ItemModule
 {
-  @Override
-  public void addInformation(ItemStack itemStack, EntityPlayer player, List info, boolean b)
-  {
-    info.add("\u00a74" + LanguageUtility.getLocal("info.module.defense"));
-    super.addInformation(itemStack, player, info, b);
-  }
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List info, boolean b)
+    {
+        info.add("\u00a74" + LanguageUtility.getLocal("info.module.defense"));
+        super.addInformation(itemStack, player, info, b);
+    }
 }

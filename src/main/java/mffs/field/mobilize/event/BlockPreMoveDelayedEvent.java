@@ -31,7 +31,7 @@ public class BlockPreMoveDelayedEvent extends DelayedEvent
     {
         if (!startPosition.world.isRemote)
         {
-            if (((TileForceMobilizer)handler).canMove(startPosition, newPosition))
+            if (((TileForceMobilizer) handler).canMove(startPosition, newPosition))
             {
                 TileEntity tileEntity = startPosition.getTileEntity();
                 EventForceMobilize.EventPreForceManipulate evt = new EventForceMobilize.EventPreForceManipulate(startPosition.world, startPosition.xi(), startPosition.yi(), startPosition.zi(), newPosition.xi(), newPosition.yi(), newPosition.zi());
@@ -53,9 +53,9 @@ public class BlockPreMoveDelayedEvent extends DelayedEvent
             }
             else
             {
-                ((TileForceMobilizer)handler).failedPositions.add(startPosition.toPos());
-                ((TileForceMobilizer)handler).markFailMove();
-                ((TileForceMobilizer)handler).clearQueue();
+                ((TileForceMobilizer) handler).failedPositions.add(startPosition.toPos());
+                ((TileForceMobilizer) handler).markFailMove();
+                ((TileForceMobilizer) handler).clearQueue();
             }
         }
     }

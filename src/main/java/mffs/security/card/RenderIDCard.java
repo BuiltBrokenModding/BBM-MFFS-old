@@ -24,7 +24,8 @@ import javax.vecmath.Vector2d;
  * @author Briman, Calclavia
  */
 @SideOnly(Side.CLIENT)
-public class RenderIDCard implements IItemRenderer {
+public class RenderIDCard implements IItemRenderer
+{
 
     /**
      * Checks if this renderer should handle a specific item's render type
@@ -35,7 +36,8 @@ public class RenderIDCard implements IItemRenderer {
      * otherwise false
      */
     @Override
-    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+    public boolean handleRenderType(ItemStack item, ItemRenderType type)
+    {
         return true;
     }
 
@@ -49,7 +51,8 @@ public class RenderIDCard implements IItemRenderer {
      * @return True to run the helper functionality, false to not.
      */
     @Override
-    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
+    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper)
+    {
         return false;
     }
 
@@ -62,15 +65,18 @@ public class RenderIDCard implements IItemRenderer {
      * @param data       Extra Type specific data
      */
     @Override
-    public void renderItem(ItemRenderType renderType, ItemStack itemStack, Object... data) {
-        if (itemStack.getItem() instanceof ItemCardIdentification) {
+    public void renderItem(ItemRenderType renderType, ItemStack itemStack, Object... data)
+    {
+        if (itemStack.getItem() instanceof ItemCardIdentification)
+        {
             ItemCardIdentification card = (ItemCardIdentification) itemStack.getItem();
             GL11.glPushMatrix();
             GL11.glDisable(GL11.GL_CULL_FACE);
             transform(renderType);
             renderItemIcon(ModularForceFieldSystem.cardID.getIcon(itemStack, 0));
 
-            if (renderType != ItemRenderType.INVENTORY) {
+            if (renderType != ItemRenderType.INVENTORY)
+            {
                 GL11.glTranslatef(0f, 0f, -0.0005f);
             }
             renderPlayerFace(getSkinFace(card.getAccess(itemStack).getName()));
@@ -79,15 +85,18 @@ public class RenderIDCard implements IItemRenderer {
         }
     }
 
-    private void transform(ItemRenderType renderType) {
+    private void transform(ItemRenderType renderType)
+    {
         float scale = 0.0625f;
-        if (renderType != ItemRenderType.INVENTORY) {
+        if (renderType != ItemRenderType.INVENTORY)
+        {
             GL11.glScalef(scale, -scale, -scale);
             GL11.glTranslatef(20f, -16f, 0f);
             GL11.glRotatef(180f, 1f, 1f, 0f);
             GL11.glRotatef(-90f, 0f, 0f, 1f);
         }
-        if (renderType == ItemRenderType.ENTITY) {
+        if (renderType == ItemRenderType.ENTITY)
+        {
             GL11.glTranslatef(20f, 0f, 0f);
             GL11.glRotatef(Minecraft.getSystemTime() / 12f % 360f, 0f, 1f, 0f);
             GL11.glTranslatef(-8f, 0f, 0f);
@@ -95,24 +104,31 @@ public class RenderIDCard implements IItemRenderer {
         }
     }
 
-    private ResourceLocation getSkinFace(String username) {
-        try {
+    private ResourceLocation getSkinFace(String username)
+    {
+        try
+        {
             //ResourceLocation resourceLocation = Minecraft.getMinecraft().thePlayer.getLocationSkin();
 
-            if (username != null && !username.isEmpty()) {
+            if (username != null && !username.isEmpty())
+            {
                 ResourceLocation resourceLocation = AbstractClientPlayer.getLocationSkin(username);
                 AbstractClientPlayer.getDownloadImageSkin(resourceLocation, username);
                 return resourceLocation;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    private void renderPlayerFace(ResourceLocation resourcelocation) {
-        if (resourcelocation != null) {
+    private void renderPlayerFace(ResourceLocation resourcelocation)
+    {
+        if (resourcelocation != null)
+        {
             Vector2d translation = new Vector2d(9, 5);
             int xSize = 4;
             int ySize = 4;
@@ -153,7 +169,8 @@ public class RenderIDCard implements IItemRenderer {
         }
     }
 
-    private void renderItemIcon(IIcon icon) {
+    private void renderItemIcon(IIcon icon)
+    {
         GL11.glBegin(GL11.GL_QUADS);
 
         GL11.glTexCoord2f(icon.getMinU(), icon.getMinV());
@@ -168,9 +185,11 @@ public class RenderIDCard implements IItemRenderer {
         GL11.glEnd();
     }
 
-    private void renderItem3D(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3) {
+    private void renderItem3D(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
+    {
         IIcon icon = par1EntityLiving.getItemIcon(par2ItemStack, par3);
-        if (icon == null) {
+        if (icon == null)
+        {
             GL11.glPopMatrix();
             return;
         }

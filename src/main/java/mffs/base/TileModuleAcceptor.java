@@ -40,6 +40,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     {
         return cache;
     }
+
     @Override
     public void write(ByteBuf buf, int id)
     {
