@@ -21,7 +21,7 @@ public class FrequencyGrid implements IFrequencyGrid
     //TODO make per chunk for faster access
     public static IFrequencyGrid GRID = new FrequencyGrid();
 
-    public List<IBlockFrequency> tiles = new ArrayList();
+    public List<IBlockFrequency> tiles = new ArrayList(); //TODO time complexity is a bitch
 
     public static IFrequencyGrid instance()
     {

@@ -1,7 +1,7 @@
 package mffs.slot;
 
 import mffs.api.card.IItemFrequency;
-import mffs.api.fortron.FrequencyGrid;
+import mffs.api.fortron.IBlockFrequency;
 import mffs.base.TileFrequency;
 import net.minecraft.item.ItemStack;
 
@@ -22,7 +22,7 @@ public class SlotCard extends SlotBase
         {
             if (itemStack.getItem() instanceof IItemFrequency)
             {
-                ((IItemFrequency) itemStack.getItem()).setFrequency(((FrequencyGrid.IBlockFrequency) tileEntity).getFrequency(), itemStack);
+                ((IItemFrequency) itemStack.getItem()).setFrequency(((IBlockFrequency) tileEntity).getFrequency(), itemStack);
             }
         }
     }
