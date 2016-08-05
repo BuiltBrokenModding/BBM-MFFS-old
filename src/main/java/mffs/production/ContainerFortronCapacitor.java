@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerFortronCapacitor extends ContainerBase
 {
-
     public ContainerFortronCapacitor(EntityPlayer player, TileFortronCapacitor tileEntity)
     {
         super(tileEntity);
@@ -39,6 +38,6 @@ public class ContainerFortronCapacitor extends ContainerBase
             }
         }
 
-        addPlayerInventory(player);
+        addPlayerInventory(player, 8 , 135);
     }
 }

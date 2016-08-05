@@ -2,6 +2,7 @@ package mffs.base;
 
 import com.builtbroken.jlib.data.science.units.UnitDisplay;
 import com.builtbroken.mc.core.Engine;
+import com.builtbroken.mc.core.References;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.prefab.gui.GuiContainerBase;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -21,6 +22,7 @@ public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase
     public GuiMFFS(Container container, MACHINE tile)
     {
         super(container);
+        this.baseTexture = References.GUI_EMPTY_FILE;
         ySize = 217;
         this.tile = tile;
     }
@@ -44,7 +46,6 @@ public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase
     public void updateScreen()
     {
         super.updateScreen();
-
 
         if (buttonList.size() > 0 && this.buttonList.get(0) != null)
         {
