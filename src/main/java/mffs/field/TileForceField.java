@@ -377,6 +377,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     /**
      * Tile Logic
      */
+    @Override
     public boolean canUpdate()
     {
         return false;
@@ -435,6 +436,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         }
     }
 
+    @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
         super.readFromNBT(nbt);
@@ -444,6 +446,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     /**
      * Writes a tile entity to NBT.
      */
+    @Override
     public void writeToNBT(NBTTagCompound nbt)
     {
         super.writeToNBT(nbt);
@@ -458,6 +461,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
      * @return Gets the projector block controlling this force field. Removes the force field if no
      * projector can be found.
      */
+    @Override
     public TileElectromagneticProjector getProjector()
     {
         if (this.getProjectorSafe() != null)

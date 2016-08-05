@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * Sets the new position into the original TileEntities' block.
@@ -48,7 +49,7 @@ public class BlockPostMoveDelayedEvent extends DelayedEvent
                 {
                     if (this.tileEntity != null && this.tileData != null)
                     {
-                        boolean isMultipart = this.tileData.getString("id") == "savedMultipart"; //TODO update and move to handler to ensure we can support more mods
+                        boolean isMultipart = Objects.equals(this.tileData.getString("id"), "savedMultipart"); //TODO update and move to handler to ensure we can support more mods
                         TileEntity newTile = null;
                         if (isMultipart)
                         {

@@ -32,14 +32,14 @@ public abstract class TileMFFSBlock extends TileMFFS
         {
             if (side == 0 || side == 1)
             {
-                return this.blockIconTopOn;
+                return blockIconTopOn;
             }
-            return this.blockIconOn;
+            return blockIconOn;
         }
 
         if (side == 0 || side == 1)
         {
-            return this.blockIconTop;
+            return blockIconTop;
         }
 
         return super.getIcon(side);
@@ -49,8 +49,8 @@ public abstract class TileMFFSBlock extends TileMFFS
     public void registerIcons(IIconRegister iconRegister)
     {
         super.registerIcons(iconRegister);
-        this.blockIconTop = iconRegister.registerIcon(this.getTextureName() + "_top");
-        this.blockIconOn = iconRegister.registerIcon(this.getTextureName() + "_on");
-        this.blockIconTopOn = iconRegister.registerIcon(this.getTextureName() + "_top_on");
+        blockIconTop = iconRegister.registerIcon(this.getTextureName() + "_top");
+        blockIconOn = iconRegister.registerIcon(this.getTextureName() + "_on");
+        blockIconTopOn = iconRegister.registerIcon(this.getTextureName() + "_top_on");
     }
 }

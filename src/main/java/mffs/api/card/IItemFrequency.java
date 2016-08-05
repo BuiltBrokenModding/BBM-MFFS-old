@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 public interface IItemFrequency
 {
     //TODO find original interface
-    public int getFrequency(ItemStack itemStack);
+    int getFrequency(ItemStack itemStack);
 
-    public void setFrequency(int frequency, ItemStack itemStack);
+    void setFrequency(int frequency, ItemStack itemStack);
 }

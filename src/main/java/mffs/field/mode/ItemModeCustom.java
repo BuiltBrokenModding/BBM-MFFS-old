@@ -187,6 +187,7 @@ public class ItemModeCustom extends ItemMode implements TCache
         return itemStack;
     }
 
+    @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10)
     {
         if (!world.isRemote)
@@ -325,17 +326,20 @@ public class ItemModeCustom extends ItemMode implements TCache
         return file;
     }
 
+    @Override
     public boolean isInField(IFieldMatrix projector, Pos position)
     {
         return false; //TODO implement?
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void render(IProjector projector, double x, double y, double z, float f, long ticks)
     {
         modes[(((TileEntity) projector).getWorldObj().rand.nextInt(modes.length - 1))].render(projector, x, y, z, f, ticks);
     }
 
+    @Override
     public float getFortronCost(float amplifier)
     {
         return super.getFortronCost(amplifier) * amplifier;

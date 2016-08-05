@@ -27,6 +27,7 @@ public class BlockPreMoveDelayedEvent extends DelayedEvent
         this.newPosition = newPosition;
     }
 
+    @Override
     protected void onEvent()
     {
         if (!startPosition.world.isRemote)

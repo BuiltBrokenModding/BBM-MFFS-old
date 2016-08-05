@@ -121,6 +121,7 @@ public class ItemModePyramid extends ItemMode
         return false;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void render(IProjector projector, double x, double y, double z, float f, long ticks)
     {

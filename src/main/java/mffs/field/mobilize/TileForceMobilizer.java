@@ -685,6 +685,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
         return new Cube(minScale, maxScale).toAABB();
     }
 
+    @Override
     public Pos getTranslation()
     {
         return super.getTranslation().add(anchor);
@@ -747,7 +748,6 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
             int time = (20 * (int) this.getTargetPosition().distance(this.getAbsoluteAnchor()));
             if (this.getTargetPosition().world != this.worldObj)
             {
-                ;
             }
             {
                 time += 20 * 60;
@@ -827,12 +827,14 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
   }
 */
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderDynamic(Pos pos, float frame, int pass)
     {
         RenderForceMobilizer.render(this, pos.x(), pos.y(), pos.z(), frame, isActive(), false);
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void renderInventory(ItemStack itemStack)
     {

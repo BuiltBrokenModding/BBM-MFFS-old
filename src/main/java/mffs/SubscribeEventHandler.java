@@ -30,7 +30,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
@@ -102,7 +101,7 @@ public class SubscribeEventHandler
                     }
                     else if (nbt.hasKey("SkullOwner", 8) && nbt.getString("SkullOwner").length() > 0)
                     {
-                        gameProfile = new GameProfile((UUID) null, nbt.getString("SkullOwner"));
+                        gameProfile = new GameProfile(null, nbt.getString("SkullOwner"));
                     }
 
                     if (gameProfile != null)

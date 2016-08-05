@@ -2,7 +2,7 @@ package mffs.api.machine;
 
 public interface IActivatable
 {
-    public boolean isActive();
+    boolean isActive();
 
-    public void setActive(boolean flag);
+    void setActive(boolean flag);
 }

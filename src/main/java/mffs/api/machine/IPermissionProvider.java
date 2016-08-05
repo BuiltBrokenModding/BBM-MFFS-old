@@ -13,5 +13,5 @@ public interface IPermissionProvider
     /**
      * Does this field matrix provide a specific permission?
      */
-    public boolean hasPermission(GameProfile profile, Permission permission);
+    boolean hasPermission(GameProfile profile, Permission permission);
 }

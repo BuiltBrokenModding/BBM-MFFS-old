@@ -9,9 +9,9 @@ import java.util.List;
  */
 public interface IFortronCapacitor
 {
-    public List<IFortronFrequency> getFrequencyDevices();
+    List<IFortronFrequency> getFrequencyDevices();
 
-    public int getTransmissionRange();
+    int getTransmissionRange();
 
-    public int getTransmissionRate();
+    int getTransmissionRate();
 }

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class ItemModuleArray extends ItemModule
 {
+    @Override
     public void onPreCalculate(IFieldMatrix projector, List<Pos> fieldBlocks)
     {
         onPreCalculateInterior(projector, fieldBlocks, fieldBlocks);
@@ -84,6 +85,7 @@ public class ItemModuleArray extends ItemModule
         return longestDirectional;
     }
 
+    @Override
     public float getFortronCost(float amplifier)
     {
         return super.getFortronCost(amplifier) + (super.getFortronCost(amplifier) * amplifier) / 100f;

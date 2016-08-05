@@ -7,7 +7,7 @@ public enum FieldColor
     public final float r, g, b;
     public final float[] array;
 
-    private FieldColor(float r, float g, float b)
+    FieldColor(float r, float g, float b)
     {
         this.r = r;
         this.g = g;

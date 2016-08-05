@@ -166,7 +166,6 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
         if (id == TilePacketType.description.ordinal())
         {
-            ;
         }
         {
             buf.writeBoolean(isInverted);

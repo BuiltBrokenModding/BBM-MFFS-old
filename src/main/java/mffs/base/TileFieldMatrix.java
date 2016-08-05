@@ -12,7 +12,6 @@ import mffs.api.modules.IModule;
 import mffs.api.modules.IProjectorMode;
 import mffs.field.mobilize.event.DelayedEvent;
 import mffs.field.mobilize.event.IDelayedEventHandler;
-import mffs.field.module.ItemModuleArray;
 import mffs.item.card.ItemCard;
 import mffs.util.TCache;
 import net.minecraft.entity.player.EntityPlayer;
@@ -328,7 +327,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         List<Pos> newField = getMode().getInteriorPoints(this);
         if (getModuleCount(ModularForceFieldSystem.moduleArray) > 0)
         {
-            ((ItemModuleArray) ModularForceFieldSystem.moduleArray).onPreCalculateInterior(this, getMode().getExteriorPoints(this), newField);
+            ModularForceFieldSystem.moduleArray.onPreCalculateInterior(this, getMode().getExteriorPoints(this), newField);
         }
 
         //Data to use to move field
