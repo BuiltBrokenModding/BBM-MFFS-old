@@ -1,5 +1,6 @@
 package mffs.field.mobilize;
 
+import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
@@ -21,6 +22,8 @@ import mffs.api.modules.IModule;
 import mffs.api.modules.IProjectorMode;
 import mffs.base.TileFieldMatrix;
 import mffs.base.TilePacketType;
+import mffs.field.gui.ContainerMatrix;
+import mffs.field.gui.GuiForceMobilizer;
 import mffs.field.mobilize.event.BlockPreMoveDelayedEvent;
 import mffs.field.mobilize.event.DelayedEvent;
 import mffs.field.mobilize.event.IDelayedEventHandler;
@@ -45,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TileForceMobilizer extends TileFieldMatrix implements IEffectController
+public class TileForceMobilizer extends TileFieldMatrix implements IEffectController, IGuiTile
 {
     int packetRange = 60;
     int animationTime = 20;
@@ -863,5 +866,17 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
         }
 
         return false;
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player)
+    {
+        return new ContainerMatrix(player, this);
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player)
+    {
+        return new GuiForceMobilizer(player, this);
     }
 }

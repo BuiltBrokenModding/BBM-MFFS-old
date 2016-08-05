@@ -1,5 +1,6 @@
 package mffs.production;
 
+import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mc.prefab.tile.Tile;
@@ -28,7 +29,7 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileFortronCapacitor extends TileModuleAcceptor implements IFortronStorage, IFortronCapacitor
+public class TileFortronCapacitor extends TileModuleAcceptor implements IFortronStorage, IFortronCapacitor, IGuiTile
 {
     private int tickRate = 10;
     private TransferMode transferMode = TransferMode.equalize;
@@ -264,5 +265,17 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     public void renderInventory(ItemStack itemStack)
     {
         RenderFortronCapacitor.render(this, -0.5, -0.5, -0.5, 0, true, true);
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player)
+    {
+        return new ContainerFortronCapacitor(player, this);
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player)
+    {
+        return new GuiFortronCapacitor(player, this);
     }
 }

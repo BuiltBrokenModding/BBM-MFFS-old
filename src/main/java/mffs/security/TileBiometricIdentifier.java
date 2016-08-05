@@ -1,5 +1,6 @@
 package mffs.security;
 
+import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.lib.access.AccessUser;
 import com.builtbroken.mc.lib.access.Permission;
 import com.builtbroken.mc.lib.transform.vector.Pos;
@@ -12,13 +13,14 @@ import mffs.Settings;
 import mffs.api.card.IAccessCard;
 import mffs.base.TileFrequency;
 import mffs.item.card.ItemCardFrequency;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TileBiometricIdentifier extends TileFrequency
+public class TileBiometricIdentifier extends TileFrequency implements IGuiTile
 {
     public static final int SLOT_COPY = 12;
     /**
@@ -121,5 +123,17 @@ public class TileBiometricIdentifier extends TileFrequency
     public void renderInventory(ItemStack itemStack)
     {
         RenderBiometricIdentifier.render(this, -0.5, -0.5, -0.5, 0, true, true);
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player)
+    {
+        return new ContainerBiometricIdentifier(player, this);
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player)
+    {
+        return new GuiBiometricIdentifier(player, this);
     }
 }

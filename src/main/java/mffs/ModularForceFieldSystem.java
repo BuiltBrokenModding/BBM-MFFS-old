@@ -7,7 +7,6 @@ import com.builtbroken.mc.lib.mod.AbstractMod;
 import com.builtbroken.mc.lib.mod.AbstractProxy;
 import com.builtbroken.mc.lib.mod.ModCreativeTab;
 import com.builtbroken.mc.lib.mod.loadable.LoadableHandler;
-import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -48,20 +47,17 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.awt.*;
-import java.util.UUID;
 
 @Mod(modid = Reference.id, name = Reference.name, version = Reference.version, dependencies = "required-after:VoltzEngine", guiFactory = "mffs.MFFSGuiFactory")
 public class ModularForceFieldSystem extends AbstractMod
 {
     /** Damage type used by forcefields */
     public static final DamageSource damageFieldShock = new DamageSource("fieldShock").setDamageBypassesArmor();
-    /** Fake player data used by the mod */
-    public final GameProfile fakeProfile = new GameProfile(UUID.randomUUID(), "mffs");
 
     @SidedProxy(clientSide = "mffs.ClientProxy", serverSide = "mffs.CommonProxy")
     public static CommonProxy proxy;
 
-    @Mod.Instance(Reference.domain)
+    @Mod.Instance(Reference.id)
     public static ModularForceFieldSystem instance;
 
     //TODO once update is done prefix all item objects with item, ex itemItemName or itemSomeItem
@@ -275,9 +271,8 @@ public class ModularForceFieldSystem extends AbstractMod
     {
 
         super.postInit(evt);
-        /**
-         * Add recipe.
-         */
+
+        //TODO move recipes to each block/items class
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(focusMatrix, 8), "RMR", "MDM", "RMR", 'M', UniversalRecipe.PRIMARY_METAL.get(), 'D', Items.diamond, 'R', Items.redstone));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(remoteController), "WWW", "MCM", "MCM", 'W', UniversalRecipe.WIRE.get(), 'C', UniversalRecipe.BATTERY.get(), 'M', UniversalRecipe.PRIMARY_METAL.get()));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(coercionDeriver), "FMF", "FCF", "FMF", 'C', UniversalRecipe.BATTERY.get(), 'M', UniversalRecipe.PRIMARY_METAL.get(), 'F', focusMatrix));

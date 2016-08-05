@@ -13,12 +13,6 @@ import java.awt.*;
 
 public class CommonProxy extends AbstractProxy
 {
-    //case tile: TileFortronCapacitor => return new ContainerFortronCapacitor(player, tile)
-    //case tile: TileElectromagneticProjector => return new ContainerElectromagneticProjector(player, tile)
-    //case tile: TileCoercionDeriver => return new ContainerCoercionDeriver(player, tile)
-    //case tile: TileBiometricIdentifier => return new ContainerBiometricIdentifier(player, tile)
-    //case tile: TileForceMobilizer => return new ContainerMatrix(player, tile)
-
     //case 1 => return new ContainerFrequency(player, player.getCurrentEquippedItem)
     //case 2 => return new ContainerItem(player, player.getCurrentEquippedItem)
 

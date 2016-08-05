@@ -16,9 +16,8 @@ public class ContainerElectromagneticProjector extends ContainerMatrix
         super(player, tileEntity);
         for (int x = 0; x < 2; x++)
         {
-            for (int y = 0; y < 3; x++)
+            for (int y = 0; y < 3; y++)
             {
-
                 addSlotToContainer(new SlotBase(tileEntity, x + y * 2 + (1 + 25), 21 + 18 * x, 31 + 18 * y));
             }
         }

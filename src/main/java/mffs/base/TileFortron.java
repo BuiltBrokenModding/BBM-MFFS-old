@@ -2,7 +2,6 @@ package mffs.base;
 
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import mffs.api.fortron.FrequencyGrid;
 import mffs.api.fortron.IFortronFrequency;
@@ -54,25 +53,13 @@ public abstract class TileFortron extends TileFrequency implements IFluidHandler
     }
 
     @Override
-    public void write(ByteBuf buf, int id)
-    {
-        super.write(buf, id);
-
-        if (id == TilePacketType.fortron.ordinal())
-        {
-            //TODO improve to reduce sending unneeded data
-            ByteBufUtils.writeTag(buf, fortronTank.writeToNBT(new NBTTagCompound()));
-        }
-    }
-
-    @Override
     public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
     {
         if (!super.read(buf, id, player, packetType))
         {
             if (id == TilePacketType.fortron.ordinal())
             {
-                fortronTank.readFromNBT(ByteBufUtils.readTag(buf));
+                fortronTank.setFluid(new FluidStack(FortronUtility.fluidFortron, buf.readInt())); //TODO redo to save ram
                 return true;
             }
             return false;

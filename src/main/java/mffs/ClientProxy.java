@@ -24,14 +24,6 @@ public class ClientProxy extends CommonProxy
         return Minecraft.getMinecraft().theWorld;
     }
 
-
-    //TODO move to IGuiTile system
-    //case tile: TileFortronCapacitor => return new GuiFortronCapacitor(player, tile)
-    //case tile: TileElectromagneticProjector => return new GuiElectromagneticProjector(player, tile)
-    //case tile: TileCoercionDeriver => return new GuiCoercionDeriver(player, tile)
-    //case tile: TileBiometricIdentifier => return new GuiBiometricIdentifier(player, tile)
-    //case tile: TileForceMobilizer => return new GuiForceMobilizer(player, tile)
-
     //case 1 => return new GuiFrequency(player, player.getCurrentEquippedItem)
 
     @Override

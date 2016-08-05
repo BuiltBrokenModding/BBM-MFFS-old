@@ -1,5 +1,6 @@
 package mffs.field;
 
+import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
@@ -18,6 +19,8 @@ import mffs.api.modules.IModule;
 import mffs.api.modules.IProjectorMode;
 import mffs.base.TileFieldMatrix;
 import mffs.base.TilePacketType;
+import mffs.field.gui.ContainerElectromagneticProjector;
+import mffs.field.gui.GuiElectromagneticProjector;
 import mffs.field.mode.ItemModeCustom;
 import mffs.item.card.ItemCard;
 import mffs.render.FieldColor;
@@ -39,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TileElectromagneticProjector extends TileFieldMatrix implements IProjector
+public class TileElectromagneticProjector extends TileFieldMatrix implements IProjector, IGuiTile
 {
     /** A set containing all positions of all force field blocks generated. */
     List<Pos> forceFields = new ArrayList();
@@ -515,5 +518,17 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
             return Math.max(((ItemModeCustom) this.getMode()).getFieldBlocks(this, this.getModeStack()).size() / 100, 1);
         }
         return Math.max(Math.min((calculatedField != null ? calculatedField.size() : 0) / 1000, 10), 1);
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player)
+    {
+        return new ContainerElectromagneticProjector(player, this);
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player)
+    {
+        return new GuiElectromagneticProjector(player, this);
     }
 }

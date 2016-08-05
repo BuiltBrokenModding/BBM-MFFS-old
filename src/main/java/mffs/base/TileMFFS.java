@@ -1,5 +1,6 @@
 package mffs.base;
 
+import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.api.tile.IPlayerUsing;
 import com.builtbroken.mc.api.tile.IRemovable;
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
@@ -176,12 +177,12 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
     @Override
     public boolean onPlayerActivated(EntityPlayer player, int side, Pos hit)
     {
-        if (!world().isRemote)
+        if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemCardLink)
         {
-            if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemCardLink)
-            {
-                return false;
-            }
+            return false;
+        }
+        if (this instanceof IGuiTile)
+        {
             openGui(player, ModularForceFieldSystem.instance);
         }
         return super.onPlayerActivated(player, side, hit);

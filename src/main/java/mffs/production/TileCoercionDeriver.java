@@ -1,5 +1,6 @@
 package mffs.production;
 
+import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mc.prefab.tile.Tile;
@@ -19,7 +20,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TileCoercionDeriver extends TileModuleAcceptor
+public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
 {
     /**
      * The amount of power (watts) this machine uses.
@@ -267,5 +268,17 @@ public class TileCoercionDeriver extends TileModuleAcceptor
     public void renderInventory(ItemStack itemStack)
     {
         RenderCoercionDeriver.render(this, -0.5, -0.5, -0.5, 0, true, true);
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player)
+    {
+        return new ContainerCoercionDeriver(player, this);
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player)
+    {
+        return new GuiCoercionDeriver(player, this);
     }
 }
