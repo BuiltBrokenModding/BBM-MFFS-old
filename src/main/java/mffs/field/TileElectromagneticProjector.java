@@ -62,6 +62,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
     public TileElectromagneticProjector()
     {
+        super("ElectromagneticProjector");
         bounds = new Cube(0, 0, 0, 1, 0.8, 1);
         capacityBase = 30;
         startModuleIndex = 1;

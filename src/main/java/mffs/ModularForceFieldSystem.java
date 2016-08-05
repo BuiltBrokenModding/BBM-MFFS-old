@@ -41,6 +41,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -135,13 +136,13 @@ public class ModularForceFieldSystem extends AbstractMod
     public void loadHandlers(LoadableHandler loader)
     {
         MinecraftForge.EVENT_BUS.register(new SubscribeEventHandler());
-        MinecraftForge.EVENT_BUS.register(remoteController);
     }
 
     @Override
     public void loadItems(ModManager manager)
     {
         remoteController = manager.newItem("MFFSxRemoteController", new ItemRemoteController());
+        MinecraftForge.EVENT_BUS.register(remoteController);
 
         focusMatrix = manager.newItem("MFFSxCardFocusMatrix", new ItemMFFS());
 
@@ -167,46 +168,46 @@ public class ModularForceFieldSystem extends AbstractMod
          * Modules
          */
 
-        moduleTranslate = manager.newItem(new ItemModule()).setCost(3f);
+        moduleTranslate = manager.newItem("MFFSxCardModuleTranslate", new ItemModule()).setCost(3f);
 
-        moduleScale = manager.newItem(new ItemModule()).setCost(2.5f);
+        moduleScale = manager.newItem("MFFSxCardModuleScale", new ItemModule()).setCost(2.5f);
 
-        moduleRotate = manager.newItem(new ItemModule()).setCost(0.5f);
+        moduleRotate = manager.newItem("MFFSxCardModuleRotate", new ItemModule()).setCost(0.5f);
 
-        moduleSpeed = manager.newItem(new ItemModule()).setCost(1.5f);
+        moduleSpeed = manager.newItem("MFFSxCardModuleSpeed", new ItemModule()).setCost(1.5f);
 
-        moduleCapacity = manager.newItem(new ItemModule()).setCost(0.5f);
+        moduleCapacity = manager.newItem("MFFSxCardModuleCapacity", new ItemModule()).setCost(0.5f);
 
-        moduleCollection = manager.newItem(new ItemModule()).setMaxStackSize(1).setCost(15);
+        moduleCollection = manager.newItem("MFFSxCardModuleCollection", new ItemModule()).setMaxStackSize(1).setCost(15);
 
-        moduleInvert = manager.newItem(new ItemModule()).setMaxStackSize(1).setCost(15);
+        moduleInvert = manager.newItem("MFFSxCardModuleInvert", new ItemModule()).setMaxStackSize(1).setCost(15);
 
-        moduleSilence = manager.newItem(new ItemModule()).setMaxStackSize(1).setCost(1);
-        moduleFusion = manager.newItem(new ItemModuleFusion());
-        moduleDome = manager.newItem(new ItemModuleDome());
+        moduleSilence = manager.newItem("MFFSxCardModuleSilence", new ItemModule()).setMaxStackSize(1).setCost(1);
+        moduleFusion = manager.newItem("MFFSxCardModuleFusion", new ItemModuleFusion());
+        moduleDome = manager.newItem("MFFSxCardModuleDome", new ItemModuleDome());
 
-        moduleCamouflage = manager.newItem(new ItemModule()).setCost(1.5f).setMaxStackSize(1);
+        moduleCamouflage = manager.newItem("MFFSxCardModuleCamouflage", new ItemModule()).setCost(1.5f).setMaxStackSize(1);
 
-        moduleApproximation = manager.newItem(new ItemModule()).setMaxStackSize(1).setCost(1f);
-        moduleArray = (ItemModuleArray) manager.newItem(new ItemModuleArray()).setCost(3f);
-        moduleDisintegration = manager.newItem(new ItemModuleDisintegration());
-        moduleShock = manager.newItem(new ItemModuleShock());
+        moduleApproximation = manager.newItem("MFFSxCardModuleApproximation", new ItemModule()).setMaxStackSize(1).setCost(1f);
+        moduleArray = (ItemModuleArray) manager.newItem("MFFSxCardModuleArray", new ItemModuleArray()).setCost(3f);
+        moduleDisintegration = manager.newItem("MFFSxCardModuleDisintegration", new ItemModuleDisintegration());
+        moduleShock = manager.newItem("MFFSxCardModuleShock", new ItemModuleShock());
 
-        moduleGlow = manager.newItem(new ItemModule());
-        moduleSponge = manager.newItem(new ItemModuleSponge());
-        moduleStabilize = manager.newItem(new ItemModuleStabilize());
-        moduleRepulsion = manager.newItem(new ItemModuleRepulsion());
-        moduleAntiHostile = manager.newItem(new ItemModuleAntiHostile()).setCost(10);
-        moduleAntiFriendly = manager.newItem(new ItemModuleAntiFriendly()).setCost(5);
-        moduleAntiPersonnel = manager.newItem(new ItemModuleAntiPersonnel()).setCost(15);
-        moduleConfiscate = manager.newItem(new ItemModuleConfiscate());
-        moduleWarn = manager.newItem(new ItemModuleBroadcast());
+        moduleGlow = manager.newItem("MFFSxCardModuleGlow", new ItemModule());
+        moduleSponge = manager.newItem("MFFSxCardModuleSponge", new ItemModuleSponge());
+        moduleStabilize = manager.newItem("MFFSxCardModuleStabilize", new ItemModuleStabilize());
+        moduleRepulsion = manager.newItem("MFFSxCardModuleRepulsion", new ItemModuleRepulsion());
+        moduleAntiHostile = manager.newItem("MFFSxCardModuleAntiHostile", new ItemModuleAntiHostile()).setCost(10);
+        moduleAntiFriendly = manager.newItem("MFFSxCardModuleAntiFriendly", new ItemModuleAntiFriendly()).setCost(5);
+        moduleAntiPersonnel = manager.newItem("MFFSxCardModuleAntiPersonnel", new ItemModuleAntiPersonnel()).setCost(15);
+        moduleConfiscate = manager.newItem("MFFSxCardModuleConfiscate", new ItemModuleConfiscate());
+        moduleWarn = manager.newItem("MFFSxCardModuleWarn", new ItemModuleBroadcast());
 
-        moduleBlockAccess = manager.newItem(new ItemModuleDefense()).setCost(10);
+        moduleBlockAccess = manager.newItem("MFFSxCardModuleBlockAccess", new ItemModuleDefense()).setCost(10);
 
-        moduleBlockAlter = manager.newItem(new ItemModuleDefense()).setCost(15);
+        moduleBlockAlter = manager.newItem("MFFSxCardModuleBlockAlter", new ItemModuleDefense()).setCost(15);
 
-        moduleAntiSpawn = manager.newItem(new ItemModuleDefense()).setCost(10);
+        moduleAntiSpawn = manager.newItem("MFFSxCardModuleAntiSpawn", new ItemModuleDefense()).setCost(10);
 
     }
 
@@ -220,7 +221,8 @@ public class ModularForceFieldSystem extends AbstractMod
         forceMobilizer = manager.newBlock(TileForceMobilizer.class);
         forceField = manager.newBlock(TileForceField.class);
 
-        FortronUtility.fluidFortron.setGaseous(true);
+        FluidRegistry.registerFluid(new Fluid("fortron").setGaseous(true));
+        FortronUtility.fluidFortron = FluidRegistry.getFluid("fortron");
         FluidRegistry.registerFluid(FortronUtility.fluidFortron);
 
         ((ModCreativeTab) manager.defaultTab).itemStack = new ItemStack(fortronCapacitor);

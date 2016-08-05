@@ -103,7 +103,7 @@ public abstract class TileFortron extends TileFrequency implements IFluidHandler
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill)
     {
-        if (resource.isFluidEqual(FortronUtility.fluidstackFortron))
+        if (resource.getFluid() == FortronUtility.fluidFortron)
         {
             return this.fortronTank.fill(resource, doFill);
         }

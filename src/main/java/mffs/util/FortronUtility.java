@@ -19,8 +19,7 @@ import java.util.List;
  */
 public class FortronUtility
 {
-    public static Fluid fluidFortron = new Fluid("fortron");
-    public static FluidStack fluidstackFortron = new FluidStack(fluidFortron, 0);
+    public static Fluid fluidFortron;
 
     public static FluidStack getFortron(int amount)
     {

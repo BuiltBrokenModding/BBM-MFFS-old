@@ -39,9 +39,9 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     protected List<Pos> calculatedField = null;
     protected boolean isCalculating = false;
 
-    public TileFieldMatrix()
+    public TileFieldMatrix(String name)
     {
-        super("FieldMatrix");
+        super(name);
     }
 
     @Override
