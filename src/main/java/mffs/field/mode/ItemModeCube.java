@@ -16,20 +16,19 @@ import java.util.List;
 
 public class ItemModeCube extends ItemMode
 {
-    private int step = 1;
-
     @Override
     public List<Pos> getExteriorPoints(IFieldMatrix projector)
     {
+        //TODO redo as we do not need to do x^3 but could just do x * 6
         List<Pos> fieldBlocks = new ArrayList();
         Pos posScale = projector.getPositiveScale();
         Pos negScale = projector.getNegativeScale(); //Positive numbers so do -# when using
 
-        for (int x = -negScale.xi(); x < posScale.xi(); x += step)
+        for (int x = -negScale.xi(); x < posScale.xi(); x += 1)
         {
-            for (int y = -negScale.yi(); y < posScale.yi(); y += step)
+            for (int y = -negScale.yi(); y < posScale.yi(); y += 1)
             {
-                for (int z = -negScale.zi(); z < posScale.zi(); z += step)
+                for (int z = -negScale.zi(); z < posScale.zi(); z += 1)
                 {
                     if (y == -negScale.yi() || y == posScale.yi() || x == -negScale.xi() || x == posScale.xi() || z == -negScale.zi() || z == posScale.zi())
                     {
@@ -49,11 +48,11 @@ public class ItemModeCube extends ItemMode
         Pos negScale = projector.getNegativeScale();
 
         //TODO: Check parallel possibility
-        for (int x = negScale.xi(); x < posScale.xi(); x += step)
+        for (int x = -negScale.xi(); x < posScale.xi(); x += 1)
         {
-            for (int y = negScale.yi(); y < posScale.yi(); y += step)
+            for (int y = -negScale.yi(); y < posScale.yi(); y += 1)
             {
-                for (int z = negScale.zi(); z < posScale.zi(); z += step)
+                for (int z = -negScale.zi(); z < posScale.zi(); z += 1)
                 {
                     fieldBlocks.add(new Pos(x, y, z));
                 }

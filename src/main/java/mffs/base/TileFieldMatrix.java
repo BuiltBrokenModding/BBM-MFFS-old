@@ -380,7 +380,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
             Pos pos2 = toPos().add(pos.transform(rotation)).add(translation).round();
             if (pos2.yi() <= maxHeight && pos2.yi() >= 0)
             {
-                newField.add(pos2);
+                field.add(pos2);
             }
         }
         newField.clear(); //faster memory cleanup, at least in theory?
@@ -427,8 +427,10 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
 
         int zTranslationNeg = 0;
         int zTranslationPos = 0;
+
         int xTranslationNeg = 0;
         int xTranslationPos = 0;
+
         int yTranslationPos = 0;
         int yTranslationNeg = 0;
 

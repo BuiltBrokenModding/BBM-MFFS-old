@@ -1,10 +1,8 @@
 package mffs.field;
 
-import com.builtbroken.mc.core.References;
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
-import com.builtbroken.mc.lib.render.RenderUtility;
 import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mc.prefab.tile.Tile;
@@ -12,13 +10,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
+import mffs.Reference;
 import mffs.api.machine.IForceField;
 import mffs.api.machine.IProjector;
 import mffs.api.modules.IModule;
 import mffs.security.MFFSPermissions;
 import mffs.security.TileBiometricIdentifier;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,16 +35,15 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     //private ItemStack camoStack = null;
     private Pos projector = null;
 
+    private static IIcon icon;
+
     public TileForceField()
     {
         super("forceField", Material.glass); //TODO get tile name
-        this.textureName = References.PREFIX + "forceField";
         hardness = -1;
         resistance = Float.MAX_VALUE;
         creativeTab = null;
         isOpaque = false;
-        this.renderNormalBlock = true;
-        this.renderTileEntity = false;
     }
 
     @Override
@@ -70,134 +68,6 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     public int getRenderBlockPass()
     {
         return 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass)
-    {
-        /**
-        int renderType = 0;
-        Block camoBlock = null;
-
-        if (camoStack != null && camoStack.getItem() instanceof ItemBlock)
-        {
-            camoBlock = ((ItemBlock) camoStack.getItem()).field_150939_a;
-
-            if (camoBlock != null)
-            {
-                renderType = camoBlock.getRenderType();
-            }
-        }
-
-        if (renderType >= 0)
-        {
-            try
-            {
-                if (camoBlock != null)
-                {
-                    renderer.setRenderBoundsFromBlock(camoBlock);
-                }
-
-                switch (renderType)
-                {
-                    case 4:
-                        renderer.renderBlockLiquid(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 31:
-                        renderer.renderBlockLog(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 1:
-                        renderer.renderCrossedSquares(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 20:
-                        renderer.renderBlockVine(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 39:
-                        renderer.renderBlockQuartz(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 5:
-                        renderer.renderBlockRedstoneWire(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 13:
-                        renderer.renderBlockCactus(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 23:
-                        renderer.renderBlockLilyPad(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 6:
-                        renderer.renderBlockCrops(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 7:
-                        renderer.renderBlockDoor(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 12:
-                        renderer.renderBlockLever(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 29:
-                        renderer.renderBlockTripWireSource(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 30:
-                        renderer.renderBlockTripWire(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 14:
-                        renderer.renderBlockBed(camoBlock, xi(), yi(), zi());
-                        break;
-                    case 16:
-                        renderer.renderPistonBase(camoBlock, xi(), yi(), zi(), false);
-                        break;
-                    case 17:
-                        renderer.renderPistonExtension(camoBlock, xi(), yi(), zi(), true);
-                        break;
-                    default:
-                        RenderUtility.renderCube(0, 0, 0, 1, 1, 1, getTileBlock());
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                if (camoStack != null && camoBlock != null)
-                {
-                    renderer.renderBlockAsItem(camoBlock, camoStack.getItemDamage(), 1);
-                }
-            }
-            return true;
-        } */
-        RenderUtility.renderCube(0, 0, 0, 1, 1, 1, getTileBlock());
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void renderInventory(ItemStack itemStack)
-    {
-        RenderUtility.renderCube(0, 0, 0, 1, 1, 1, getTileBlock());
-    }
-
-    /**
-     * Block Logic
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean shouldSideBeRendered(int side)
-    {
-        /**
-        if (camoStack != null)
-        {
-            try
-            {
-                Block block = ((ItemBlock) camoStack.getItem()).field_150939_a;
-                return block.shouldSideBeRendered(getAccess(), xi(), yi(), zi(), side);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-
-            }
-            return true;
-        } */
-
-        return getAccess().getBlock(xi(), yi(), zi()) == getBlockType() ? false : super.shouldSideBeRendered(side);
     }
 
     @Override
@@ -292,51 +162,6 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(int side)
-    {
-        /**
-        if (camoStack != null)
-        {
-            try
-            {
-                Block block = ((ItemBlock) camoStack.getItem()).field_150939_a;
-                IIcon icon = block.getIcon(side, camoStack.getItemDamage());
-
-                if (icon != null)
-                {
-                    return icon;
-                }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        } */
-
-        return super.getIcon(side);
-    }
-
-    @Override
-    public int getColorMultiplier()
-    {
-        /**
-        if (camoStack != null)
-        {
-            try
-            {
-                return ((ItemBlock) camoStack.getItem()).field_150939_a.colorMultiplier(getAccess(), xi(), yi(), zi());
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-
-        } */
-        return super.getColorMultiplier();
-    }
-
     @Override
     public int getLightValue()
     {
@@ -352,8 +177,6 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         {
             e.printStackTrace();
         }
-
-
         return 0;
     }
 
@@ -385,6 +208,20 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         return null;
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister reg)
+    {
+        icon = reg.registerIcon(Reference.prefix + "forceField");
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon()
+    {
+        return icon;
+    }
+
     /**
      * Tile Logic
      */
@@ -399,15 +236,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     {
         if (getProjector() != null)
         {
-            /**
-            if (camoStack != null)
-            {
-                NBTTagCompound nbt = new NBTTagCompound();
-                camoStack.writeToNBT(nbt);
-                return new PacketTile(this, projector.xi(), projector.yi(), projector.zi(), true, nbt);
-            } */
-
-            return new PacketTile(this, projector.xi(), projector.yi(), projector.zi(), false);
+            return new PacketTile(this, 0, projector.xi(), projector.yi(), projector.zi());
         }
         return null;
     }
@@ -415,37 +244,18 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     @Override
     public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
     {
-
-        setProjector(new Pos(buf.readInt(), buf.readInt(), buf.readInt()));
-        markRender();
-        //camoStack = null;
-
-        if (buf.readBoolean())
+        if (id == 0)
         {
-            //camoStack = ItemStack.loadItemStackFromNBT(ByteBufUtils.readTag(buf));
+            setProjector(new Pos(buf.readInt(), buf.readInt(), buf.readInt()));
+            markRender();
+            return true;
         }
-        return true;
+        return false;
     }
 
     public void setProjector(Pos position)
     {
         projector = position;
-
-        if (!world().isRemote)
-        {
-            refreshCamoBlock();
-        }
-    }
-
-    /**
-     * Server Side Only
-     */
-    public void refreshCamoBlock()
-    {
-        if (getProjectorSafe() != null)
-        {
-            //camoStack = MFFSUtility.getCamoBlock(getProjector(), toPos());
-        }
     }
 
     @Override
