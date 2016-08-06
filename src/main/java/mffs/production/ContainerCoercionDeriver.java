@@ -1,8 +1,6 @@
 package mffs.production;
 
 import com.builtbroken.mc.prefab.gui.ContainerBase;
-import com.builtbroken.mc.prefab.gui.slot.SlotSpecific;
-import mffs.item.card.ItemCardFrequency;
 import mffs.slot.SlotBase;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -15,7 +13,7 @@ public class ContainerCoercionDeriver extends ContainerBase
     public ContainerCoercionDeriver(EntityPlayer player, TileCoercionDeriver tileEntity)
     {
         super(tileEntity);
-        addSlotToContainer(new SlotSpecific(tileEntity, 0, 8, 114, ItemCardFrequency.class));
+        //addSlotToContainer(new SlotSpecific(tileEntity, 0, 8, 114, ItemCardFrequency.class));
 
         addSlotToContainer(new SlotBase(tileEntity, 1, 9, 76));
         addSlotToContainer(new SlotBase(tileEntity, 2, 9 + 20, 76));

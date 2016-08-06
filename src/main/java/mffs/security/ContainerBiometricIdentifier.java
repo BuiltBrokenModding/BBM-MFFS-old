@@ -1,8 +1,6 @@
 package mffs.security;
 
 import com.builtbroken.mc.prefab.gui.ContainerBase;
-import com.builtbroken.mc.prefab.gui.slot.SlotSpecific;
-import mffs.item.card.ItemCardFrequency;
 import mffs.slot.SlotBase;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -13,7 +11,7 @@ public class ContainerBiometricIdentifier extends ContainerBase
     {
         super(tile);
         //Frequency
-        addSlotToContainer(new SlotSpecific(tile, 0, 8, 114, ItemCardFrequency.class));
+        //addSlotToContainer(new SlotSpecific(tile, 0, 8, 114, ItemCardFrequency.class));
 
         for (int x = 0; x < 9; x++)
         {

@@ -4,7 +4,7 @@ import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketPlayerItem;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
 import mffs.Settings;
-import mffs.item.card.ItemCardFrequency;
+import mffs.item.card.ItemCardHz;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -16,7 +16,6 @@ import scala.util.Random;
  */
 public class GuiFrequency extends GuiItem
 {
-
     ItemStack item;
     EntityPlayer player;
 
@@ -31,7 +30,7 @@ public class GuiFrequency extends GuiItem
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
         drawStringCentered(LanguageUtility.getLocal("item.mffs:cardFrequency.name"), this.xSize / 2, 0);
-        drawStringCentered("" + ((ItemCardFrequency) item.getItem()).getEncodedFrequency(item), this.xSize / 2, 20);
+        drawStringCentered("" + ((ItemCardHz) item.getItem()).getEncodedFrequency(item), this.xSize / 2, 20);
         textField.drawTextBox();
         drawStringCentered(LanguageUtility.getLocal("gui.makecopy"), this.xSize / 2, 80);
 
@@ -54,7 +53,7 @@ public class GuiFrequency extends GuiItem
         {
             int ranFreq = new Random().nextInt((int) Math.pow(10, (Settings.maxFrequencyDigits - 1)));
             textField.setText(ranFreq + "");
-            ((ItemCardFrequency) item.getItem()).setFrequency(ranFreq, item);
+            ((ItemCardHz) item.getItem()).setFrequency(ranFreq, item);
         }
     }
 
@@ -76,7 +75,7 @@ public class GuiFrequency extends GuiItem
             //TODO: Disallow any special characters and etc.
             int newFreq = Math.abs(Integer.parseInt(textField.getText()));
             Engine.instance.packetHandler.sendToServer(new PacketPlayerItem(player, newFreq));
-            ((ItemCardFrequency) item.getItem()).setFrequency(newFreq, item);
+            ((ItemCardHz) item.getItem()).setFrequency(newFreq, item);
         }
         catch (NumberFormatException ex)
         {

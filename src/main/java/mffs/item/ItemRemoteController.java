@@ -13,7 +13,7 @@ import mffs.api.event.EventForceMobilize;
 import mffs.api.fortron.FrequencyGrid;
 import mffs.api.fortron.IBlockFrequency;
 import mffs.api.fortron.IFortronFrequency;
-import mffs.item.card.ItemCardFrequency;
+import mffs.item.card.ItemCardHz;
 import mffs.security.MFFSPermissions;
 import mffs.util.MFFSUtility;
 import net.minecraft.block.Block;
@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ItemRemoteController extends ItemCardFrequency implements ICoordLink
+public class ItemRemoteController extends ItemCardHz implements ICoordLink
 {
     private final Set<ItemStack> remotesCached = new HashSet();
     private final Set<ItemStack> temporaryRemoteBlacklist = new HashSet();

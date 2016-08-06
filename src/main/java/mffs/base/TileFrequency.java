@@ -8,7 +8,6 @@ import mffs.Reference;
 import mffs.api.card.ICoordLink;
 import mffs.api.fortron.FrequencyGrid;
 import mffs.api.fortron.IBlockFrequency;
-import mffs.item.card.ItemCardFrequency;
 import mffs.security.MFFSPermissions;
 import mffs.security.TileBiometricIdentifier;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +24,7 @@ import java.util.List;
  */
 public abstract class TileFrequency extends TileMFFSInventory implements IBlockFrequency
 {
-    public int frequencySlot = 0;
+    public int hz = 0;
 
     public TileFrequency(String name)
     {
@@ -98,32 +97,13 @@ public abstract class TileFrequency extends TileMFFSInventory implements IBlockF
     @Override
     public int getFrequency()
     {
-        ItemStack frequencyCard = getFrequencyCard();
-
-        if (frequencyCard != null && frequencyCard.getItem() instanceof ItemCardFrequency)
-        {
-            return ((ItemCardFrequency) frequencyCard.getItem()).getFrequency(frequencyCard);
-        }
-
-        return 0;
+        return hz;
     }
 
     @Override
     public void setFrequency(int frequency)
     {
-
-    }
-
-    public ItemStack getFrequencyCard()
-    {
-        ItemStack stack = getStackInSlot(frequencySlot);
-
-        if (stack != null && stack.getItem() instanceof ItemCardFrequency)
-        {
-            return stack;
-        }
-
-        return null;
+        this.hz = frequency;
     }
 
     /**

@@ -19,7 +19,7 @@ import java.util.List;
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
  * Created by Dark(DarkGuardsman, Robert) on 4/19/2016.
  */
-public class ItemCardFrequency extends ItemCard implements IItemFrequency, IPacketReceiver
+public class ItemCardHz extends ItemCard implements IItemFrequency, IPacketReceiver
 {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List list, boolean par4)

@@ -12,7 +12,6 @@ import mffs.ModularForceFieldSystem;
 import mffs.Settings;
 import mffs.api.card.IAccessCard;
 import mffs.base.TileFrequency;
-import mffs.item.card.ItemCardFrequency;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -92,10 +91,6 @@ public class TileBiometricIdentifier extends TileFrequency implements IGuiTile
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
     {
-        if (slotID == 0)
-        {
-            return itemStack.getItem() instanceof ItemCardFrequency;
-        }
         return itemStack.getItem() instanceof IAccessCard;
     }
 

@@ -2,8 +2,6 @@ package mffs.field.gui;
 
 import com.builtbroken.mc.lib.transform.vector.Point;
 import com.builtbroken.mc.prefab.gui.ContainerBase;
-import com.builtbroken.mc.prefab.gui.slot.SlotSpecific;
-import mffs.item.card.ItemCardFrequency;
 import mffs.slot.SlotBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -18,7 +16,7 @@ public class ContainerMatrix extends ContainerBase
 
         Point slotCenter = matrixCenter.add(1);
         //Frequency
-        addSlotToContainer(new SlotSpecific(tileEntity, 0, 8, 114, ItemCardFrequency.class));
+        //addSlotToContainer(new SlotSpecific(tileEntity, 0, 8, 114, ItemCardFrequency.class));
         //Mode
         addSlotToContainer(new SlotBase(tileEntity, 1, slotCenter.xi(), slotCenter.yi()));
 

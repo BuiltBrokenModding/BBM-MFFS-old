@@ -1,8 +1,6 @@
 package mffs.production;
 
 import com.builtbroken.mc.prefab.gui.ContainerBase;
-import com.builtbroken.mc.prefab.gui.slot.SlotSpecific;
-import mffs.item.card.ItemCardFrequency;
 import mffs.slot.SlotBase;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -12,7 +10,7 @@ public class ContainerFortronCapacitor extends ContainerBase
     {
         super(tileEntity);
         //Frequency
-        addSlotToContainer(new SlotSpecific(tileEntity, 0, 8, 114, ItemCardFrequency.class));
+        //addSlotToContainer(new SlotSpecific(tileEntity, 0, 8, 114, ItemCardFrequency.class));
 
         //Upgrade slots
         for (int y = 0; y <= 2; y++)

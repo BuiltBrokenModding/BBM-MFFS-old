@@ -23,7 +23,6 @@ import mffs.field.mode.*;
 import mffs.field.module.*;
 import mffs.item.ItemRemoteController;
 import mffs.item.card.ItemCard;
-import mffs.item.card.ItemCardFrequency;
 import mffs.item.card.ItemCardLink;
 import mffs.item.fortron.ItemCardInfinite;
 import mffs.production.TileCoercionDeriver;
@@ -72,7 +71,6 @@ public class ModularForceFieldSystem extends AbstractMod
      */
     public static Item cardBlank;
     public static Item cardInfinite;
-    public static Item cardFrequency;
     public static ItemCardAccess cardID;
     public static Item cardLink;
 
@@ -147,7 +145,6 @@ public class ModularForceFieldSystem extends AbstractMod
          */
         cardBlank = manager.newItem("cardBlank", new ItemCard()).setTextureName(Reference.prefix + "cardBlank");
         cardInfinite = manager.newItem("cardInfinite", new ItemCardInfinite()).setTextureName(Reference.prefix + "cardInfinite");
-        cardFrequency = manager.newItem("cardFrequency", new ItemCardFrequency()).setTextureName(Reference.prefix + "cardFrequency");
         cardID = (ItemCardIdentification) manager.newItem("cardID", new ItemCardIdentification()).setTextureName(Reference.prefix + "cardIdentification");
         cardLink = manager.newItem("cardLink", new ItemCardLink()).setTextureName(Reference.prefix + "cardLink");
 
@@ -282,7 +279,7 @@ public class ModularForceFieldSystem extends AbstractMod
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(forceMobilizer), "FCF", "TMT", "FCF", 'F', focusMatrix, 'C', UniversalRecipe.MOTOR.get(), 'T', moduleTranslate, 'M', UniversalRecipe.MOTOR.get()));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardBlank), "PPP", "PMP", "PPP", 'P', Items.paper, 'M', UniversalRecipe.PRIMARY_METAL.get()));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardLink), "BWB", 'B', cardBlank, 'W', UniversalRecipe.WIRE.get()));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardFrequency), "WBW", 'B', cardBlank, 'W', UniversalRecipe.WIRE.get()));
+        //GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardFrequency), "WBW", 'B', cardBlank, 'W', UniversalRecipe.WIRE.get()));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardID), "R R", " B ", "R R", 'B', cardBlank, 'R', Items.redstone));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeSphere), " F ", "FFF", " F ", 'F', focusMatrix));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeCube), "FFF", "FFF", "FFF", 'F', focusMatrix));

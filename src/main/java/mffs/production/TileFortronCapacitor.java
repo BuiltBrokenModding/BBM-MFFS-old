@@ -16,7 +16,6 @@ import mffs.api.fortron.IFortronStorage;
 import mffs.api.modules.IModule;
 import mffs.base.TileModuleAcceptor;
 import mffs.base.TilePacketType;
-import mffs.item.card.ItemCardFrequency;
 import mffs.util.FortronUtility;
 import mffs.util.TransferMode;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -224,11 +223,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
     {
-        if (slotID == 0)
-        {
-            return itemStack.getItem() instanceof ItemCardFrequency;
-        }
-        else if (slotID < 4)
+        if (slotID < 4)
         {
             return itemStack.getItem() instanceof IModule;
         }
