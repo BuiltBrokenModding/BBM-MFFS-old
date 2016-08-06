@@ -3,10 +3,10 @@ package mffs.field;
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
+import com.builtbroken.mc.lib.render.RenderUtility;
 import com.builtbroken.mc.lib.transform.region.Cube;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mc.prefab.tile.Tile;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -16,15 +16,12 @@ import mffs.api.machine.IProjector;
 import mffs.api.modules.IModule;
 import mffs.security.MFFSPermissions;
 import mffs.security.TileBiometricIdentifier;
-import mffs.util.MFFSUtility;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
@@ -35,7 +32,7 @@ import net.minecraft.util.MovingObjectPosition;
 
 public class TileForceField extends Tile implements IPacketIDReceiver, IForceField
 {
-    private ItemStack camoStack = null;
+    //private ItemStack camoStack = null;
     private Pos projector = null;
 
     public TileForceField()
@@ -45,7 +42,8 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
         resistance = Float.MAX_VALUE;
         creativeTab = null;
         isOpaque = false;
-        this.renderNormalBlock = false;
+        this.renderNormalBlock = true;
+        this.renderTileEntity = false;
     }
 
     @Override
@@ -76,9 +74,9 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     @Override
     public boolean renderStatic(RenderBlocks renderer, Pos pos, int pass)
     {
+        /**
         int renderType = 0;
         Block camoBlock = null;
-        TileEntity tileEntity = getAccess().getTileEntity(xi(), yi(), zi());
 
         if (camoStack != null && camoStack.getItem() instanceof ItemBlock)
         {
@@ -150,7 +148,8 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
                         renderer.renderPistonExtension(camoBlock, xi(), yi(), zi(), true);
                         break;
                     default:
-                        super.renderStatic(renderer, pos, pass);
+                        RenderUtility.renderCube(0, 0, 0, 1, 1, 1, getTileBlock());
+                        break;
                 }
             }
             catch (Exception e)
@@ -161,9 +160,16 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
                 }
             }
             return true;
-        }
-
+        } */
+        RenderUtility.renderCube(0, 0, 0, 1, 1, 1, getTileBlock());
         return false;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderInventory(ItemStack itemStack)
+    {
+        RenderUtility.renderCube(0, 0, 0, 1, 1, 1, getTileBlock());
     }
 
     /**
@@ -173,6 +179,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     @Override
     public boolean shouldSideBeRendered(int side)
     {
+        /**
         if (camoStack != null)
         {
             try
@@ -186,7 +193,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
 
             }
             return true;
-        }
+        } */
 
         return getAccess().getBlock(xi(), yi(), zi()) == getBlockType() ? false : super.shouldSideBeRendered(side);
     }
@@ -287,6 +294,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     @Override
     public IIcon getIcon(int side)
     {
+        /**
         if (camoStack != null)
         {
             try
@@ -303,7 +311,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
             {
                 e.printStackTrace();
             }
-        }
+        } */
 
         return super.getIcon(side);
     }
@@ -311,6 +319,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     @Override
     public int getColorMultiplier()
     {
+        /**
         if (camoStack != null)
         {
             try
@@ -322,7 +331,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
                 e.printStackTrace();
             }
 
-        }
+        } */
         return super.getColorMultiplier();
     }
 
@@ -388,12 +397,13 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     {
         if (getProjector() != null)
         {
+            /**
             if (camoStack != null)
             {
                 NBTTagCompound nbt = new NBTTagCompound();
                 camoStack.writeToNBT(nbt);
                 return new PacketTile(this, projector.xi(), projector.yi(), projector.zi(), true, nbt);
-            }
+            } */
 
             return new PacketTile(this, projector.xi(), projector.yi(), projector.zi(), false);
         }
@@ -406,11 +416,11 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
 
         setProjector(new Pos(buf.readInt(), buf.readInt(), buf.readInt()));
         markRender();
-        camoStack = null;
+        //camoStack = null;
 
         if (buf.readBoolean())
         {
-            camoStack = ItemStack.loadItemStackFromNBT(ByteBufUtils.readTag(buf));
+            //camoStack = ItemStack.loadItemStackFromNBT(ByteBufUtils.readTag(buf));
         }
         return true;
     }
@@ -432,7 +442,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     {
         if (getProjectorSafe() != null)
         {
-            camoStack = MFFSUtility.getCamoBlock(getProjector(), toPos());
+            //camoStack = MFFSUtility.getCamoBlock(getProjector(), toPos());
         }
     }
 

@@ -146,6 +146,7 @@ public abstract class TileFrequency extends TileMFFSInventory implements IBlockF
             player.addChatMessage(new ChatComponentText("[" + Reference.name + "]" + " Access denied!"));
             return true;
         }
+        //TODO add rotation support as it was removed in the original base code
         return super.onPlayerRightClickWrench(player, side, hit);
     }
 }
