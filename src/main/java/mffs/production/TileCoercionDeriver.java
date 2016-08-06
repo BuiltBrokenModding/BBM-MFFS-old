@@ -1,7 +1,6 @@
 package mffs.production;
 
 import com.builtbroken.mc.api.tile.IGuiTile;
-import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mc.prefab.tile.Tile;
 import cpw.mods.fml.relauncher.Side;
@@ -12,7 +11,6 @@ import mffs.Settings;
 import mffs.api.card.IItemFrequency;
 import mffs.api.modules.IModule;
 import mffs.base.TileModuleAcceptor;
-import mffs.base.TilePacketType;
 import mffs.util.FortronUtility;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,7 +41,6 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     public static float energyConversionPercentage = 1F;
 
     int processTime = 0;
-    boolean isInversed = false;
     //Client
     float animationTween = 0f;
 
@@ -51,7 +48,7 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
 
     public TileCoercionDeriver()
     {
-        super("coercionDeriver"); //TODO get name
+        super("coercionDeriver");
         capacityBase = 30;
         startModuleIndex = 3;
     }
@@ -77,44 +74,37 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
         {
             if (isActive())
             {
-                if (isInversed && Settings.enableElectricity)
+                if (getFortronEnergy() < getFortronCapacity())
                 {
-                    int withdrawnElectricity = (int) (requestFortron(getProductionRate() / 20, true) / TileCoercionDeriver.ueToFortronRatio);
-                    this.energy += withdrawnElectricity * TileCoercionDeriver.energyConversionPercentage;
-
-                    //          recharge(getStackInSlot(TileCoercionDeriver.slotBattery))
-                }
-                else
-                {
-                    if (getFortronEnergy() < getFortronCapacity())
+                    //Create power from items if electricity is not enabled
+                    if( /* TODO !Settings.enableElectricity && */ isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL)))
                     {
-                        //            discharge(getStackInSlot(TileCoercionDeriver.slotBattery))
-
-                        if (energy >= getPower() || (!Settings.enableElectricity && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL))))
+                        if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL)))
                         {
-                            fortronTank.fill(FortronUtility.getFortron(getProductionRate()), true);
-                            energy -= getPower();
+                            decrStackSize(TileCoercionDeriver.SLOT_FUEL, 1);
+                            processTime = TileCoercionDeriver.fuelProcessTime * Math.max(this.getModuleCount(ModularForceFieldSystem.moduleScale) / 20, 1);
+                        }
 
-                            if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL)))
-                            {
-                                decrStackSize(TileCoercionDeriver.SLOT_FUEL, 1);
-                                processTime = TileCoercionDeriver.fuelProcessTime * Math.max(this.getModuleCount(ModularForceFieldSystem.moduleScale) / 20, 1);
-                            }
+                        if (processTime > 0)
+                        {
+                            processTime -= 1;
 
-                            if (processTime > 0)
-                            {
-                                processTime -= 1;
-
-                                if (processTime < 1)
-                                {
-                                    processTime = 0;
-                                }
-                            }
-                            else
+                            if (processTime < 1)
                             {
                                 processTime = 0;
                             }
                         }
+                        else
+                        {
+                            processTime = 0;
+                        }
+                    }
+
+                    //Create fortron fluid
+                    if (energy >= getPower())
+                    {
+                        fortronTank.fill(FortronUtility.getFortron(getProductionRate()), true);
+                        energy -= getPower();
                     }
                 }
             }
@@ -188,7 +178,7 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
 
     public boolean canConsume()
     {
-        if (this.isActive() && !this.isInversed)
+        if (this.isActive())
         {
             return FortronUtility.getAmount(this.fortronTank) < this.fortronTank.getCapacity();
         }
@@ -199,7 +189,6 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     public void writeDescPacket(ByteBuf buf)
     {
         super.writeDescPacket(buf);
-        buf.writeBoolean(isInversed);
         buf.writeInt(processTime);
     }
 
@@ -207,22 +196,7 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     public void readDescPacket(ByteBuf buf)
     {
         super.writeDescPacket(buf);
-        isInversed = buf.readBoolean();
         processTime = buf.readInt();
-    }
-
-    @Override
-    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
-    {
-        super.read(buf, id, player, packetType);
-        if (!worldObj.isRemote)
-        {
-            if (id == TilePacketType.toggleMoe.ordinal())
-            {
-                isInversed = !isInversed;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -230,7 +204,6 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     {
         super.readFromNBT(nbt);
         processTime = nbt.getInteger("processTime");
-        isInversed = nbt.getBoolean("isInversed");
     }
 
     @Override
@@ -238,7 +211,6 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     {
         super.writeToNBT(nbt);
         nbt.setInteger("processT;ime", processTime);
-        nbt.setBoolean("isInversed", isInversed);
     }
 
     /**

@@ -38,13 +38,13 @@ public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver>
         drawTextWithTooltip("upgrade", -95, 140, x, y);
         GL11.glPopMatrix();
 
-        ((GuiButton) buttonList.get(1)).displayString = LanguageUtility.getLocal(tile.isInversed ? "gui.deriver.integrate" : "gui.deriver.derive");
+        //((GuiButton) buttonList.get(1)).displayString = LanguageUtility.getLocal(tile.isInversed ? "gui.deriver.integrate" : "gui.deriver.derive");
 
         drawString(ChatFormatting.AQUA + "Energy Requirement:", 8, 20);
         renderUniversalDisplay(8, 30, tile.getPower(), x, y, UnitDisplay.Unit.WATT);
 
         drawTextWithTooltip("progress", "%1: " + LanguageUtility.getLocal(this.tile.isActive() ? "gui.deriver.running" : "gui.deriver.idle"), 8, 60, x, y);
-        drawString("Production: " + (this.tile.isInversed ? ChatFormatting.DARK_RED : ChatFormatting.DARK_GREEN) + new UnitDisplay(UnitDisplay.Unit.LITER, tile.getProductionRate() * 20) + "/s", 8, 100);
+        drawString("Production: " + ChatFormatting.DARK_GREEN + new UnitDisplay(UnitDisplay.Unit.LITER, tile.getProductionRate() * 20) + "/s", 8, 100);
 
 
         drawFortronText(x, y);
