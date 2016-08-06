@@ -12,3 +12,5 @@ build/
 .settings/org.eclipse.jdt.core.prefs
 output/
 BBM-Mffs.txt
+Mffs.txt
+CompiledWith.txt
