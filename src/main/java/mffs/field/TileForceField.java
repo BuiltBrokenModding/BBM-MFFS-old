@@ -1,5 +1,6 @@
 package mffs.field;
 
+import com.builtbroken.mc.core.References;
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
@@ -37,7 +38,8 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
 
     public TileForceField()
     {
-        super("ForceField", Material.glass); //TODO get tile name
+        super("forceField", Material.glass); //TODO get tile name
+        this.textureName = References.PREFIX + "forceField";
         hardness = -1;
         resistance = Float.MAX_VALUE;
         creativeTab = null;

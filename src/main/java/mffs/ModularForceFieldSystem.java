@@ -137,73 +137,73 @@ public class ModularForceFieldSystem extends AbstractMod
     @Override
     public void loadItems(ModManager manager)
     {
-        remoteController = manager.newItem("MFFSxRemoteController", new ItemRemoteController()).setTextureName(Reference.id+":remoteController");
+        remoteController = manager.newItem("MFFSxRemoteController", new ItemRemoteController()).setTextureName(Reference.prefix + "remoteController");
         MinecraftForge.EVENT_BUS.register(remoteController);
 
-        focusMatrix = manager.newItem("MFFSxCardFocusMatrix", new ItemMFFS()).setTextureName(Reference.id+":focusMatrix");
+        focusMatrix = manager.newItem("cardFocusMatrix", new ItemMFFS()).setTextureName(Reference.prefix + "focusMatrix");
 
         /**
          * Cards
          */
-        cardBlank = manager.newItem("MFFSxCardBlank", new ItemCard()).setTextureName(Reference.id+":cardBlank");
-        cardInfinite = manager.newItem("MFFSxCardInfinite", new ItemCardInfinite()).setTextureName(Reference.id+":cardInfinite");
-        cardFrequency = manager.newItem("MFFSxCardFrequency", new ItemCardFrequency()).setTextureName(Reference.id+":cardFrequency");
-        cardID = (ItemCardIdentification) manager.newItem("MFFSxCardID", new ItemCardIdentification()).setTextureName(Reference.id+":cardIdentification");
-        cardLink = manager.newItem("MFFSxCardLink", new ItemCardLink()).setTextureName(Reference.id+":cardLink");
+        cardBlank = manager.newItem("cardBlank", new ItemCard()).setTextureName(Reference.prefix + "cardBlank");
+        cardInfinite = manager.newItem("cardInfinite", new ItemCardInfinite()).setTextureName(Reference.prefix + "cardInfinite");
+        cardFrequency = manager.newItem("cardFrequency", new ItemCardFrequency()).setTextureName(Reference.prefix + "cardFrequency");
+        cardID = (ItemCardIdentification) manager.newItem("cardID", new ItemCardIdentification()).setTextureName(Reference.prefix + "cardIdentification");
+        cardLink = manager.newItem("cardLink", new ItemCardLink()).setTextureName(Reference.prefix + "cardLink");
 
         /**
          * Modes
          */
-        modeCube = (ItemModeCube) manager.newItem("MFFSxModeCube", new ItemModeCube()).setTextureName(Reference.id+":modeCube");
-        modeSphere = (ItemModeSphere) manager.newItem("MFFSxModeSphere", new ItemModeSphere()).setTextureName(Reference.id+":modeSphere");
-        modeTube = (ItemModeTube) manager.newItem("MFFSxCardNodeTube", new ItemModeTube()).setTextureName(Reference.id+":modeTube");
-        modeCylinder = (ItemModeCylinder) manager.newItem("MFFSxModeCylinder", new ItemModeCylinder()).setTextureName(Reference.id+":modeCylinder");
-        modePyramid = (ItemModePyramid) manager.newItem("MFFSxModePyramid", new ItemModePyramid()).setTextureName(Reference.id+":modePyramid");
-        modeCustom = (ItemModeCustom) manager.newItem("MFFSxModeCustom", new ItemModeCustom()).setTextureName(Reference.id+":modeCustom");
+        modeCube = (ItemModeCube) manager.newItem("modeCube", new ItemModeCube()).setTextureName(Reference.prefix + "modeCube");
+        modeSphere = (ItemModeSphere) manager.newItem("modeSphere", new ItemModeSphere()).setTextureName(Reference.prefix + "modeSphere");
+        modeTube = (ItemModeTube) manager.newItem("cardNodeTube", new ItemModeTube()).setTextureName(Reference.prefix + "modeTube");
+        modeCylinder = (ItemModeCylinder) manager.newItem("modeCylinder", new ItemModeCylinder()).setTextureName(Reference.prefix + "modeCylinder");
+        modePyramid = (ItemModePyramid) manager.newItem("modePyramid", new ItemModePyramid()).setTextureName(Reference.prefix + "modePyramid");
+        modeCustom = (ItemModeCustom) manager.newItem("modeCustom", new ItemModeCustom()).setTextureName(Reference.prefix + "modeCustom");
         /**
          * Modules
          */
 
-        moduleTranslate = (ItemModule) manager.newItem("MFFSxModuleTranslate", new ItemModule()).setCost(3f).setTextureName(Reference.id+":moduleTranslate");
+        moduleTranslate = (ItemModule) manager.newItem("moduleTranslate", new ItemModule()).setCost(3f).setTextureName(Reference.prefix + "moduleTranslate");
 
-        moduleScale = (ItemModule) manager.newItem("MFFSxModuleScale", new ItemModule()).setCost(2.5f).setTextureName(Reference.id+":moduleScale");
+        moduleScale = (ItemModule) manager.newItem("moduleScale", new ItemModule()).setCost(2.5f).setTextureName(Reference.prefix + "moduleScale");
 
-        moduleRotate = (ItemModule) manager.newItem("MFFSxModuleRotate", new ItemModule()).setCost(0.5f).setTextureName(Reference.id+":moduleRotate");
+        moduleRotate = (ItemModule) manager.newItem("moduleRotate", new ItemModule()).setCost(0.5f).setTextureName(Reference.prefix + "moduleRotate");
 
-        moduleSpeed = (ItemModule) manager.newItem("MFFSxModuleSpeed", new ItemModule()).setCost(1.5f).setTextureName(Reference.id+":moduleSpeed");
+        moduleSpeed = (ItemModule) manager.newItem("moduleSpeed", new ItemModule()).setCost(1.5f).setTextureName(Reference.prefix + "moduleSpeed");
 
-        moduleCapacity = (ItemModule) manager.newItem("MFFSxModuleCapacity", new ItemModule()).setCost(0.5f).setTextureName(Reference.id+":moduleCapacity");
+        moduleCapacity = (ItemModule) manager.newItem("moduleCapacity", new ItemModule()).setCost(0.5f).setTextureName(Reference.prefix + "moduleCapacity");
 
-        moduleCollection = (ItemModule) manager.newItem("MFFSxModuleCollection", new ItemModule()).setMaxStackSize(1).setCost(15).setTextureName(Reference.id+":moduleCollection");
+        moduleCollection = (ItemModule) manager.newItem("moduleCollection", new ItemModule()).setMaxStackSize(1).setCost(15).setTextureName(Reference.prefix + "moduleCollection");
 
-        moduleInvert = (ItemModule) manager.newItem("MFFSxModuleInvert", new ItemModule()).setMaxStackSize(1).setCost(15).setTextureName(Reference.id+":moduleInvert");
+        moduleInvert = (ItemModule) manager.newItem("moduleInvert", new ItemModule()).setMaxStackSize(1).setCost(15).setTextureName(Reference.prefix + "moduleInvert");
 
-        moduleSilence = (ItemModule) manager.newItem("MFFSxModuleSilence", new ItemModule()).setMaxStackSize(1).setCost(1).setTextureName(Reference.id+":moduleSilence");
-        moduleFusion = (ItemModuleFusion) manager.newItem("MFFSxModuleFusion", new ItemModuleFusion()).setTextureName(Reference.id+":moduleFusion");
-        moduleDome = (ItemModuleDome) manager.newItem("MFFSxModuleDome", new ItemModuleDome()).setTextureName(Reference.id+":moduleDome");
+        moduleSilence = (ItemModule) manager.newItem("moduleSilence", new ItemModule()).setMaxStackSize(1).setCost(1).setTextureName(Reference.prefix + "moduleSilence");
+        moduleFusion = (ItemModuleFusion) manager.newItem("moduleFusion", new ItemModuleFusion()).setTextureName(Reference.prefix + "moduleFusion");
+        moduleDome = (ItemModuleDome) manager.newItem("moduleDome", new ItemModuleDome()).setTextureName(Reference.prefix + "moduleDome");
 
-        moduleCamouflage = (ItemModule) manager.newItem("MFFSxModuleCamouflage", new ItemModule()).setCost(1.5f).setMaxStackSize(1).setTextureName(Reference.id+":moduleCamouflage");
+        moduleCamouflage = (ItemModule) manager.newItem("moduleCamouflage", new ItemModule()).setCost(1.5f).setMaxStackSize(1).setTextureName(Reference.prefix + "moduleCamouflage");
 
-        moduleApproximation = (ItemModule) manager.newItem("MFFSxModuleApproximation", new ItemModule()).setMaxStackSize(1).setCost(1f).setTextureName(Reference.id+":moduleApproximation");
-        moduleArray = (ItemModuleArray) manager.newItem("MFFSxModuleArray", new ItemModuleArray()).setCost(3f).setTextureName(Reference.id+":moduleArray");
-        moduleDisintegration = (ItemModuleDisintegration) manager.newItem("MFFSxModuleDisintegration", new ItemModuleDisintegration()).setTextureName(Reference.id+":moduleDisintegration");
-        moduleShock = (ItemModuleShock) manager.newItem("MFFSxModuleShock", new ItemModuleShock()).setTextureName(Reference.id+":moduleShock");
+        moduleApproximation = (ItemModule) manager.newItem("moduleApproximation", new ItemModule()).setMaxStackSize(1).setCost(1f).setTextureName(Reference.prefix + "moduleApproximation");
+        moduleArray = (ItemModuleArray) manager.newItem("moduleArray", new ItemModuleArray()).setCost(3f).setTextureName(Reference.prefix + "moduleArray");
+        moduleDisintegration = (ItemModuleDisintegration) manager.newItem("moduleDisintegration", new ItemModuleDisintegration()).setTextureName(Reference.prefix + "moduleDisintegration");
+        moduleShock = (ItemModuleShock) manager.newItem("moduleShock", new ItemModuleShock()).setTextureName(Reference.prefix + "moduleShock");
 
-        moduleGlow = (ItemModule) manager.newItem("MFFSxModuleGlow", new ItemModule()).setTextureName(Reference.id+":moduleGlow");
-        moduleSponge = (ItemModuleSponge) manager.newItem("MFFSxModuleSponge", new ItemModuleSponge()).setTextureName(Reference.id+":moduleSponge");
-        moduleStabilize = (ItemModuleStabilize) manager.newItem("MFFSxModuleStabilize", new ItemModuleStabilize()).setTextureName(Reference.id+":moduleStabilize");
-        moduleRepulsion = (ItemModuleRepulsion) manager.newItem("MFFSxModuleRepulsion", new ItemModuleRepulsion()).setTextureName(Reference.id+":moduleRepulsion");
-        moduleAntiHostile = (ItemModuleAntiHostile) manager.newItem("MFFSxModuleAntiHostile", new ItemModuleAntiHostile()).setCost(10).setTextureName(Reference.id+":moduleAntiHostile");
-        moduleAntiFriendly = (ItemModuleAntiFriendly) manager.newItem("MFFSxModuleAntiFriendly", new ItemModuleAntiFriendly()).setCost(5).setTextureName(Reference.id+":moduleAntiFriendly");
-        moduleAntiPersonnel = (ItemModuleAntiPersonnel) manager.newItem("MFFSxModuleAntiPersonnel", new ItemModuleAntiPersonnel()).setCost(15).setTextureName(Reference.id+":moduleAntiPersonnel");
-        moduleConfiscate = (ItemModuleConfiscate) manager.newItem("MFFSxModuleConfiscate", new ItemModuleConfiscate()).setTextureName(Reference.id+":moduleConfiscate");
-        moduleWarn = (ItemModuleBroadcast) manager.newItem("MFFSxModuleWarn", new ItemModuleBroadcast()).setTextureName(Reference.id+":moduleWarn");
+        moduleGlow = (ItemModule) manager.newItem("moduleGlow", new ItemModule()).setTextureName(Reference.prefix + "moduleGlow");
+        moduleSponge = (ItemModuleSponge) manager.newItem("moduleSponge", new ItemModuleSponge()).setTextureName(Reference.prefix + "moduleSponge");
+        moduleStabilize = (ItemModuleStabilize) manager.newItem("moduleStabilize", new ItemModuleStabilize()).setTextureName(Reference.prefix + "moduleStabilize");
+        moduleRepulsion = (ItemModuleRepulsion) manager.newItem("moduleRepulsion", new ItemModuleRepulsion()).setTextureName(Reference.prefix + "moduleRepulsion");
+        moduleAntiHostile = (ItemModuleAntiHostile) manager.newItem("moduleAntiHostile", new ItemModuleAntiHostile()).setCost(10).setTextureName(Reference.prefix + "moduleAntiHostile");
+        moduleAntiFriendly = (ItemModuleAntiFriendly) manager.newItem("moduleAntiFriendly", new ItemModuleAntiFriendly()).setCost(5).setTextureName(Reference.prefix + "moduleAntiFriendly");
+        moduleAntiPersonnel = (ItemModuleAntiPersonnel) manager.newItem("moduleAntiPersonnel", new ItemModuleAntiPersonnel()).setCost(15).setTextureName(Reference.prefix + "moduleAntiPersonnel");
+        moduleConfiscate = (ItemModuleConfiscate) manager.newItem("moduleConfiscate", new ItemModuleConfiscate()).setTextureName(Reference.prefix + "moduleConfiscate");
+        moduleWarn = (ItemModuleBroadcast) manager.newItem("moduleWarn", new ItemModuleBroadcast()).setTextureName(Reference.prefix + "moduleWarn");
 
-        moduleBlockAccess = (ItemModuleDefense) manager.newItem("MFFSxModuleBlockAccess", new ItemModuleDefense()).setCost(10).setTextureName(Reference.id+":moduleBlockAccess");
+        moduleBlockAccess = (ItemModuleDefense) manager.newItem("moduleBlockAccess", new ItemModuleDefense()).setCost(10).setTextureName(Reference.prefix + "moduleBlockAccess");
 
-        moduleBlockAlter = (ItemModuleDefense) manager.newItem("MFFSxModuleBlockAlter", new ItemModuleDefense()).setCost(15).setTextureName(Reference.id+":moduleBlockAlter");
+        moduleBlockAlter = (ItemModuleDefense) manager.newItem("moduleBlockAlter", new ItemModuleDefense()).setCost(15).setTextureName(Reference.prefix + "moduleBlockAlter");
 
-        moduleAntiSpawn = (ItemModuleDefense) manager.newItem("MFFSxModuleAntiSpawn", new ItemModuleDefense()).setCost(10).setTextureName(Reference.id+":moduleAntiSpawn");
+        moduleAntiSpawn = (ItemModuleDefense) manager.newItem("moduleAntiSpawn", new ItemModuleDefense()).setCost(10).setTextureName(Reference.prefix + "moduleAntiSpawn");
 
     }
 

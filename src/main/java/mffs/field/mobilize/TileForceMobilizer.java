@@ -75,7 +75,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 
     public TileForceMobilizer()
     {
-        super("ForceMobilizer"); //TODO get name
+        super("forceMobilizer"); //TODO get name
         //rotationMask = 63; TODO ?
     }
 

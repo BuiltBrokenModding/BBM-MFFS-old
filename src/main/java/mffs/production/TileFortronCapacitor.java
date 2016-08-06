@@ -36,7 +36,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
 
     public TileFortronCapacitor()
     {
-        super("FortonCapacitor"); //TODO get actual tile name
+        super("fortronCapacitor"); //TODO get actual tile name
         capacityBase = 700;
         capacityBoost = 10;
         startModuleIndex = 1;
