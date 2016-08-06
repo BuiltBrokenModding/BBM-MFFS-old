@@ -23,13 +23,13 @@ public class ItemModeCube extends ItemMode
     {
         List<Pos> fieldBlocks = new ArrayList();
         Pos posScale = projector.getPositiveScale();
-        Pos negScale = projector.getNegativeScale();
+        Pos negScale = projector.getNegativeScale(); //Positive numbers so do -# when using
 
-        for (int x = negScale.xi(); x < posScale.xi(); x += step)
+        for (int x = -negScale.xi(); x < posScale.xi(); x += step)
         {
-            for (int y = negScale.yi(); y < posScale.yi(); y += step)
+            for (int y = -negScale.yi(); y < posScale.yi(); y += step)
             {
-                for (int z = negScale.zi(); z < posScale.zi(); z += step)
+                for (int z = -negScale.zi(); z < posScale.zi(); z += step)
                 {
                     if (y == -negScale.yi() || y == posScale.yi() || x == -negScale.xi() || x == posScale.xi() || z == -negScale.zi() || z == posScale.zi())
                     {

@@ -101,7 +101,6 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         }
 
         return true;
-
     }
 
     @Override
@@ -142,7 +141,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     @Override
     protected void calculateField()
     {
-        if (!worldObj.isRemote && !isCalculating)
+        if (isServer() && !isCalculating)
         {
             if (getMode() != null)
             {
@@ -227,34 +226,38 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     {
         super.update();
 
-        if (isActive() && getMode() != null && requestFortron(getFortronCost(), false) >= this.getFortronCost())
+        setActive(true); //TODO remove
+        if (isServer())
         {
-            consumeCost();
+            if (isActive() && getMode() != null && requestFortron(getFortronCost(), false) >= this.getFortronCost())
+            {
+                consumeCost();
 
-            if (ticks % 10 == 0 || markFieldUpdate || fieldRequireTicks)
-            {
-                if (calculatedField == null)
+                if (ticks % 10 == 0 || markFieldUpdate || fieldRequireTicks)
                 {
-                    calculateField();
+                    if (calculatedField == null)
+                    {
+                        calculateField();
+                    }
+                    else
+                    {
+                        projectField();
+                    }
                 }
-                else
-                {
-                    projectField();
-                }
-            }
 
-            if (isActive() && worldObj.isRemote)
-            {
-                animation += getFortronCost() / 100f;
+                if (isActive() && worldObj.isRemote)
+                {
+                    animation += getFortronCost() / 100f;
+                }
+                if (ticks % (2 * 20) == 0 && getModuleCount(ModularForceFieldSystem.moduleSilence) <= 0)
+                {
+                    worldObj.playSoundEffect(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D, Reference.prefix + "field", 0.6f, (1 - this.worldObj.rand.nextFloat() * 0.1f));
+                }
             }
-            if (ticks % (2 * 20) == 0 && getModuleCount(ModularForceFieldSystem.moduleSilence) <= 0)
+            else
             {
-                worldObj.playSoundEffect(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D, Reference.prefix + "field", 0.6f, (1 - this.worldObj.rand.nextFloat() * 0.1f));
+                destroyField();
             }
-        }
-        else if (!worldObj.isRemote)
-        {
-            destroyField();
         }
     }
 

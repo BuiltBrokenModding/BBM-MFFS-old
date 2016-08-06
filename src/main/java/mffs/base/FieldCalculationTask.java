@@ -17,7 +17,14 @@ public class FieldCalculationTask implements IThreadProcess
     @Override
     public void runProcess()
     {
-        matrix.generateCalculatedField();
+        try
+        {
+            matrix.calculatedField = matrix.generateCalculatedField();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         matrix.isCalculating = false;
     }
 

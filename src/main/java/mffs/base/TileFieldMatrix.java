@@ -240,7 +240,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         int[] array = new int[end - start];
         for (int i = start; i < end; i++)
         {
-            array[end - start] = i;
+            array[end - start - 1] = i;
         }
         return array;
     }
@@ -280,7 +280,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
      */
     protected void calculateField()
     {
-        if (!worldObj.isRemote && !isCalculating)
+        if (isServer() && !isCalculating)
         {
             if (getMode() != null)
             {
