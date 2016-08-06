@@ -75,7 +75,7 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
 
     public void powerOff()
     {
-        if (!this.isRedstoneActive && !this.worldObj.isRemote)
+        if (!this.isRedstoneActive && isServer())
         {
             this.setActive(false);
         }
@@ -100,19 +100,7 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
     @Override
     public boolean read(ByteBuf buf, int id, EntityPlayer entityplayer, PacketType packetType)
     {
-        if (id == TilePacketType.description.ordinal())
-        {
-            boolean prevActive = active;
-            active = buf.readBoolean();
-            isRedstoneActive = buf.readBoolean();
-
-            if (prevActive != this.active)
-            {
-                markRender();
-            }
-            return true;
-        }
-        else if (id == TilePacketType.toggleActivation.ordinal())
+        if (id == TilePacketType.toggleActivation.ordinal())
         {
             isRedstoneActive = !isRedstoneActive;
 
@@ -136,20 +124,26 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
         worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
     }
 
-    public void write(ByteBuf buf, int id)
+    @Override
+    public void readDescPacket(ByteBuf buf)
     {
+        super.readDescPacket(buf);
+        boolean prevActive = active;
+        active = buf.readBoolean();
+        isRedstoneActive = buf.readBoolean();
 
-        if (id == TilePacketType.description.ordinal())
+        if (prevActive != this.active)
         {
-            buf.writeBoolean(active);
-            buf.writeBoolean(isRedstoneActive);
-            //TODO replace with state system to save on network(eg two boolean == two bytes, could be one byte with 8 states instead)
+            markRender();
         }
     }
 
-    public boolean isPoweredByRedstone()
+    @Override
+    public void writeDescPacket(ByteBuf buf)
     {
-        return world().isBlockIndirectlyGettingPowered(xi(), yi(), zi());
+        super.writeDescPacket(buf);
+        buf.writeBoolean(active);
+        buf.writeBoolean(isRedstoneActive);
     }
 
     @Override

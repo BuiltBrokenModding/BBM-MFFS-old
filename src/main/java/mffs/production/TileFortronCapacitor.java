@@ -109,19 +109,18 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
         return 0f;
     }
 
-    /**
-     * Packet Methods
-     */
+    @Override
+    public void writeDescPacket(ByteBuf buf)
+    {
+        super.writeDescPacket(buf);
+        buf.writeInt(transferMode.ordinal());
+    }
 
     @Override
-    public void write(ByteBuf buf, int id)
+    public void readDescPacket(ByteBuf buf)
     {
-        super.write(buf, id);
-
-        if (id == TilePacketType.description.ordinal())
-        {
-            buf.writeInt(transferMode.ordinal());
-        }
+        super.readDescPacket(buf);
+        transferMode = TransferMode.get(buf.readInt());
     }
 
     @Override
@@ -129,12 +128,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     {
         if (!super.read(buf, id, player, packetType))
         {
-            if (id == TilePacketType.description.ordinal())
-            {
-                transferMode = TransferMode.get(buf.readInt());
-                return true;
-            }
-            else if (id == TilePacketType.toggleMoe.ordinal())
+            if (id == TilePacketType.toggleMoe.ordinal())
             {
                 transferMode = transferMode.toggle();
                 return true;

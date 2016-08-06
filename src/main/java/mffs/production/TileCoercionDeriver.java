@@ -196,31 +196,26 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     }
 
     @Override
-    public void write(ByteBuf buf, int id)
+    public void writeDescPacket(ByteBuf buf)
     {
-        super.write(buf, id);
+        super.writeDescPacket(buf);
+        buf.writeBoolean(isInversed);
+        buf.writeInt(processTime);
+    }
 
-        if (id == TilePacketType.description.ordinal())
-        {
-            buf.writeBoolean(isInversed);
-            buf.writeInt(processTime);
-        }
+    @Override
+    public void readDescPacket(ByteBuf buf)
+    {
+        super.writeDescPacket(buf);
+        isInversed = buf.readBoolean();
+        processTime = buf.readInt();
     }
 
     @Override
     public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
     {
         super.read(buf, id, player, packetType);
-
-        if (worldObj.isRemote)
-        {
-            if (id == TilePacketType.description.ordinal())
-            {
-                isInversed = buf.readBoolean();
-                processTime = buf.readInt();
-            }
-        }
-        else
+        if (!worldObj.isRemote)
         {
             if (id == TilePacketType.toggleMoe.ordinal())
             {

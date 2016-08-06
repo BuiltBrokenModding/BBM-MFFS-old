@@ -514,17 +514,23 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
     }
 
     @Override
-    public void write(ByteBuf buf, int id)
+    public void writeDescPacket(ByteBuf buf)
     {
-        super.write(buf, id);
+        super.writeDescPacket(buf);
+        anchor.writeByteBuf(buf);
+        buf.writeInt(previewMode);
+        buf.writeBoolean(doAnchor);
+        buf.writeInt(moveTime > 0 ? moveTime : getMoveTime());
+    }
 
-        if (id == TilePacketType.description.ordinal())
-        {
-            anchor.writeByteBuf(buf);
-            buf.writeInt(previewMode);
-            buf.writeBoolean(doAnchor);
-            buf.writeInt(moveTime > 0 ? moveTime : getMoveTime());
-        }
+    @Override
+    public void readDescPacket(ByteBuf buf)
+    {
+        super.readDescPacket(buf);
+        anchor = new Location(buf);
+        previewMode = (byte) buf.readInt();
+        doAnchor = buf.readBoolean();
+        clientMoveTime = buf.readInt();
     }
 
     @Override
@@ -625,13 +631,6 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
                 else if (id == TilePacketType.field.ordinal())
                 {
                     this.moveEntities();
-                }
-                else if (id == TilePacketType.description.ordinal())
-                {
-                    anchor = new Location(buf);
-                    previewMode = (byte) buf.readInt();
-                    doAnchor = buf.readBoolean();
-                    clientMoveTime = buf.readInt();
                 }
             }
             else

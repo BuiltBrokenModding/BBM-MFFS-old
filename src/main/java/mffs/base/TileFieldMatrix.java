@@ -60,14 +60,17 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     }
 
     @Override
-    public void write(ByteBuf buf, int id)
+    public void writeDescPacket(ByteBuf buf)
     {
-        super.write(buf, id);
+        super.writeDescPacket(buf);
+        buf.writeBoolean(absoluteDirection);
+    }
 
-        if (id == TilePacketType.description.ordinal())
-        {
-            buf.writeBoolean(absoluteDirection);
-        }
+    @Override
+    public void readDescPacket(ByteBuf buf)
+    {
+        super.readDescPacket(buf);
+        absoluteDirection = buf.readBoolean();
     }
 
     @Override
@@ -75,15 +78,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     {
         if (!super.read(buf, id, player, packetType))
         {
-
-            if (world().isRemote)
-            {
-                if (id == TilePacketType.description.ordinal())
-                {
-                    absoluteDirection = buf.readBoolean();
-                }
-            }
-            else
+            if (!world().isRemote)
             {
                 if (id == TilePacketType.toggleMode4.ordinal())
                 {

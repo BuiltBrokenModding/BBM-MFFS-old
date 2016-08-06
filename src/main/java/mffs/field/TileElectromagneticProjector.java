@@ -163,16 +163,17 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     }
 
     @Override
-    public void write(ByteBuf buf, int id)
+    public void writeDescPacket(ByteBuf buf)
     {
-        super.write(buf, id);
+        super.writeDescPacket(buf);
+        buf.writeBoolean(isInverted);
+    }
 
-        if (id == TilePacketType.description.ordinal())
-        {
-        }
-        {
-            buf.writeBoolean(isInverted);
-        }
+    @Override
+    public void readDescPacket(ByteBuf buf)
+    {
+        super.readDescPacket(buf);
+        isInverted = buf.readBoolean();
     }
 
     @Override
@@ -182,11 +183,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         {
             if (isClient())
             {
-                if (id == TilePacketType.description.ordinal())
-                {
-                    isInverted = buf.readBoolean();
-                }
-                else if (id == TilePacketType.effect.ordinal())
+                if (id == TilePacketType.effect.ordinal())
                 {
                     int packetType = buf.readInt();
                     Pos vector = new Pos(buf.readInt(), buf.readInt(), buf.readInt()).add(0.5);

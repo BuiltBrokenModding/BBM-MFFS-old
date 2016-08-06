@@ -1,12 +1,10 @@
 package mffs.base;
 
-import com.builtbroken.mc.core.network.packet.PacketType;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.modules.IModule;
 import mffs.api.modules.IModuleProvider;
 import mffs.util.TCache;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,17 +37,6 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     public Map<String, Object> cache()
     {
         return cache;
-    }
-
-    @Override
-    public void write(ByteBuf buf, int id)
-    {
-        //super.write(buf, id);
-
-        if (id == TilePacketType.description.ordinal())
-        {
-            buf.writeInt(getFortronCost());
-        }
     }
 
     /**
@@ -93,19 +80,19 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
         return 1f;
     }
 
-    @Override
-    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
-    {
-        if (!super.read(buf, id, player, packetType))
-        {
 
-            if (id == TilePacketType.description.ordinal())
-            {
-                clientFortronCost = buf.readInt();
-                return true;
-            }
-        }
-        return false; //this allows any childClass to continue reading.
+    @Override
+    public void writeDescPacket(ByteBuf buf)
+    {
+        super.writeDescPacket(buf);
+        buf.writeInt(getFortronCost());
+    }
+
+    @Override
+    public void readDescPacket(ByteBuf buf)
+    {
+        super.readDescPacket(buf);
+        clientFortronCost = buf.readInt();
     }
 
     @Override
