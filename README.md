@@ -14,6 +14,9 @@ This mod is therefore _not_ derived work of MFFS v2, but is simply a mod that us
 ### Website & Download
 The mod can be found and downloaded at: http://calclavia.com/mffs/
 
+### Code Coverage
+[![codecov](https://codecov.io/gh/BuiltBrokenModding/BBM-MFFS/branch/MFFS/graph/badge.svg)](https://codecov.io/gh/BuiltBrokenModding/BBM-MFFS)
+
 ### Developement
 **Developer** - Calclavia
 
