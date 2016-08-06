@@ -9,10 +9,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.card.ICoordLink;
-import mffs.api.fortron.FrequencyGrid;
-import mffs.api.fortron.IFortronCapacitor;
-import mffs.api.fortron.IFortronFrequency;
-import mffs.api.fortron.IFortronStorage;
+import mffs.api.fortron.*;
 import mffs.api.modules.IModule;
 import mffs.base.TileModuleAcceptor;
 import mffs.base.TilePacketType;
@@ -27,6 +24,7 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TileFortronCapacitor extends TileModuleAcceptor implements IFortronStorage, IFortronCapacitor, IGuiTile
 {
@@ -57,13 +55,11 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     public void update()
     {
         super.update();
-        this.consumeCost();
+        this.consumeCost(); //TODO figure out why we have a cost for moving power
 
-        if (isActive())
+        if (true || isActive())
         {
-            /**
-             * Draw from input slots and eject from output slots
-             */
+            //Drain fluid containers
             if (getFortronEmpty() > 0)
             {
                 getInputStacks().stream()
@@ -71,6 +67,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
                         .forEach(stack -> fortronTank.fill(((IFluidContainerItem) stack.getItem()).drain(stack, Math.min(getFortronEmpty(), getTransmissionRate()), true), true));
             }
 
+            //Fill fluid containers
             if (fortronTank.getFluidAmount() > 0)
             {
                 FluidStack transferFluid = fortronTank.getFluid().copy();
@@ -82,15 +79,9 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
 
             if (ticks % tickRate == 0)
             {
-                /**
-                 * Transfer based on input/output slots
-                 */
-                FortronUtility.transferFortron(this, getInputDevices(), TransferMode.fill, getTransmissionRate() * tickRate);
-                FortronUtility.transferFortron(this, getOutputDevices(), TransferMode.drain, getTransmissionRate() * tickRate);
-
-                /**
-                 * Transfer based on frequency
-                 */
+                //TODO recode into a wireless network
+                FortronUtility.transferFortron(this, getFrequencyDevices(), TransferMode.fill, getTransmissionRate() * tickRate);
+                FortronUtility.transferFortron(this, getFrequencyDevices(), TransferMode.drain, getTransmissionRate() * tickRate);
                 FortronUtility.transferFortron(this, getFrequencyDevices(), transferMode, getTransmissionRate() * tickRate);
             }
         }
@@ -159,7 +150,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     @Override
     public List<IFortronFrequency> getFrequencyDevices()
     {
-        return FrequencyGrid.instance().getNodes(IFortronFrequency.class, world(), toPos(), getTransmissionRange(), getFrequency());
+        return FrequencyGrid.instance().getNodes(world(), toPos(), getTransmissionRange(), getFrequency()).stream().filter(s -> s instanceof IFortronFrequency).map(s -> (IFortronFrequency) s).collect(Collectors.toList());
     }
 
     @Override

@@ -85,7 +85,6 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
     {
-
         if (slotID == 0)
         {
             return itemStack.getItem() instanceof ItemCard;

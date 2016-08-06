@@ -19,8 +19,9 @@ public class FrequencyGrid implements IFrequencyGrid
 {
     //TODO make per world
     //TODO make per chunk for faster access
-    public static IFrequencyGrid GRID = new FrequencyGrid();
+    private static IFrequencyGrid GRID = new FrequencyGrid();
 
+    //TODO fix, we have two entries per tile (lock to server side only)
     public List<IBlockFrequency> tiles = new ArrayList(); //TODO time complexity is a bitch
 
     public static IFrequencyGrid instance()
@@ -31,7 +32,7 @@ public class FrequencyGrid implements IFrequencyGrid
     @Override
     public void add(IBlockFrequency tileEntity)
     {
-        if (!tiles.contains(tileEntity))
+        if (tileEntity != null && !tileEntity.world().isRemote && !tiles.contains(tileEntity))
         {
             tiles.add(tileEntity);
         }
