@@ -9,7 +9,6 @@ import mffs.base.TilePacketType;
 import mffs.render.button.GuiTransferModeButton;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 import org.lwjgl.opengl.GL11;
 
 public class GuiFortronCapacitor extends GuiMFFS<TileFortronCapacitor>
@@ -43,13 +42,6 @@ public class GuiFortronCapacitor extends GuiMFFS<TileFortronCapacitor>
         super.drawGuiContainerForegroundLayer(x, y);
     }
 
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
-    {
-        super.drawGuiContainerBackgroundLayer(f, x, y);
-        inventorySlots.inventorySlots.stream().forEach(s -> drawSlot(((Slot)s).xDisplayPosition, ((Slot)s).yDisplayPosition));
-        drawFrequencyGui();
-    }
 
     @Override
     protected void actionPerformed(GuiButton guiButton)

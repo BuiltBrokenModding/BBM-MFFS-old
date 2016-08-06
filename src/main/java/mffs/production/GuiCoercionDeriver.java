@@ -1,15 +1,10 @@
 package mffs.production;
 
 import com.builtbroken.jlib.data.science.units.UnitDisplay;
-import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.References;
-import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
-import com.builtbroken.mc.prefab.gui.EnumGuiIconSheet;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import mffs.base.GuiMFFS;
-import mffs.base.TilePacketType;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
@@ -20,13 +15,6 @@ public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver>
     {
         super(new ContainerCoercionDeriver(player, tile), tile);
         this.baseTexture = References.GUI_BASE;
-    }
-
-    @Override
-    public void initGui()
-    {
-        super.initGui();
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 10, this.height / 2 - 35, 58, 20, LanguageUtility.getLocal("gui.deriver.derive")));
     }
 
     @Override
@@ -49,34 +37,5 @@ public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver>
 
         drawFortronText(x, y);
         super.drawGuiContainerForegroundLayer(x, y);
-    }
-
-    @Override
-    public void drawGuiContainerBackgroundLayer(float f, int x, int y)
-    {
-        super.drawGuiContainerBackgroundLayer(f, x, y);
-
-        //Upgrade slots
-        for (int slot = 0; slot <= 2; slot++)
-        {
-            drawSlot(153, 46 + slot * 18);
-        }
-
-        drawSlot(8, 75, EnumGuiIconSheet.BATTERY);
-        drawSlot(8 + 20, 75);
-        drawBar(50, 77, 1);
-
-        drawFrequencyGui();
-    }
-
-    @Override
-    public void actionPerformed(GuiButton guibutton)
-    {
-        super.actionPerformed(guibutton);
-
-        if (guibutton.id == 1)
-        {
-            Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.toggleMoe.ordinal()));
-        }
     }
 }

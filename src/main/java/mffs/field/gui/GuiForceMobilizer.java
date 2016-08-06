@@ -2,7 +2,6 @@ package mffs.field.gui;
 
 import com.builtbroken.jlib.data.science.units.UnitDisplay;
 import com.builtbroken.mc.core.Engine;
-import com.builtbroken.mc.core.References;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -51,14 +50,6 @@ public class GuiForceMobilizer extends GuiMatrix<TileForceMobilizer>
             absoluteCache = !absoluteCache;
             setupTooltips();
         }
-    }
-
-    @Override
-    public void drawGuiContainerBackgroundLayer(float f, int x, int y)
-    {
-        super.drawGuiContainerBackgroundLayer(f, x, y);
-        drawMatrix();
-        drawFrequencyGui();
     }
 
     @Override

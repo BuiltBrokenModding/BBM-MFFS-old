@@ -271,7 +271,6 @@ public class ModularForceFieldSystem extends AbstractMod
 
         //TODO move recipes to each block/items class
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(focusMatrix, 8), "RMR", "MDM", "RMR", 'M', UniversalRecipe.PRIMARY_METAL.get(), 'D', Items.diamond, 'R', Items.redstone));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(remoteController), "WWW", "MCM", "MCM", 'W', UniversalRecipe.WIRE.get(), 'C', UniversalRecipe.BATTERY.get(), 'M', UniversalRecipe.PRIMARY_METAL.get()));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(coercionDeriver), "FMF", "FCF", "FMF", 'C', UniversalRecipe.BATTERY.get(), 'M', UniversalRecipe.PRIMARY_METAL.get(), 'F', focusMatrix));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(fortronCapacitor), "MFM", "FCF", "MFM", 'D', Items.diamond, 'C', UniversalRecipe.BATTERY.get(), 'F', focusMatrix, 'M', UniversalRecipe.PRIMARY_METAL.get()));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(electromagneticProjector), " D ", "FFF", "MCM", 'D', Items.diamond, 'C', UniversalRecipe.BATTERY.get(), 'F', focusMatrix, 'M', UniversalRecipe.PRIMARY_METAL.get()));

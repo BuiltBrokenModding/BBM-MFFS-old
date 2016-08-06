@@ -12,11 +12,10 @@ public class ContainerCoercionDeriver extends ContainerBase
 {
     public ContainerCoercionDeriver(EntityPlayer player, TileCoercionDeriver tileEntity)
     {
-        super(tileEntity);
-        //addSlotToContainer(new SlotSpecific(tileEntity, 0, 8, 114, ItemCardFrequency.class));
+        super(player, tileEntity);
 
-        addSlotToContainer(new SlotBase(tileEntity, 1, 9, 76));
-        addSlotToContainer(new SlotBase(tileEntity, 2, 9 + 20, 76));
+        addSlotToContainer(new SlotBase(tileEntity, TileCoercionDeriver.SLOT_BATTERY, 9, 76));
+        addSlotToContainer(new SlotBase(tileEntity, TileCoercionDeriver.SLOT_FUEL, 9 + 20, 76));
 
         //Upgrade slots
         for (int y = 0; y <= 2; y++)

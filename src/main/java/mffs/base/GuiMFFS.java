@@ -10,9 +10,8 @@ import mffs.render.button.GuiIcon;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-
-import java.awt.*;
 
 public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase
 {
@@ -54,6 +53,13 @@ public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase
     }
 
     @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
+    {
+        super.drawGuiContainerBackgroundLayer(f, x, y);
+        inventorySlots.inventorySlots.stream().forEach(s -> drawSlot((Slot) s));
+    }
+
+    @Override
     protected void actionPerformed(GuiButton button)
     {
         super.actionPerformed(button);
@@ -72,19 +78,4 @@ public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase
             drawTextWithTooltip("fortron", ChatFormatting.WHITE + "" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronEnergy()).symbol() + "/" + new UnitDisplay(UnitDisplay.Unit.LITER, fortronTile.getFortronCapacity()).symbol(), 35, 119, x, y);
         }
     }
-
-    protected void drawFrequencyGui()
-    {
-        //Frequency Card
-        drawSlot(7, 113);
-
-        if (tile instanceof TileFortron)
-        {
-            TileFortron fortronTile = (TileFortron) tile;
-
-            //Fortron Bar
-            drawBar(30, 115, Math.min((float) fortronTile.getFortronEnergy() / fortronTile.getFortronCapacity(), 1), Color.BLUE);
-        }
-    }
-
 }

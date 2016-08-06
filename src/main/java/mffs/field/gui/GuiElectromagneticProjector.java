@@ -59,23 +59,6 @@ public class GuiElectromagneticProjector extends GuiMatrix<TileElectromagneticPr
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
-    {
-        super.drawGuiContainerBackgroundLayer(f, x, y);
-        drawMatrix();
-        drawFrequencyGui();
-
-        //Filter slots
-        for (int x1 = 0; x1 < 2; x1++)
-        {
-            for (int y1 = 0; y1 < 3; y1++)
-            {
-                drawSlot(20 + 18 * x1, 30 + 18 * y1);
-            }
-        }
-    }
-
-    @Override
     protected void actionPerformed(GuiButton guiButton)
     {
         super.actionPerformed(guiButton);

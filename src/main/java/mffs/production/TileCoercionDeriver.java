@@ -2,6 +2,7 @@ package mffs.production;
 
 import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.inventory.InventoryUtility;
 import com.builtbroken.mc.prefab.tile.Tile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -77,9 +78,11 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
                 if (getFortronEnergy() < getFortronCapacity())
                 {
                     //Create power from items if electricity is not enabled
-                    if( /* TODO !Settings.enableElectricity && */ isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL)))
+                    ItemStack stack = getStackInSlot(TileCoercionDeriver.SLOT_FUEL);
+                    if( /* TODO !Settings.enableElectricity && */ isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, stack))
                     {
-                        if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, getStackInSlot(TileCoercionDeriver.SLOT_FUEL)))
+                        energy += getPower(); //TODO balance
+                        if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, stack))
                         {
                             decrStackSize(TileCoercionDeriver.SLOT_FUEL, 1);
                             processTime = TileCoercionDeriver.fuelProcessTime * Math.max(this.getModuleCount(ModularForceFieldSystem.moduleScale) / 20, 1);
@@ -154,7 +157,6 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
 
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
-
     {
         if (itemStack != null)
         {
@@ -167,10 +169,10 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
                 case TileCoercionDeriver.SLOT_FREQ:
                     return itemStack.getItem() instanceof IItemFrequency;
                 case TileCoercionDeriver.SLOT_BATTERY:
-                    return false; //add battery handler
+                    return false; //TODO add battery handler
                 // return Compatibility.isHandler(itemStack.getItem(), null);
                 case TileCoercionDeriver.SLOT_FUEL:
-                    return itemStack.isItemEqual(new ItemStack(Items.dye, 1, 4)) || itemStack.isItemEqual(new ItemStack(Items.quartz));
+                    return InventoryUtility.stacksMatch(itemStack, new ItemStack(Items.dye, 1, 4)) || InventoryUtility.stacksMatch(itemStack, new ItemStack(Items.quartz));
             }
         }
         return false;

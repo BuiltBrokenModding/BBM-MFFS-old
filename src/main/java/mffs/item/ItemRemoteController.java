@@ -1,7 +1,9 @@
 package mffs.item;
 
 import com.builtbroken.jlib.data.science.units.UnitDisplay;
+import com.builtbroken.mc.core.registry.implement.IRecipeContainer;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
+import com.builtbroken.mc.lib.helper.recipe.UniversalRecipe;
 import com.builtbroken.mc.lib.transform.vector.Location;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -20,6 +22,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
@@ -32,7 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ItemRemoteController extends ItemCardHz implements ICoordLink
+public class ItemRemoteController extends ItemCardHz implements ICoordLink, IRecipeContainer
 {
     private final Set<ItemStack> remotesCached = new HashSet();
     private final Set<ItemStack> temporaryRemoteBlacklist = new HashSet();
@@ -200,4 +203,9 @@ public class ItemRemoteController extends ItemCardHz implements ICoordLink
         itemStack.getTagCompound().setTag("link", vec.toNBT());
     }
 
+    @Override
+    public void genRecipes(List<IRecipe> recipes)
+    {
+        recipes.add(newShapedRecipe(this, "WWW", "MCM", "MCM", 'W', UniversalRecipe.WIRE.get(), 'C', UniversalRecipe.BATTERY.get(), 'M', UniversalRecipe.PRIMARY_METAL.get()));
+    }
 }
