@@ -24,11 +24,11 @@ public class ItemModeCube extends ItemMode
         Pos posScale = projector.getPositiveScale();
         Pos negScale = projector.getNegativeScale(); //Positive numbers so do -# when using
 
-        for (int x = -negScale.xi(); x < posScale.xi(); x += 1)
+        for (int x = -negScale.xi(); x <= posScale.xi(); x += 1)
         {
-            for (int y = -negScale.yi(); y < posScale.yi(); y += 1)
+            for (int y = -negScale.yi(); y <= posScale.yi(); y += 1)
             {
-                for (int z = -negScale.zi(); z < posScale.zi(); z += 1)
+                for (int z = -negScale.zi(); z <= posScale.zi(); z += 1)
                 {
                     if (y == -negScale.yi() || y == posScale.yi() || x == -negScale.xi() || x == posScale.xi() || z == -negScale.zi() || z == posScale.zi())
                     {
@@ -48,11 +48,11 @@ public class ItemModeCube extends ItemMode
         Pos negScale = projector.getNegativeScale();
 
         //TODO: Check parallel possibility
-        for (int x = -negScale.xi(); x < posScale.xi(); x += 1)
+        for (int x = -negScale.xi(); x <= posScale.xi(); x += 1)
         {
-            for (int y = -negScale.yi(); y < posScale.yi(); y += 1)
+            for (int y = -negScale.yi(); y <= posScale.yi(); y += 1)
             {
-                for (int z = -negScale.zi(); z < posScale.zi(); z += 1)
+                for (int z = -negScale.zi(); z <= posScale.zi(); z += 1)
                 {
                     fieldBlocks.add(new Pos(x, y, z));
                 }
