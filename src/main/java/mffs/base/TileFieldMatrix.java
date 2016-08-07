@@ -215,6 +215,8 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     @Override
     public int[] getDirectionSlots(ForgeDirection direction)
     {
+        //TODO: These arrays are STATIC, should just create final variable
+        //TODO: Use ordinal of direction to return array index
         switch (direction)
         {
             case UP:
@@ -234,7 +236,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         }
     }
 
-    //TODO move to helper, or base tile class
+    //TODO move to helper, or base tile class.
     private int[] newIntArray(int start, int end)
     {
         int[] array = new int[end - start];
