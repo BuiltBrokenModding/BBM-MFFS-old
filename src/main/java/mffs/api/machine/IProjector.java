@@ -41,4 +41,6 @@ public interface IProjector extends IInventory, IFieldMatrix, IBlockFrequency
     List<Pos> getForceFields();
 
     int provideFortron(int energy, boolean b);
+
+    int[] getModuleSlots();
 }

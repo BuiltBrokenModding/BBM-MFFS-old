@@ -1,11 +1,9 @@
 package mffs.api.machine;
 
 import com.builtbroken.mc.lib.transform.vector.Pos;
-import mffs.api.modules.IModule;
 import mffs.api.modules.IModuleProvider;
 import mffs.api.modules.IProjectorMode;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.List;
 
@@ -18,25 +16,6 @@ public interface IFieldMatrix extends IModuleProvider, IActivatable, IPermission
      * Gets the mode of the projector, mainly the shape and size of it.
      */
     IProjectorMode getMode();
-
-    ItemStack getModeStack();
-
-    /**
-     * Gets the slot IDs based on the direction given.
-     */
-    int[] getDirectionSlots(ForgeDirection direction);
-
-    /**
-     * Gets the unspecified, direction-unspecific module slots on the left side of the GUI.
-     */
-    int[] getModuleSlots();
-
-    /**
-     * @param module    - The module instance.
-     * @param direction - The direction facing.
-     * @return Gets the amount of modules based on the side.
-     */
-    int getSidedModuleCount(IModule module, ForgeDirection... direction);
 
     /**
      * Transformation information functions. Returns CACHED information unless the cache is cleared.
@@ -53,6 +32,15 @@ public interface IFieldMatrix extends IModuleProvider, IActivatable, IPermission
     int getRotationPitch();
 
     /**
+     * Mainly for internal use, this allows the calculated field to
+     * be set from outside of the field matrix.
+     *
+     * @param field - list of field positions not translated by matrix position
+     */
+    void setCalculatedField(List<Pos> field);
+
+
+    /**
      * @return Gets all the absolute block coordinates that are occupying the force field. Note that this is a copy of the actual field set.
      */
     List<Pos> getCalculatedField();
@@ -65,8 +53,11 @@ public interface IFieldMatrix extends IModuleProvider, IActivatable, IPermission
     List<Pos> getInteriorPoints();
 
     /**
-     * @return Gets the facing direction. Always returns the front side of the block.
+     * Called to generate the field
+     *
+     * @return list of positions not translated by matrix position or rotation
      */
-    ForgeDirection getDirection();
+    List<Pos> generateCalculatedField();
 
+    ItemStack getModeStack();
 }

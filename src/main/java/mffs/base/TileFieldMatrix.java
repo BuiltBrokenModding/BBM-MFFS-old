@@ -1,5 +1,7 @@
 package mffs.base;
 
+import com.builtbroken.mc.api.process.IProcessListener;
+import com.builtbroken.mc.api.process.IThreadProcess;
 import com.builtbroken.mc.lib.transform.rotation.EulerAngle;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import mffs.ModularForceFieldSystem;
@@ -19,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFieldMatrix, IDelayedEventHandler, IPermissionProvider
+public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFieldMatrix, IDelayedEventHandler, IPermissionProvider, IProcessListener
 {
     protected final Queue<DelayedEvent> delayedEvents = new LinkedList();
 
@@ -32,6 +34,12 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     public TileFieldMatrix(String name)
     {
         super(name);
+    }
+
+    @Override
+    public int getSizeInventory()
+    {
+        return 0;
     }
 
     @Override
@@ -66,7 +74,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return itemStack.getItem() instanceof IModule;
     }
 
-    @Override
     public int getSidedModuleCount(IModule module, ForgeDirection... directions)
     {
         ForgeDirection[] actualDirs = directions;
@@ -112,8 +119,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         int xScaleNeg = 0;
         int yScaleNeg = 0;
 
-        ForgeDirection direction = getDirection();
-
         zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.NORTH));
         xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.WEST));
         yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN));
@@ -126,13 +131,13 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return new Pos(xScaleNeg, yScaleNeg, zScaleNeg);
     }
 
-    @Override
+
     public int[] getModuleSlots()
     {
         return _getModuleSlots;
     }
 
-    @Override
+
     public int[] getDirectionSlots(ForgeDirection direction)
     {
         //TODO: These arrays are STATIC, should just create final variable
@@ -178,6 +183,12 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     }
 
     @Override
+    public void setCalculatedField(List<Pos> field)
+    {
+        this.calculatedField = field;
+    }
+
+    @Override
     public void queueEvent(DelayedEvent evt)
     {
         delayedEvents.add(evt);
@@ -200,7 +211,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
                 isCalculating = true;
                 //TODO implement thread priority so MFFS has one of the worker threads to itself
                 //TODO only claim thread if more than a few force fields are running
-                FieldCalculationTask task = new FieldCalculationTask(this);
+                FieldCalculationTask task = new FieldCalculationTask(this, this);
                 task.queProcess();
             }
         }
@@ -220,10 +231,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         }
 
         List<Pos> newField = getMode().getInteriorPoints(this);
-        if (getModuleCount(ModularForceFieldSystem.moduleArray) > 0)
-        {
-            ModularForceFieldSystem.moduleArray.onPreCalculateInterior(this, getMode().getExteriorPoints(this), newField);
-        }
 
         //Data to use to move field
         final Pos translation = getTranslation();
@@ -298,7 +305,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         return null;
     }
 
-    @Override
     public ItemStack getModeStack()
     {
         if (this.getStackInSlot(modeSlotID) != null)
@@ -336,18 +342,30 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     @Override
     public int getRotationYaw()
     {
-        int horizontalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.EAST))
-                - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.WEST))
-                + getModuleCount(ModularForceFieldSystem.moduleRotate, this.getDirectionSlots(ForgeDirection.SOUTH))
-                - this.getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.NORTH));
-        return horizontalRotation * 2;
+        return 0; //TODO
     }
 
     @Override
     public int getRotationPitch()
     {
-        int verticalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.UP)) - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.DOWN));
-        return verticalRotation * 2;
+        return 0; //TODO
     }
 
+    @Override
+    public void onProcessStarts(IThreadProcess process)
+    {
+        this.isCalculating = true;
+    }
+
+    @Override
+    public void onProcessFinished(IThreadProcess process)
+    {
+        this.isCalculating = false;
+    }
+
+    @Override
+    public void onProcessTerminated(IThreadProcess process)
+    {
+        this.isCalculating = false;
+    }
 }

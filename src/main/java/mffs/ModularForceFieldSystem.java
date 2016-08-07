@@ -85,7 +85,6 @@ public class ModularForceFieldSystem extends AbstractMod
     public static ItemMode modeCustom;
     public static ItemModule moduleTranslate;
     public static ItemModule moduleScale;
-    public static ItemModule moduleRotate;
     public static ItemModule moduleSpeed;
     public static ItemModule moduleCapacity;
     public static ItemModule moduleCollection;
@@ -95,7 +94,6 @@ public class ModularForceFieldSystem extends AbstractMod
     public static ItemModule moduleDome;
     public static ItemModule moduleCamouflage;
     public static ItemModule moduleApproximation;
-    public static ItemModuleArray moduleArray;
     public static ItemModule moduleDisintegration;
     public static ItemModule moduleShock;
     public static ItemModule moduleGlow;
@@ -165,8 +163,6 @@ public class ModularForceFieldSystem extends AbstractMod
 
         moduleScale = (ItemModule) manager.newItem("moduleScale", new ItemModule()).setCost(2.5f).setTextureName(Reference.prefix + "moduleScale");
 
-        moduleRotate = (ItemModule) manager.newItem("moduleRotate", new ItemModule()).setCost(0.5f).setTextureName(Reference.prefix + "moduleRotate");
-
         moduleSpeed = (ItemModule) manager.newItem("moduleSpeed", new ItemModule()).setCost(1.5f).setTextureName(Reference.prefix + "moduleSpeed");
 
         moduleCapacity = (ItemModule) manager.newItem("moduleCapacity", new ItemModule()).setCost(0.5f).setTextureName(Reference.prefix + "moduleCapacity");
@@ -182,7 +178,6 @@ public class ModularForceFieldSystem extends AbstractMod
         moduleCamouflage = (ItemModule) manager.newItem("moduleCamouflage", new ItemModule()).setCost(1.5f).setMaxStackSize(1).setTextureName(Reference.prefix + "moduleCamouflage");
 
         moduleApproximation = (ItemModule) manager.newItem("moduleApproximation", new ItemModule()).setMaxStackSize(1).setCost(1f).setTextureName(Reference.prefix + "moduleApproximation");
-        moduleArray = (ItemModuleArray) manager.newItem("moduleArray", new ItemModuleArray()).setCost(3f).setTextureName(Reference.prefix + "moduleArray");
         moduleDisintegration = (ItemModuleDisintegration) manager.newItem("moduleDisintegration", new ItemModuleDisintegration()).setTextureName(Reference.prefix + "moduleDisintegration");
         moduleShock = (ItemModuleShock) manager.newItem("moduleShock", new ItemModuleShock()).setTextureName(Reference.prefix + "moduleShock");
 
@@ -297,14 +292,12 @@ public class ModularForceFieldSystem extends AbstractMod
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleFusion), "FJF", 'F', focusMatrix, 'J', moduleShock));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleScale, 2), "FRF", 'F', focusMatrix));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleTranslate, 2), "FSF", 'F', focusMatrix, 'S', moduleScale));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleRotate, 4), "F  ", " F ", "  F", 'F', focusMatrix));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleGlow, 4), "GGG", "GFG", "GGG", 'F', focusMatrix, 'G', Blocks.glowstone));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleStabilize), "FDF", "PSA", "FDF", 'F', focusMatrix, 'P', Items.diamond_pickaxe, 'S', Items.diamond_shovel, 'A', Items.diamond_axe, 'D', Items.diamond));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleCollection), "F F", " H ", "F F", 'F', focusMatrix, 'H', Blocks.hopper));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleInvert), "L", "F", "L", 'F', focusMatrix, 'L', Blocks.lapis_block));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleSilence), " N ", "NFN", " N ", 'F', focusMatrix, 'N', Blocks.noteblock));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleApproximation), " N ", "NFN", " N ", 'F', focusMatrix, 'N', Items.golden_pickaxe));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleArray), " F ", "DFD", " F ", 'F', focusMatrix, 'D', Items.diamond));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleRepulsion), "FFF", "DFD", "SFS", 'F', focusMatrix, 'D', Items.diamond, 'S', Items.slime_ball));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleAntiHostile), " R ", "GFB", " S ", 'F', focusMatrix, 'G', Items.gunpowder, 'R', Items.rotten_flesh, 'B', Items.bone, 'S', Items.ghast_tear));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleAntiFriendly), " R ", "GFB", " S ", 'F', focusMatrix, 'G', Items.cooked_porkchop, 'R', new ItemStack(Blocks.wool, 1, OreDictionary.WILDCARD_VALUE), 'B', Items.leather, 'S', Items.slime_ball));

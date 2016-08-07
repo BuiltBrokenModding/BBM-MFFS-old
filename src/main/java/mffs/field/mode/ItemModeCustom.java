@@ -22,7 +22,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.io.File;
 import java.util.HashMap;
@@ -223,28 +222,6 @@ public class ItemModeCustom extends ItemMode implements TCache
         }
 
         Map<Pos, Pair<Block, Integer>> fieldMap = getFieldBlockMapClean(projector, itemStack);
-
-        if (projector.getModuleCount(ModularForceFieldSystem.moduleArray) > 0)
-        {
-            Map<ForgeDirection, Integer> longestDirectional = ModularForceFieldSystem.moduleArray.getDirectionWidthMap(fieldMap.keySet());
-
-            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS)
-            {
-                int copyAmount = projector.getSidedModuleCount(ModularForceFieldSystem.moduleArray, direction);
-                int directionalDisplacement = (Math.abs(longestDirectional.get(direction)) + Math.abs(longestDirectional.get(direction.getOpposite()))) + 1;
-
-                for (int i = 0; i < copyAmount; i++)
-                {
-                    int directionalDisplacementScale = directionalDisplacement * (i + 1);
-
-                    getFieldBlocks(projector, itemStack).forEach(originalVec ->
-                    {
-                        Pos newFieldBlock = originalVec.clone().add(new Pos(direction).multiply(directionalDisplacementScale));
-                        fieldMap.put(newFieldBlock, fieldMap.get(originalVec));
-                    });
-                }
-            }
-        }
 
         putCache(cacheID, fieldMap);
 

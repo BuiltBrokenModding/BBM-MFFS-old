@@ -1,5 +1,6 @@
 package mffs.field.mode;
 
+import com.builtbroken.mc.api.tile.IRotation;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -18,7 +19,7 @@ public class ItemModeTube extends ItemModeCube
     public List<Pos> getExteriorPoints(IFieldMatrix projector)
     {
         List<Pos> fieldBlocks = new ArrayList();
-        ForgeDirection direction = projector.getDirection();
+        ForgeDirection direction = projector instanceof IRotation ? ((IRotation)projector).getDirection() : ForgeDirection.NORTH; //TODO maybe remove rotation based on projector facing direction
         Pos posScale = projector.getPositiveScale();
         Pos negScale = projector.getNegativeScale();
 

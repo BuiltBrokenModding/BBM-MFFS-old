@@ -1,5 +1,6 @@
 package mffs.field.gui;
 
+import com.builtbroken.mc.prefab.gui.ContainerBase;
 import mffs.field.TileElectromagneticProjector;
 import mffs.slot.SlotBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
  *
  * @author Calclavia
  */
-public class ContainerElectromagneticProjector extends ContainerMatrix
+public class ContainerElectromagneticProjector extends ContainerBase
 {
     public ContainerElectromagneticProjector(EntityPlayer player, TileElectromagneticProjector tileEntity)
     {
@@ -21,5 +22,6 @@ public class ContainerElectromagneticProjector extends ContainerMatrix
                 addSlotToContainer(new SlotBase(tileEntity, x + y * 2 + (1 + 25), 21 + 18 * x, 31 + 18 * y));
             }
         }
+        addPlayerInventory(player, 8, 135);
     }
 }

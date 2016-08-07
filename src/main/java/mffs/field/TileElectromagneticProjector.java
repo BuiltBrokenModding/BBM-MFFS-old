@@ -1,10 +1,13 @@
 package mffs.field;
 
+import com.builtbroken.mc.api.process.IProcessListener;
+import com.builtbroken.mc.api.process.IThreadProcess;
 import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.region.Cube;
+import com.builtbroken.mc.lib.transform.rotation.EulerAngle;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mc.prefab.tile.Tile;
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -14,15 +17,19 @@ import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.Reference;
 import mffs.Settings;
+import mffs.api.machine.IFieldMatrix;
+import mffs.api.machine.IPermissionProvider;
 import mffs.api.machine.IProjector;
 import mffs.api.modules.IModule;
 import mffs.api.modules.IProjectorMode;
-import mffs.base.TileFieldMatrix;
+import mffs.base.FieldCalculationTask;
+import mffs.base.TileModuleAcceptor;
 import mffs.base.TilePacketType;
 import mffs.field.gui.ContainerElectromagneticProjector;
 import mffs.field.gui.GuiElectromagneticProjector;
+import mffs.field.mobilize.event.DelayedEvent;
+import mffs.field.mobilize.event.IDelayedEventHandler;
 import mffs.field.mode.ItemModeCustom;
-import mffs.item.card.ItemCard;
 import mffs.render.FieldColor;
 import mffs.security.MFFSPermissions;
 import mffs.util.TCache;
@@ -36,20 +43,43 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
-public class TileElectromagneticProjector extends TileFieldMatrix implements IProjector, IGuiTile
+public class TileElectromagneticProjector extends TileModuleAcceptor implements IProjector, IGuiTile, IFieldMatrix, IDelayedEventHandler, IPermissionProvider, IProcessListener
 {
+    public static final int[] MODULE_SLOTS = new int[]{0, 1, 2, 3, 4, 5};
+    public static final int MODE_SLOT = 1;
+
+    /** List of events to que later */ //TODO
+    protected final Queue<DelayedEvent> delayedEvents = new LinkedList();
+
+
+    /** Is the tile currently waiting on a thread to calculate the field */
+    protected boolean isCalculating = false; //TODO add tick to ensure this value resets if the field doesn't finish calculating
+    /** A set containing all positions of the calculated field data */
+    protected List<Pos> calculatedField = null;
     /** A set containing all positions of all force field blocks generated. */
-    List<Pos> forceFields = new ArrayList();
+    protected List<Pos> forceFields = new ArrayList();
+
+    /** How far to move from center point */
+    public Pos translation = new Pos();
+    /** How much to scale in each direction */
+    public int[] scale = new int[6];
+
+    /** How much we can move the field in any direction */
+    public int translationPoints = 0;
+    /** How much we can expand the field in any direction */
+    public int scalePoints = 0;
 
     /** Marks the field for an update call */
     public boolean markFieldUpdate = true;
-
     /**
      * True if the field is done constructing and the projector is simply
      * maintaining the field
@@ -61,6 +91,8 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
     /** Are the filters in the projector inverted? */
     private boolean isInverted = false;
+
+    private int yaw = 0, pitch = 0;
 
     public TileElectromagneticProjector()
     {
@@ -76,38 +108,37 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         return new TileElectromagneticProjector();
     }
 
+    /** Ensures the field size and position is valid for modules we contain */
+    public void validateField()
+    {
+        if((translation.xi() + translation.yi() + translation.zi()) > translationPoints)
+        {
+            //TODO invalidate field and recalculate
+        }
+        int size = scale[0] + scale[1] + scale[2] + scale[3] + scale[4] + scale[5];
+        if(size > scalePoints)
+        {
+            //TODO invalidate field and recalculate
+        }
+    }
+
     @Override
     public int getSizeInventory()
     {
-        return 1 + 25 + 6;
+        return 6;
     }
 
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
     {
-        if (slotID == 0)
-        {
-            return itemStack.getItem() instanceof ItemCard;
-        }
-
-        if (slotID == modeSlotID)
-        {
-            return itemStack.getItem() instanceof IProjectorMode;
-        }
-
-        if (slotID < 26)
-        {
-            return itemStack.getItem() instanceof IModule;
-        }
-
-        return true;
+        return itemStack.getItem() instanceof IModule;
     }
 
     @Override
     public void firstTick()
     {
         super.firstTick();
-        calculateField();
+        calculateField(); //TODO Delay calculation to improve load time
         postCalculation();
     }
 
@@ -135,10 +166,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         return getModuleCount(ModularForceFieldSystem.moduleRepulsion) > 0;
     }
 
-    /**
-     * Initiate a field calculation
-     */
-    @Override
+    /** Initiate a field calculation */
     protected void calculateField()
     {
         if (isServer() && !isCalculating)
@@ -147,8 +175,19 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
             {
                 forceFields.clear();
             }
-
-            super.calculateField();
+            if (getMode() != null)
+            {
+                //Clear mode cache
+                if (getModeStack().getItem() instanceof TCache)
+                {
+                    ((TCache) getModeStack().getItem()).clearCache();
+                }
+                isCalculating = true;
+                //TODO implement thread priority so MFFS has one of the worker threads to itself
+                //TODO only claim thread if more than a few force fields are running
+                FieldCalculationTask task = new FieldCalculationTask(this, this);
+                task.queProcess();
+            }
             isCompleteConstructing = false;
             fieldRequireTicks = getModuleStacks().stream().allMatch(module -> ((IModule) module.getItem()).requireTicks(module));
         }
@@ -226,6 +265,9 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     {
         super.update();
 
+        delayedEvents.forEach(d -> d.update());
+        delayedEvents.removeIf(d -> d.ticks < 0);
+
         setActive(true); //TODO remove
         if (isServer())
         {
@@ -273,7 +315,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
         {
             List<Pos> potentialField = calculatedField;
 
-            List<IModule> relevantModules = getModules(getModuleSlots());
+            List<IModule> relevantModules = getModules(MODULE_SLOTS);
 
             if (!relevantModules.stream().anyMatch(m -> m.onProject(this, potentialField)))
             {
@@ -356,6 +398,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
 
     private boolean canReplaceBlock(Pos vector, Block block)
     {
+        //TODO move to helper that is easier to add to or remove from
         return block == null ||
                 (getModuleCount(ModularForceFieldSystem.moduleDisintegration) > 0 && block.getBlockHardness(this.worldObj, vector.xi(), vector.yi(), vector.zi()) != -1) ||
                 (block.getMaterial().isLiquid() || block == Blocks.snow || block == Blocks.vine || block == Blocks.tallgrass || block == Blocks.deadbush || block.isReplaceable(world(), vector.xi(), vector.yi(), vector.zi()));
@@ -364,7 +407,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     @Override
     public int getProjectionSpeed()
     {
-        return 28 + 28 * getModuleCount(ModularForceFieldSystem.moduleSpeed, getModuleSlots());
+        return 28 + 28 * getModuleCount(ModularForceFieldSystem.moduleSpeed, MODULE_SLOTS);
     }
 
     @Override
@@ -372,7 +415,7 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     {
         if (!world().isRemote && calculatedField != null && !isCalculating)
         {
-            getModules(getModuleSlots()).forEach(m -> m.onDestroy(this, calculatedField));
+            getModules(MODULE_SLOTS).forEach(m -> m.onDestroy(this, calculatedField));
             //TODO: Parallelism?
             calculatedField.stream().filter(p -> p.getBlock(world()) == ModularForceFieldSystem.forceField).forEach(p -> p.setBlock(world(), Blocks.air));
 
@@ -405,6 +448,12 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     public List<Pos> getForceFields()
     {
         return forceFields;
+    }
+
+    @Override
+    public int[] getModuleSlots()
+    {
+        return MODULE_SLOTS;
     }
 
     @Override
@@ -529,5 +578,181 @@ public class TileElectromagneticProjector extends TileFieldMatrix implements IPr
     public Object getClientGuiElement(int ID, EntityPlayer player)
     {
         return new GuiElectromagneticProjector(player, this);
+    }
+
+    public void clearQueue()
+    {
+        delayedEvents.clear();
+    }
+
+    @Override
+    public Pos getPositiveScale()
+    {
+        return new Pos(scale[ForgeDirection.SOUTH.ordinal()], scale[ForgeDirection.EAST.ordinal()], scale[ForgeDirection.UP.ordinal()]);
+    }
+
+    @Override
+    public Pos getNegativeScale()
+    {
+        return new Pos(scale[ForgeDirection.NORTH.ordinal()], scale[ForgeDirection.WEST.ordinal()], scale[ForgeDirection.DOWN.ordinal()]);
+    }
+
+    @Override
+    public List<Pos> getCalculatedField()
+    {
+        if (calculatedField != null)
+        {
+            return calculatedField;
+        }
+        return new ArrayList();
+    }
+
+    @Override
+    public void setCalculatedField(List<Pos> field)
+    {
+        this.calculatedField = field;
+    }
+
+    @Override
+    public void queueEvent(DelayedEvent evt)
+    {
+        delayedEvents.add(evt);
+    }
+
+    @Override
+    public List<Pos> generateCalculatedField()
+    {
+        return getExteriorPoints();
+    }
+
+    @Override //This is threaded, so ensure thread safe actions
+    public List<Pos> getInteriorPoints()
+    {
+        if (getModeStack() != null && getModeStack().getItem() instanceof TCache)
+        {
+            ((TCache) getModeStack().getItem()).clearCache();
+        }
+
+        List<Pos> newField = getMode().getInteriorPoints(this);
+
+        //Data to use to move field
+        final Pos translation = getTranslation();
+        final int rotationYaw = getRotationYaw();
+        final int rotationPitch = getRotationPitch();
+        final EulerAngle rotation = new EulerAngle(rotationYaw, rotationPitch, 0);
+
+        //Limiter for field
+        final int maxHeight = world().getHeight();
+
+        //TODO optimize as we are generate x2, or more, pos objects each time this is calculated
+        List<Pos> field = new ArrayList();
+        for (Pos pos : newField)
+        {
+            Pos pos2 = toPos().add(pos.transform(rotation)).add(translation).round();
+            if (pos2.yi() <= maxHeight && pos2.yi() >= 0)
+            {
+                field.add(pos2);
+            }
+        }
+        newField.clear(); //faster memory cleanup, at least in theory?
+        return field;
+    }
+
+    protected List<Pos> getExteriorPoints()
+    {
+        List<Pos> newField;
+
+        if (getModuleCount(ModularForceFieldSystem.moduleInvert) > 0)
+        {
+            newField = getMode().getInteriorPoints(this);
+        }
+        else
+        {
+            newField = getMode().getExteriorPoints(this);
+        }
+
+        getModules().forEach(m -> m.onPreCalculate(this, newField));
+
+        Pos translation = getTranslation();
+        int rotationYaw = getRotationYaw();
+        int rotationPitch = getRotationPitch();
+
+        EulerAngle rotation = new EulerAngle(rotationYaw, rotationPitch);
+
+        int maxHeight = world().getHeight();
+
+        //TODO optimize as we are generate x2, or more, pos objects each time this is calculated
+        List<Pos> field = new ArrayList();
+        for (Pos pos : newField)
+        {
+            Pos pos2 = toPos().add(pos.transform(rotation)).add(translation).round();
+            if (pos2.yi() <= maxHeight && pos2.yi() >= 0)
+            {
+                field.add(pos2);
+            }
+        }
+        newField.clear(); //faster memory cleanup, at least in theory?
+
+        getModules().forEach(m -> m.onPostCalculate(this, field));
+
+        return field;
+    }
+
+    @Override
+    public IProjectorMode getMode()
+    {
+        if (this.getModeStack() != null)
+        {
+            return (IProjectorMode) this.getModeStack().getItem();
+        }
+        return null;
+    }
+
+    public ItemStack getModeStack()
+    {
+        if (this.getStackInSlot(MODE_SLOT) != null)
+        {
+            if (this.getStackInSlot(MODE_SLOT).getItem() instanceof IProjectorMode)
+            {
+                return this.getStackInSlot(MODE_SLOT);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Pos getTranslation()
+    {
+        return translation;
+    }
+
+    @Override
+    public int getRotationYaw()
+    {
+        return yaw;
+    }
+
+    @Override
+    public int getRotationPitch()
+    {
+        return pitch;
+    }
+
+    @Override
+    public void onProcessStarts(IThreadProcess process)
+    {
+        this.isCalculating = true;
+    }
+
+    @Override
+    public void onProcessFinished(IThreadProcess process)
+    {
+        this.isCalculating = false;
+    }
+
+    @Override
+    public void onProcessTerminated(IThreadProcess process)
+    {
+        this.isCalculating = false;
     }
 }

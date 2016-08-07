@@ -119,7 +119,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
 
         if (projector != null)
         {
-            if (!projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule) stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), entity, stack)))
+            if (!projector.getModuleStacks(projector.MODULE_SLOTS).stream().allMatch(stack -> ((IModule) stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), entity, stack)))
             {
                 return;
             }
