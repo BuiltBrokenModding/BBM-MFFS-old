@@ -64,13 +64,12 @@ public class GuiElectromagneticProjector extends GuiMFFS<TileElectromagneticProj
 
         for (int i = 0; i < 6; i++)
         {
-            drawStringCentered("" + i, (this.xSize / 2) + (12 * i) + 5, 40);
+            drawStringCentered("" + tile.scale[i], (this.xSize / 2) + (12 * i) + 5, 40);
         }
 
-        for (int i = 0; i < 3; i++)
-        {
-            drawStringCentered("" + i, (this.xSize / 2) + (12 * i) + 5, 80);
-        }
+        drawStringCentered("" + tile.translation.xi(), (this.xSize / 2) + 5, 80);
+        drawStringCentered("" + tile.translation.yi(), (this.xSize / 2) + (12 * 1) + 5, 80);
+        drawStringCentered("" + tile.translation.zi(), (this.xSize / 2) + (12 * 2) + 5, 80);
 
         drawFortronText(x, y);
         drawString(ChatFormatting.RED + new UnitDisplay(UnitDisplay.Unit.LITER, tile.getFortronCost() * 20).symbol().toString() + "/s", 120, 119);

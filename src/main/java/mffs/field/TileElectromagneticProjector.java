@@ -111,12 +111,12 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     /** Ensures the field size and position is valid for modules we contain */
     public void validateField()
     {
-        if((translation.xi() + translation.yi() + translation.zi()) > translationPoints)
+        if ((Math.abs(translation.xi()) + Math.abs(translation.yi()) + Math.abs(translation.zi())) > translationPoints)
         {
             //TODO invalidate field and recalculate
         }
         int size = scale[0] + scale[1] + scale[2] + scale[3] + scale[4] + scale[5];
-        if(size > scalePoints)
+        if (size > scalePoints)
         {
             //TODO invalidate field and recalculate
         }
