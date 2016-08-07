@@ -131,7 +131,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
     {
-        return itemStack.getItem() instanceof IModule;
+        return slotID == 0 ? itemStack.getItem() instanceof IProjectorMode : itemStack.getItem() instanceof IModule;
     }
 
     @Override
@@ -537,7 +537,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     public List<Item> getFilterItems()
     {
         List<Item> stacks = new ArrayList();
-        for (int i = 26; i < 32; i++)
+        for (int i = 1; i < 7; i++)
         {
             if (getStackInSlot(i) != null)
             {
@@ -550,7 +550,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     public List<ItemStack> getFilterStacks()
     {
         List<ItemStack> stacks = new ArrayList();
-        for (int i = 26; i < 32; i++)
+        for (int i = 1; i < 7; i++)
         {
             if (getStackInSlot(i) != null)
             {
@@ -798,5 +798,27 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     public void onProcessTerminated(IThreadProcess process)
     {
         this.isCalculating = false;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt)
+    {
+        super.readFromNBT(nbt);
+        if (nbt.hasKey("scaleArray"))
+        {
+            scale = nbt.getIntArray("scaleArray");
+        }
+        if (nbt.hasKey("translation"))
+        {
+            translation = new Pos(nbt.getCompoundTag("translation"));
+        }
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt)
+    {
+        super.writeToNBT(nbt);
+        nbt.setIntArray("scaleArray", scale);
+        nbt.setTag("translation", translation.toNBT());
     }
 }

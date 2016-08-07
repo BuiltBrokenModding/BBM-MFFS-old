@@ -155,7 +155,7 @@ public class GuiElectromagneticProjector extends GuiMFFS<TileElectromagneticProj
                     pos = tile.translation.add(0, 0, 1);
                     break;
             }
-            Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.translate, pos));
+            Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.translate.ordinal(), pos));
         }
         else if (id >= 18 && id <= 20)
         {
@@ -172,7 +172,7 @@ public class GuiElectromagneticProjector extends GuiMFFS<TileElectromagneticProj
                     pos = tile.translation.sub(0, 0, 1);
                     break;
             }
-            Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.translate, pos));
+            Engine.instance.packetHandler.sendToServer(new PacketTile(tile, TilePacketType.translate.ordinal(), pos));
         }
     }
 }
