@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 public class TileElectromagneticProjector extends TileModuleAcceptor implements IProjector, IGuiTile, IFieldMatrix, IDelayedEventHandler, IPermissionProvider, IProcessListener
 {
     public static final int[] MODULE_SLOTS = new int[]{0, 1, 2, 3, 4, 5};
-    public static final int MODE_SLOT = 1;
+    public static final int MODE_SLOT = 0;
 
     /** List of events to que later */ //TODO
     protected final Queue<DelayedEvent> delayedEvents = new LinkedList();
@@ -125,7 +125,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     @Override
     public int getSizeInventory()
     {
-        return 6;
+        return 7;
     }
 
     @Override
@@ -174,9 +174,6 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
             if (getMode() != null)
             {
                 forceFields.clear();
-            }
-            if (getMode() != null)
-            {
                 //Clear mode cache
                 if (getModeStack().getItem() instanceof TCache)
                 {
@@ -202,8 +199,13 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     @Override
     public void writeDescPacket(ByteBuf buf)
     {
-        super.writeDescPacket(buf);
+        super.writeDescPacket(buf); //TODO check if is client side only
         buf.writeBoolean(isInverted);
+        for (int i = 0; i < scale.length; i++)
+        {
+            buf.writeInt(scale[i]);
+        }
+        translation.writeByteBuf(buf);
     }
 
     @Override
@@ -211,6 +213,11 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     {
         super.readDescPacket(buf);
         isInverted = buf.readBoolean();
+        for (int i = 0; i < scale.length; i++)
+        {
+            scale[i] = buf.readInt();
+        }
+        translation = new Pos(buf);
     }
 
     @Override
@@ -230,11 +237,13 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
                     {
                         ModularForceFieldSystem.proxy.renderBeam(this.worldObj, root, vector, FieldColor.RED, 40);
                         ModularForceFieldSystem.proxy.renderHologramMoving(this.worldObj, vector, FieldColor.RED, 50);
+                        return true;
                     }
                     else if (packetType == 2)
                     {
                         ModularForceFieldSystem.proxy.renderBeam(this.worldObj, vector, root, FieldColor.RED, 40);
                         ModularForceFieldSystem.proxy.renderHologramMoving(this.worldObj, vector, FieldColor.RED, 50);
+                        return true;
                     }
                 }
                 else if (id == TilePacketType.field.ordinal())
@@ -246,13 +255,33 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
                     {
                         calculatedField.add(new Pos(nbtList.getCompoundTagAt(i)));
                     }
+                    return true;
                 }
             }
-            else
+            //Prevents client side hacks from messing with the tiles data
+            else if (player.openContainer instanceof ContainerElectromagneticProjector) //TODO add permissions check
             {
                 if (id == TilePacketType.toggleMode2.ordinal())
                 {
                     isInverted = !isInverted;
+                    return true;
+                }
+                else if (id == TilePacketType.increase_scale.ordinal())
+                {
+                    increaseScale(ForgeDirection.getOrientation(buf.readInt()));
+                    return true;
+                }
+                else if (id == TilePacketType.decrease_scale.ordinal())
+                {
+                    decreaseScale(ForgeDirection.getOrientation(buf.readInt()));
+                    return true;
+                }
+                else if (id == TilePacketType.translate.ordinal())
+                {
+                    this.translation = new Pos(buf);
+                    validateField();
+                    destroyField(); //TODO instead of destroying just update translation
+                    return true;
                 }
             }
             return false;
@@ -260,11 +289,26 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
         return true;
     }
 
+    public void increaseScale(ForgeDirection direction)
+    {
+        scale[direction.ordinal()] = scale[direction.ordinal()] + 1;
+        //TODO limit to max
+        validateField();
+        destroyField();
+    }
+
+    public void decreaseScale(ForgeDirection direction)
+    {
+        scale[direction.ordinal()] = scale[direction.ordinal()] - 1;
+        //TODO limit to min
+        validateField();
+        destroyField();
+    }
+
     @Override
     public void update()
     {
         super.update();
-
         delayedEvents.forEach(d -> d.update());
         delayedEvents.removeIf(d -> d.ticks < 0);
 
