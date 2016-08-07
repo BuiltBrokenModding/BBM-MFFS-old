@@ -1,10 +1,7 @@
 package mffs.base;
 
-import com.builtbroken.mc.core.network.packet.PacketType;
-import com.builtbroken.mc.lib.helper.RotationUtility;
 import com.builtbroken.mc.lib.transform.rotation.EulerAngle;
 import com.builtbroken.mc.lib.transform.vector.Pos;
-import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IPermissionProvider;
@@ -14,9 +11,7 @@ import mffs.field.mobilize.event.DelayedEvent;
 import mffs.field.mobilize.event.IDelayedEventHandler;
 import mffs.item.card.ItemCard;
 import mffs.util.TCache;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
@@ -30,10 +25,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
 
     public static final int[] _getModuleSlots = new int[]{14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
     protected int modeSlotID = 1;
-    /**
-     * Are the directions on the GUI absolute values?
-     */
-    public boolean absoluteDirection = false;
+
     protected List<Pos> calculatedField = null;
     protected boolean isCalculating = false;
 
@@ -57,37 +49,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     public void clearQueue()
     {
         delayedEvents.clear();
-    }
-
-    @Override
-    public void writeDescPacket(ByteBuf buf)
-    {
-        super.writeDescPacket(buf);
-        buf.writeBoolean(absoluteDirection);
-    }
-
-    @Override
-    public void readDescPacket(ByteBuf buf)
-    {
-        super.readDescPacket(buf);
-        absoluteDirection = buf.readBoolean();
-    }
-
-    @Override
-    public boolean read(ByteBuf buf, int id, EntityPlayer player, PacketType packetType)
-    {
-        if (!super.read(buf, id, player, packetType))
-        {
-            if (!world().isRemote)
-            {
-                if (id == TilePacketType.toggleMode4.ordinal())
-                {
-                    absoluteDirection = !absoluteDirection;
-                }
-            }
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -126,31 +87,14 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     @Override
     public Pos getPositiveScale()
     {
-        String cacheID = "getPositiveScale";
-
-        if (cache.containsKey(cacheID))
-        {
-            return (Pos) cache.get(cacheID);
-        }
-
         int zScalePos = 0;
         int xScalePos = 0;
         int yScalePos = 0;
 
-        if (absoluteDirection)
-        {
-            zScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.SOUTH));
-            xScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.EAST));
-            yScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.UP));
-        }
-        else
-        {
-            ForgeDirection direction = getDirection();
+        zScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.SOUTH));
+        xScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.EAST));
+        yScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.UP));
 
-            zScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)));
-            xScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)));
-            yScalePos = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.UP));
-        }
 
         int omnidirectionalScale = getModuleCount(ModularForceFieldSystem.moduleScale, getModuleSlots());
 
@@ -158,52 +102,28 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         xScalePos += omnidirectionalScale;
         yScalePos += omnidirectionalScale;
 
-        Pos positiveScale = new Pos(xScalePos, yScalePos, zScalePos);
-
-        cache.put(cacheID, positiveScale);
-
-        return positiveScale;
+        return new Pos(xScalePos, yScalePos, zScalePos);
     }
 
     @Override
     public Pos getNegativeScale()
     {
-        final String cacheID = "getNegativeScale";
-
-        if (cache.containsKey(cacheID))
-        {
-            return (Pos) cache.get(cacheID);
-        }
-
         int zScaleNeg = 0;
         int xScaleNeg = 0;
         int yScaleNeg = 0;
 
         ForgeDirection direction = getDirection();
 
-        if (absoluteDirection)
-        {
-            zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.NORTH));
-            xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.WEST));
-            yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN));
-        }
-        else
-        {
-            zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)));
-            xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)));
-            yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN));
-        }
+        zScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.NORTH));
+        xScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.WEST));
+        yScaleNeg = getModuleCount(ModularForceFieldSystem.moduleScale, getDirectionSlots(ForgeDirection.DOWN));
 
         int omnidirectionalScale = this.getModuleCount(ModularForceFieldSystem.moduleScale, getModuleSlots());
         zScaleNeg += omnidirectionalScale;
         xScaleNeg += omnidirectionalScale;
         yScaleNeg += omnidirectionalScale;
 
-        Pos negativeScale = new Pos(xScaleNeg, yScaleNeg, zScaleNeg);
-
-        cache.put(cacheID, negativeScale);
-
-        return negativeScale;
+        return new Pos(xScaleNeg, yScaleNeg, zScaleNeg);
     }
 
     @Override
@@ -261,20 +181,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         delayedEvents.add(evt);
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt)
-    {
-        super.readFromNBT(nbt);
-        absoluteDirection = nbt.getBoolean("isAbsolute");
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound nbt)
-    {
-        super.writeToNBT(nbt);
-        nbt.setBoolean("isAbsolute", absoluteDirection);
-    }
-
     /**
      * Calculates the force field
      */
@@ -306,14 +212,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     @Override //This is threaded, so ensure thread safe actions
     public List<Pos> getInteriorPoints()
     {
-        final String cacheID = "getInteriorPoints";
-
-        //TODO replace generic cache with object variable holding the field data
-        if (cache.containsKey(cacheID))
-        {
-            return (List<Pos>) cache.get(cacheID);
-        }
-
         if (getModeStack() != null && getModeStack().getItem() instanceof TCache)
         {
             ((TCache) getModeStack().getItem()).clearCache();
@@ -345,8 +243,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
             }
         }
         newField.clear(); //faster memory cleanup, at least in theory?
-
-        cache.put(cacheID, field);
         return field;
     }
 
@@ -416,15 +312,6 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
     @Override
     public Pos getTranslation()
     {
-        final String cacheID = "getTranslation";
-
-        if (cache.containsKey(cacheID))
-        {
-            return (Pos) cache.get(cacheID);
-        }
-
-        ForgeDirection direction = getDirection();
-
         int zTranslationNeg = 0;
         int zTranslationPos = 0;
 
@@ -434,82 +321,31 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         int yTranslationPos = 0;
         int yTranslationNeg = 0;
 
-        if (absoluteDirection)
-        {
-            zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.NORTH));
-            zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.SOUTH));
-            xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.WEST));
-            xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.EAST));
-            yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP));
-            yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN));
-        }
-        else
-        {
-            zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)));
-            zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)));
-            xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)));
-            xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)));
-            yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP));
-            yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN));
-        }
+        zTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.NORTH));
+        zTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.SOUTH));
+        xTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.WEST));
+        xTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.EAST));
+        yTranslationPos = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.UP));
+        yTranslationNeg = getModuleCount(ModularForceFieldSystem.moduleTranslate, getDirectionSlots(ForgeDirection.DOWN));
 
-        Pos translation = new Pos(xTranslationPos - xTranslationNeg, yTranslationPos - yTranslationNeg, zTranslationPos - zTranslationNeg);
-
-        cache.put(cacheID, translation);
-
-        return translation;
+        return new Pos(xTranslationPos - xTranslationNeg, yTranslationPos - yTranslationNeg, zTranslationPos - zTranslationNeg);
     }
 
     @Override
     public int getRotationYaw()
     {
-        final String cacheID = "getRotationYaw";
-        if (cache.containsKey(cacheID))
-        {
-            return (int) cache.get(cacheID);
-        }
-
-        int horizontalRotation = 0;
-        ForgeDirection direction = getDirection();
-
-        if (this.absoluteDirection)
-        {
-            horizontalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.EAST))
-                    - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.WEST))
-                    + getModuleCount(ModularForceFieldSystem.moduleRotate, this.getDirectionSlots(ForgeDirection.SOUTH))
-                    - this.getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.NORTH));
-        }
-        else
-        {
-            horizontalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.EAST)))
-                    - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.WEST)))
-                    + this.getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.SOUTH)))
-                    - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(RotationUtility.getRelativeSide(direction, ForgeDirection.NORTH)));
-        }
-
-        horizontalRotation *= 2;
-
-        cache.put(cacheID, horizontalRotation);
-
-        return horizontalRotation;
+        int horizontalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.EAST))
+                - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.WEST))
+                + getModuleCount(ModularForceFieldSystem.moduleRotate, this.getDirectionSlots(ForgeDirection.SOUTH))
+                - this.getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.NORTH));
+        return horizontalRotation * 2;
     }
 
     @Override
     public int getRotationPitch()
     {
-        final String cacheID = "getRotationPitch";
-
-        if (cache.containsKey(cacheID))
-        {
-            return (int) cache.get(cacheID);
-        }
-
         int verticalRotation = getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.UP)) - getModuleCount(ModularForceFieldSystem.moduleRotate, getDirectionSlots(ForgeDirection.DOWN));
-        verticalRotation *= 2;
-
-        cache.put(cacheID, verticalRotation);
-
-        return verticalRotation;
+        return verticalRotation * 2;
     }
 
 }

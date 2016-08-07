@@ -661,7 +661,6 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
 
         if (world() != null)
         {
-            clearCache();
             calculateField();
         }
     }

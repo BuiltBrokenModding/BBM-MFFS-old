@@ -4,18 +4,15 @@ import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.modules.IModule;
 import mffs.api.modules.IModuleProvider;
-import mffs.util.TCache;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public abstract class TileModuleAcceptor extends TileFortron implements IModuleProvider, TCache
+public abstract class TileModuleAcceptor extends TileFortron implements IModuleProvider
 {
     protected int capacityBase = 500;
     protected int capacityBoost = 5;
@@ -25,18 +22,10 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
      * Used for client-side only.
      */
     int clientFortronCost = 0;
-    /* Cache mapping */
-    public Map<String, Object> cache = new HashMap<String, Object>();
 
     public TileModuleAcceptor(String name)
     {
         super(name);
-    }
-
-    @Override
-    public Map<String, Object> cache()
-    {
-        return cache;
     }
 
     /**
@@ -49,17 +38,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
         {
             return this.clientFortronCost;
         }
-
-        String cacheID = "getFortronCost";
-
-        if (cacheExists(cacheID))
-        {
-            return (Integer) getCache(cacheID);
-        }
-
-        int result = doGetFortronCost();
-        putCache(cacheID, result);
-        return result;
+        return doGetFortronCost();
     }
 
     protected int doGetFortronCost()
@@ -113,33 +92,12 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     @Override
     public ItemStack getModule(IModule module)
     {
-        String cacheID = "getModule_" + module.hashCode();
-
-        if (cacheExists(cacheID))
-        {
-            return (ItemStack) getCache(cacheID);
-        }
-
-        ItemStack returnStack = new ItemStack((Item) module, getModuleCount(module));
-
-        putCache(cacheID, returnStack.copy());
-        return returnStack;
+        return new ItemStack((Item) module, getModuleCount(module));
     }
 
     @Override
     public List<IModule> getModules(int... slots)
     {
-        String cacheID = "getModules_";
-        if (slots != null)
-        {
-            cacheID += slots.hashCode();
-        }
-
-        if (cacheExists(cacheID))
-        {
-            return (List<IModule>) getCache(cacheID);
-        }
-
         List<IModule> stacks = new ArrayList<IModule>();
         if (slots != null && slots.length > 0)
         {
@@ -163,8 +121,6 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
                 }
             }
         }
-
-        putCache(cacheID, stacks);
         return stacks;
     }
 
@@ -173,25 +129,12 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     {
         super.markDirty();
         this.fortronTank.setCapacity((this.getModuleCount(ModularForceFieldSystem.moduleCapacity) * this.capacityBoost + this.capacityBase) * FluidContainerRegistry.BUCKET_VOLUME);
-        clearCache();
     }
 
 
     @Override
     public int getModuleCount(IModule module, int... slots)
     {
-        String cacheID = "getModuleCount_" + module.hashCode();
-
-        if (slots != null)
-        {
-            cacheID += "_" + slots.hashCode();
-        }
-
-        if (cacheExists(cacheID))
-        {
-            return (Integer) getCache(cacheID);
-        }
-
         int count = 0;
         if (slots != null && slots.length > 0)
         {
@@ -220,18 +163,6 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     @Override
     public List<ItemStack> getModuleStacks(int... slots)
     {
-        String cacheID = "getModuleStacks_";
-
-        if (slots != null)
-        {
-            cacheID += slots.hashCode();
-        }
-
-        if (cacheExists(cacheID))
-        {
-            return (List<ItemStack>) getCache(cacheID);
-        }
-
         List<ItemStack> stacks = new ArrayList<ItemStack>();
         if (slots != null && slots.length > 0)
         {
@@ -255,44 +186,12 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
                 }
             }
         }
-        putCache(cacheID, stacks);
         return stacks;
-    }
-
-    @Override
-    public Object getCache(String paramString)
-    {
-        return cache.get(paramString);
-    }
-
-    @Override
-    public void putCache(String param, Object object)
-    {
-        cache.put(name, object);
-    }
-
-    @Override
-    public boolean cacheExists(String param)
-    {
-        return cache.containsKey(param);
-    }
-
-    @Override
-    public void clearCache(String paramString)
-    {
-        cache.remove(paramString);
-    }
-
-    @Override
-    public void clearCache()
-    {
-        cache.clear();
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt)
     {
-        clearCache();
         super.readFromNBT(nbt);
         this.clientFortronCost = nbt.getInteger("fortronCost");
     }
