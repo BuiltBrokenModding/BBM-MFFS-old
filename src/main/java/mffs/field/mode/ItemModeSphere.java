@@ -22,9 +22,10 @@ public class ItemModeSphere extends ItemMode
         int radius = projector.getModuleCount(ModularForceFieldSystem.moduleScale);
         int steps = (int) Math.ceil(Math.PI / Math.atan(1.0D / radius / 2));
 
-        for (int phi_n = 0; phi_n <= 2 * steps; phi_n++)
+        //TODO: This creates MANY duplicates. Each only .01-.10 away from eachother.
+        for (int phi_n = 0; phi_n < 2 * steps; phi_n++)
         {
-            for (int theta_n = 0; theta_n <= 2 * steps; theta_n++)
+            for (int theta_n = 0; theta_n < steps; theta_n++)
             {
                 double phi = Math.PI * 2 / steps * phi_n;
                 double theta = Math.PI / steps * theta_n;
