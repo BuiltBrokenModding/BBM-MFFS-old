@@ -17,6 +17,7 @@ import mffs.api.modules.ICardModule;
 import mffs.security.MFFSPermissions;
 import mffs.security.TileBiometricIdentifier;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -35,7 +36,10 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     //private ItemStack camoStack = null;
     private Pos projector = null;
 
+    @SideOnly(Side.CLIENT)
     private static IIcon icon;
+    @SideOnly(Side.CLIENT)
+    private static IIcon icon_noAnimation;
 
     public TileForceField()
     {
@@ -213,13 +217,14 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
     public void registerIcons(IIconRegister reg)
     {
         icon = reg.registerIcon(Reference.prefix + "forceField");
+        icon_noAnimation = reg.registerIcon(Reference.prefix + "forceFieldNoAnimationSmall");
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public IIcon getIcon()
     {
-        return icon;
+        return Minecraft.getMinecraft().gameSettings.fancyGraphics ? icon : icon_noAnimation;
     }
 
     /**

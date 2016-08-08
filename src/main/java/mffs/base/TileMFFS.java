@@ -100,20 +100,11 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
     @Override
     public boolean read(ByteBuf buf, int id, EntityPlayer entityplayer, PacketType packetType)
     {
-        if(!super.read(buf, id, entityplayer, packetType))
+        if (!super.read(buf, id, entityplayer, packetType))
         {
             if (id == TilePacketType.toggleActivation.ordinal())
             {
-                isRedstoneActive = !isRedstoneActive;
-
-                if (isRedstoneActive)
-                {
-                    setActive(true);
-                }
-                else
-                {
-                    setActive(false);
-                }
+                setActive(!isActive());
                 return true;
             }
             return false;
@@ -169,7 +160,7 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
     @Override
     public boolean isActive()
     {
-        return active;
+        return active && !isRedstoneActive;
     }
 
     @Override

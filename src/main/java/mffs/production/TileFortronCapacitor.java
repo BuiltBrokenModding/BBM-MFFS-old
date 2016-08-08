@@ -57,7 +57,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
         super.update();
         this.consumeCost(); //TODO figure out why we have a cost for moving power
 
-        if (true || isActive())
+        if (isActive())
         {
             //Drain fluid containers
             if (getFortronEmpty() > 0)

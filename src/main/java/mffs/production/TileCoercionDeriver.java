@@ -197,7 +197,7 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     @Override
     public void readDescPacket(ByteBuf buf)
     {
-        super.writeDescPacket(buf);
+        super.readDescPacket(buf);
         processTime = buf.readInt();
     }
 

@@ -312,7 +312,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
         delayedEvents.forEach(d -> d.update());
         delayedEvents.removeIf(d -> d.ticks < 0);
 
-        setActive(true); //TODO remove
+        //setActive(true); //TODO remove
         if (isServer())
         {
             if (isActive() && getMode() != null && requestFortron(getFortronCost(), false) >= this.getFortronCost())
