@@ -48,7 +48,7 @@ public class GuiMFFS<MACHINE extends TileMFFS> extends GuiContainerBase
 
         if (buttonList.size() > 0 && this.buttonList.get(0) != null)
         {
-            ((GuiIcon) buttonList.get(0)).setIndex(tile.isRedstoneActive ? 1 : 0);
+            ((GuiIcon) buttonList.get(0)).setIndex(tile.isActive() ? 1 : 0);
         }
     }
 

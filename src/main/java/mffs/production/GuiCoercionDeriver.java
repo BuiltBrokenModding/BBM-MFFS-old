@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver>
 {
-
     public GuiCoercionDeriver(EntityPlayer player, TileCoercionDeriver tile)
     {
         super(new ContainerCoercionDeriver(player, tile), tile);

@@ -59,12 +59,13 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
         {
             if (world().isBlockIndirectlyGettingPowered(xi(), yi(), zi()))
             {
-                powerOn();
+                isRedstoneActive = true;
             }
             else
             {
-                powerOff();
+                isRedstoneActive = false;
             }
+            world().markBlockForUpdate(xi(), yi(), zi());
         }
     }
 
@@ -117,6 +118,7 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
     {
         active = flag;
         worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
+        sendDescPacket();
     }
 
     @Override

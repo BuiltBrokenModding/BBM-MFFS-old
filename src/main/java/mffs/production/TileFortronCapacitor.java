@@ -193,7 +193,6 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
 
     public List<IFortronFrequency> getOutputDevices()
     {
-
         return getDevicesFromStacks(getOutputStacks());
     }
 
