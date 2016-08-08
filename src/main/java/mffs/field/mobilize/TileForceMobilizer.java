@@ -18,7 +18,7 @@ import mffs.Settings;
 import mffs.api.Blacklist;
 import mffs.api.card.ICoordLink;
 import mffs.api.event.EventForceMobilize;
-import mffs.api.modules.IModule;
+import mffs.api.modules.ICardModule;
 import mffs.api.modules.IProjectorMode;
 import mffs.base.TileFieldMatrix;
 import mffs.base.TilePacketType;
@@ -733,7 +733,7 @@ public class TileForceMobilizer extends TileFieldMatrix implements IEffectContro
             return itemStack.getItem() instanceof IProjectorMode;
         }
 
-        return itemStack.getItem() instanceof IModule || itemStack.getItem() instanceof ICoordLink;
+        return itemStack.getItem() instanceof ICardModule || itemStack.getItem() instanceof ICoordLink;
     }
 
     /**

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * A module for any matrix based machines.
  */
-public interface IModule extends IFortronCost
+public interface ICardModule extends IFortronCost
 {
     /**
      * Called before the projector projects a field.
@@ -21,12 +21,12 @@ public interface IModule extends IFortronCost
      * @param projector
      * @return True to stop projecting.
      */
-    default boolean onProject(IProjector projector, List<Pos> field)
+    default boolean onProject(ItemStack stack, IProjector projector, List<Pos> field)
     {
         return false;
     }
 
-    default boolean onDestroy(IProjector projector, List<Pos> field)
+    default boolean onDestroy(ItemStack stack, IProjector projector, List<Pos> field)
     {
         return false;
     }
@@ -36,7 +36,7 @@ public interface IModule extends IFortronCost
      *
      * @return 0 - Do nothing; 1 - Skip this block and continue; 2 - Cancel rest of projection;
      */
-    default int onProject(IProjector projector, Pos position)
+    default int onProject(ItemStack stack, IProjector projector, Pos position)
     {
         return 0;
     }
@@ -57,7 +57,7 @@ public interface IModule extends IFortronCost
      *
      * @return False if to prevent this position from being added to the projection add.
      */
-    default void onPreCalculate(IFieldMatrix projector, List<Pos> calculatedField)
+    default void onPreCalculate(ItemStack stack, IFieldMatrix projector, List<Pos> calculatedField)
     {
     }
 
@@ -66,7 +66,7 @@ public interface IModule extends IFortronCost
      *
      * @return False if to prevent this position from being added to the projection add.
      */
-    default void onPostCalculate(IFieldMatrix projector, List<Pos> fieldDefinition)
+    default void onPostCalculate(ItemStack stack, IFieldMatrix projector, List<Pos> fieldDefinition)
     {
     }
 
@@ -88,7 +88,7 @@ public interface IModule extends IFortronCost
      * @param projector
      * @return
      */
-    default List<Entity> getEntitiesInField(IProjector projector)
+    default List<Entity> getEntitiesInField(ItemStack stack, IProjector projector)
     {
         return new ArrayList();
     }

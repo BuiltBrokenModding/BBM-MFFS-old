@@ -20,17 +20,17 @@ public class ItemModuleRepulsion extends ItemModule
     }
 
     @Override
-    public boolean onProject(IProjector projector, List<Pos> fields)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> fields)
     {
         double repulsionVelocity = Math.max(projector.getModuleCount(this) / 20, 1.2);
-        List<Entity> entities = getEntitiesInField(projector);
+        List<Entity> entities = getEntitiesInField(stack, projector);
 
         //TODO: Check parallel
         entities.stream()
                 .filter(
                         entity ->
                         {
-                            if (fields.contains(new Pos(entity).floor()) || projector.getMode().isInField(projector, new Pos(entity)))
+                            if (fields.contains(new Pos(entity).floor()) || projector.getMode().isInField(stack, projector, new Pos(entity)))
                             {
                                 if (entity instanceof EntityPlayer)
                                 {
@@ -63,7 +63,7 @@ public class ItemModuleRepulsion extends ItemModule
     }
 
     @Override
-    public boolean onDestroy(IProjector projector, List<Pos> field)
+    public boolean onDestroy(ItemStack stack, IProjector projector, List<Pos> field)
     {
         ((TileElectromagneticProjector) projector).sendFieldToClient();
         return false;

@@ -104,7 +104,7 @@ public final class RenderElectromagneticProjector
                 GL11.glTranslatef(0, (float) (Math.sin(Math.toRadians(tileEntity.getTicks() * 3)) / 7.0), 0);
                 GL11.glRotatef(tileEntity.getTicks() * 4, 0, 1, 0);
                 GL11.glRotatef(36f + tileEntity.getTicks() * 4, 0, 1, 1);
-                tileEntity.getMode().render(tileEntity, x, y, z, frame, tileEntity.getTicks());
+                tileEntity.getMode().render(tileEntity.getModeStack(), tileEntity, x, y, z, frame, tileEntity.getTicks());
                 GL11.glPopMatrix();
                 RenderUtility.enableLighting();
                 RenderUtility.disableBlending();

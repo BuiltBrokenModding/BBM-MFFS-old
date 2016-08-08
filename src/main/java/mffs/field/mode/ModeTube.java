@@ -7,16 +7,17 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IProjector;
 import mffs.render.model.ModelPlane;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemModeTube extends ItemModeCube
+public class ModeTube extends ModeCube
 {
     @Override
-    public List<Pos> getExteriorPoints(IFieldMatrix projector)
+    public List<Pos> getExteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
         List<Pos> fieldBlocks = new ArrayList();
         ForgeDirection direction = projector instanceof IRotation ? ((IRotation)projector).getDirection() : ForgeDirection.NORTH; //TODO maybe remove rotation based on projector facing direction
@@ -50,7 +51,7 @@ public class ItemModeTube extends ItemModeCube
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void render(IProjector projector, double x, double y, double z, float f, long ticks)
+    public void render(ItemStack stack, IProjector projector, double x, double y, double z, float f, long ticks)
     {
         GL11.glScalef(0.5f, 0.5f, 0.5f);
         GL11.glTranslatef(-0.5f, 0, 0);

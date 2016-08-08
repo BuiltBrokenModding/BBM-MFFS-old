@@ -20,7 +20,7 @@ import mffs.Settings;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IPermissionProvider;
 import mffs.api.machine.IProjector;
-import mffs.api.modules.IModule;
+import mffs.api.modules.ICardModule;
 import mffs.api.modules.IProjectorMode;
 import mffs.base.FieldCalculationTask;
 import mffs.base.TileModuleAcceptor;
@@ -131,7 +131,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     @Override
     public boolean isItemValidForSlot(int slotID, ItemStack itemStack)
     {
-        return slotID == 0 ? itemStack.getItem() instanceof IProjectorMode : itemStack.getItem() instanceof IModule;
+        return slotID == 0 ? itemStack.getItem() instanceof IProjectorMode : itemStack.getItem() instanceof ICardModule;
     }
 
     @Override
@@ -186,7 +186,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
                 task.queProcess();
             }
             isCompleteConstructing = false;
-            fieldRequireTicks = getModuleStacks().stream().allMatch(module -> ((IModule) module.getItem()).requireTicks(module));
+            fieldRequireTicks = getModuleStacks().stream().allMatch(module -> ((ICardModule) module.getItem()).requireTicks(module));
         }
     }
 
@@ -359,9 +359,16 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
         {
             List<Pos> potentialField = calculatedField;
 
-            List<IModule> relevantModules = getModules(MODULE_SLOTS);
+            boolean flag1 = true;
+            for(ItemStack stack : getModuleStacks(getModuleSlots()))
+            {
+                if(stack != null && stack.getItem() instanceof ICardModule)
+                {
+                    flag1 = ((ICardModule) stack.getItem()).onProject(stack, this, potentialField);
+                }
+            }
 
-            if (!relevantModules.stream().anyMatch(m -> m.onProject(this, potentialField)))
+            if (!flag1)
             {
                 if (!isCompleteConstructing || markFieldUpdate || fieldRequireTicks)
                 {
@@ -394,11 +401,11 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
                             {
                                 int flag = 0;
 
-                                for (IModule module : relevantModules)
+                                for(ItemStack stack : getModuleStacks(getModuleSlots()))
                                 {
-                                    if (flag == 0)
+                                    if(flag == 0 && stack != null && stack.getItem() instanceof ICardModule)
                                     {
-                                        flag = module.onProject(this, vector);
+                                        flag = ((ICardModule) stack.getItem()).onProject(stack, this, vector);
                                     }
                                 }
 
@@ -459,7 +466,13 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     {
         if (!world().isRemote && calculatedField != null && !isCalculating)
         {
-            getModules(MODULE_SLOTS).forEach(m -> m.onDestroy(this, calculatedField));
+            for(ItemStack stack : getModuleStacks(getModuleSlots()))
+            {
+                if(stack != null && stack.getItem() instanceof ICardModule)
+                {
+                    ((ICardModule) stack.getItem()).onDestroy(stack, this, calculatedField);
+                }
+            }
             //TODO: Parallelism?
             calculatedField.stream().filter(p -> p.getBlock(world()) == ModularForceFieldSystem.forceField).forEach(p -> p.setBlock(world(), Blocks.air));
 
@@ -508,7 +521,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
 
     public boolean isInField(Pos position)
     {
-        return getMode() != null ? getMode().isInField(this, position) : false;
+        return getMode() != null ? getMode().isInField(getModeStack(), this, position) : false;
     }
 
     public boolean isAccessGranted(World checkWorld, Pos checkPos, EntityPlayer player, PlayerInteractEvent.Action action)
@@ -597,7 +610,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
     {
         if (this.getMode() != null)
         {
-            return Math.round(super.doGetFortronCost() + this.getMode().getFortronCost(this.getAmplifier()));
+            return Math.round(super.doGetFortronCost() + this.getMode().getFortronCost(getModeStack(), this.getAmplifier()));
         }
         return 0;
     }
@@ -677,7 +690,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
             ((TCache) getModeStack().getItem()).clearCache();
         }
 
-        List<Pos> newField = getMode().getInteriorPoints(this);
+        List<Pos> newField = getMode().getInteriorPoints(getModeStack(), this);
 
         //Data to use to move field
         final Pos translation = getTranslation();
@@ -708,14 +721,20 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
 
         if (getModuleCount(ModularForceFieldSystem.moduleInvert) > 0)
         {
-            newField = getMode().getInteriorPoints(this);
+            newField = getMode().getInteriorPoints(getModeStack(), this);
         }
         else
         {
-            newField = getMode().getExteriorPoints(this);
+            newField = getMode().getExteriorPoints(getModeStack(), this);
         }
 
-        getModules().forEach(m -> m.onPreCalculate(this, newField));
+        for(ItemStack stack : getModuleStacks(getModuleSlots()))
+        {
+            if(stack != null && stack.getItem() instanceof ICardModule)
+            {
+                ((ICardModule) stack.getItem()).onPreCalculate(stack, this, newField);
+            }
+        }
 
         Pos translation = getTranslation();
         int rotationYaw = getRotationYaw();
@@ -737,7 +756,13 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
         }
         newField.clear(); //faster memory cleanup, at least in theory?
 
-        getModules().forEach(m -> m.onPostCalculate(this, field));
+        for(ItemStack stack : getModuleStacks(getModuleSlots()))
+        {
+            if(stack != null && stack.getItem() instanceof ICardModule)
+            {
+                ((ICardModule) stack.getItem()).onPostCalculate(stack, this, newField);
+            }
+        }
 
         return field;
     }

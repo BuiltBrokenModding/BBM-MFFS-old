@@ -40,14 +40,14 @@ public class ItemModuleStabilize extends ItemModule
     }
 
     @Override
-    public boolean onProject(IProjector projector, List<Pos> fields)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> fields)
     {
         blockCount = 0;
         return false;
     }
 
     @Override
-    public int onProject(IProjector projector, Pos position)
+    public int onProject(ItemStack stack, IProjector projector, Pos position)
     {
         TileEntity tile = (TileEntity) projector;
         World world = tile.getWorldObj();
@@ -143,8 +143,8 @@ public class ItemModuleStabilize extends ItemModule
     }
 
     @Override
-    public float getFortronCost(float amplifier)
+    public float getFortronCost(ItemStack stack, float amplifier)
     {
-        return super.getFortronCost(amplifier) + (super.getFortronCost(amplifier) * amplifier);
+        return super.getFortronCost(stack, amplifier) + (super.getFortronCost(stack, amplifier) * amplifier);
     }
 }

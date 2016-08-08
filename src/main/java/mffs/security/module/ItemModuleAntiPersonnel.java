@@ -6,15 +6,16 @@ import mffs.api.machine.IProjector;
 import mffs.security.MFFSPermissions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
 public class ItemModuleAntiPersonnel extends ItemModuleDefense
 {
     @Override
-    public boolean onProject(IProjector projector, List<Pos> fields)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> fields)
     {
-        List<Entity> entities = getEntitiesInField(projector);
+        List<Entity> entities = getEntitiesInField(stack, projector);
         for (Entity entity : entities)
         {
             if (entity instanceof EntityPlayer && !((EntityPlayer) entity).capabilities.disableDamage && !((EntityPlayer) entity).capabilities.isCreativeMode && !projector.hasPermission(((EntityPlayer) entity).getGameProfile(), MFFSPermissions.defense))

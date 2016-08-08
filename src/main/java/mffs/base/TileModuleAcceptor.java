@@ -2,9 +2,8 @@ package mffs.base;
 
 import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
-import mffs.api.modules.IModule;
+import mffs.api.modules.ICardModule;
 import mffs.api.modules.IModuleProvider;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -48,7 +47,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
         {
             if (stack != null)
             {
-                cost += stack.stackSize * ((IModule) stack.getItem()).getFortronCost(getAmplifier());
+                cost += stack.stackSize * ((ICardModule) stack.getItem()).getFortronCost(stack, getAmplifier());
             }
         }
         return Math.round(cost);
@@ -90,41 +89,6 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
     }
 
     @Override
-    public ItemStack getModule(IModule module)
-    {
-        return new ItemStack((Item) module, getModuleCount(module));
-    }
-
-    @Override
-    public List<IModule> getModules(int... slots)
-    {
-        List<IModule> stacks = new ArrayList<IModule>();
-        if (slots != null && slots.length > 0)
-        {
-            for (int slot : slots)
-            {
-                ItemStack stack = getStackInSlot(slot);
-                if (stack != null && stack.getItem() instanceof IModule)
-                {
-                    stacks.add((IModule) stack.getItem());
-                }
-            }
-        }
-        else
-        {
-            for (int i = startModuleIndex; i < endModuleIndex; i++)
-            {
-                ItemStack stack = getStackInSlot(i);
-                if (stack != null && stack.getItem() instanceof IModule)
-                {
-                    stacks.add((IModule) stack.getItem());
-                }
-            }
-        }
-        return stacks;
-    }
-
-    @Override
     public void markDirty()
     {
         super.markDirty();
@@ -133,7 +97,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
 
 
     @Override
-    public int getModuleCount(IModule module, int... slots)
+    public int getModuleCount(ICardModule module, int... slots)
     {
         int count = 0;
         if (slots != null && slots.length > 0)
@@ -141,7 +105,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
             for (int slot : slots)
             {
                 ItemStack stack = getStackInSlot(slot);
-                if (stack != null && stack.getItem() instanceof IModule && stack.getItem() == module)
+                if (stack != null && stack.getItem() instanceof ICardModule && stack.getItem() == module)
                 {//would be easier to check if assignable.
                     count += stack.stackSize;
                 }
@@ -151,7 +115,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
         {
             for (ItemStack stack : getModuleStacks())
             {
-                if (stack != null && stack.getItem() instanceof IModule && stack.getItem() == module)
+                if (stack != null && stack.getItem() instanceof ICardModule && stack.getItem() == module)
                 {
                     count += stack.stackSize;
                 }
@@ -169,7 +133,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
             for (int slot : slots)
             {
                 ItemStack stack = getStackInSlot(slot);
-                if (stack != null && stack.getItem() instanceof IModule)
+                if (stack != null && stack.getItem() instanceof ICardModule)
                 {
                     stacks.add(stack);
                 }
@@ -180,7 +144,7 @@ public abstract class TileModuleAcceptor extends TileFortron implements IModuleP
             for (int i = startModuleIndex; i < endModuleIndex; i++)
             {
                 ItemStack stack = getStackInSlot(i);
-                if (stack != null && stack.getItem() instanceof IModule)
+                if (stack != null && stack.getItem() instanceof ICardModule)
                 {
                     stacks.add(stack);
                 }

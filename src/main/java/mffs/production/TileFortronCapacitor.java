@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.api.card.ICoordLink;
 import mffs.api.fortron.*;
-import mffs.api.modules.IModule;
+import mffs.api.modules.ICardModule;
 import mffs.base.TileModuleAcceptor;
 import mffs.base.TilePacketType;
 import mffs.util.FortronUtility;
@@ -216,7 +216,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
     {
         if (slotID < 4)
         {
-            return itemStack.getItem() instanceof IModule;
+            return itemStack.getItem() instanceof ICardModule;
         }
         return true;
     }

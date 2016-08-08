@@ -5,6 +5,7 @@ import mffs.api.fortron.FrequencyGrid;
 import mffs.api.machine.IProjector;
 import mffs.base.ItemModule;
 import mffs.field.TileElectromagneticProjector;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.Iterator;
@@ -20,7 +21,7 @@ public class ItemModuleFusion extends ItemModule
     }
 
     @Override
-    public boolean onProject(IProjector projector, List<Pos> field)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> field)
     {
         TileEntity tile = (TileEntity) projector;
         List<TileElectromagneticProjector> projectors = FrequencyGrid.instance().getNodes(TileElectromagneticProjector.class, projector.getFrequency());
@@ -34,7 +35,7 @@ public class ItemModuleFusion extends ItemModule
                 while (it.hasNext())
                 {
                     Pos pos = it.next();
-                    if (proj.getInteriorPoints().contains(pos) || proj.getMode().isInField(proj, pos))
+                    if (proj.getInteriorPoints().contains(pos) || proj.getMode().isInField(stack, proj, pos))
                     {
                         it.remove();
                     }

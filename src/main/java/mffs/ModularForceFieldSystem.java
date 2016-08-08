@@ -19,7 +19,8 @@ import mffs.base.ItemModule;
 import mffs.field.TileElectromagneticProjector;
 import mffs.field.TileForceField;
 import mffs.field.mobilize.TileForceMobilizer;
-import mffs.field.mode.*;
+import mffs.field.mode.ItemMode;
+import mffs.field.mode.ItemModeCustom;
 import mffs.field.module.*;
 import mffs.item.ItemRemoteController;
 import mffs.item.card.ItemCard;
@@ -77,11 +78,7 @@ public class ModularForceFieldSystem extends AbstractMod
     /**
      * Modes
      */
-    public static ItemMode modeCube;
-    public static ItemMode modeSphere;
-    public static ItemMode modeTube;
-    public static ItemMode modeCylinder;
-    public static ItemMode modePyramid;
+    public static ItemMode modeCard;
     public static ItemMode modeCustom;
     public static ItemModule moduleTranslate;
     public static ItemModule moduleScale;
@@ -149,11 +146,7 @@ public class ModularForceFieldSystem extends AbstractMod
         /**
          * Modes
          */
-        modeCube = (ItemModeCube) manager.newItem("modeCube", new ItemModeCube()).setTextureName(Reference.prefix + "modeCube");
-        modeSphere = (ItemModeSphere) manager.newItem("modeSphere", new ItemModeSphere()).setTextureName(Reference.prefix + "modeSphere");
-        modeTube = (ItemModeTube) manager.newItem("cardNodeTube", new ItemModeTube()).setTextureName(Reference.prefix + "modeTube");
-        modeCylinder = (ItemModeCylinder) manager.newItem("modeCylinder", new ItemModeCylinder()).setTextureName(Reference.prefix + "modeCylinder");
-        modePyramid = (ItemModePyramid) manager.newItem("modePyramid", new ItemModePyramid()).setTextureName(Reference.prefix + "modePyramid");
+        modeCard = manager.newItem("modeCard", new ItemMode());
         modeCustom = (ItemModeCustom) manager.newItem("modeCustom", new ItemModeCustom()).setTextureName(Reference.prefix + "modeCustom");
         /**
          * Modules
@@ -275,12 +268,8 @@ public class ModularForceFieldSystem extends AbstractMod
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardLink), "BWB", 'B', cardBlank, 'W', UniversalRecipe.WIRE.get()));
         //GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardFrequency), "WBW", 'B', cardBlank, 'W', UniversalRecipe.WIRE.get()));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cardID), "R R", " B ", "R R", 'B', cardBlank, 'R', Items.redstone));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeSphere), " F ", "FFF", " F ", 'F', focusMatrix));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeCube), "FFF", "FFF", "FFF", 'F', focusMatrix));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeTube), "FFF", "   ", "FFF", 'F', focusMatrix));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modePyramid), "F  ", "FF ", "FFF", 'F', focusMatrix));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeCylinder), "S", "S", "S", 'S', modeSphere));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeCustom), " C ", "TFP", " S ", 'S', modeSphere, 'C', modeCube, 'T', modeTube, 'P', modePyramid, 'F', focusMatrix));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modeCustom), " C ", "TFP", " S ", 'S', ItemMode.Modes.SPHERE.toStack(), 'C', ItemMode.Modes.CUBE.toStack(), 'T', ItemMode.Modes.TUBE.toStack(), 'P', ItemMode.Modes.PYRAMID.toStack(), 'F', focusMatrix));
         GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(modeCustom), new ItemStack(modeCustom)));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleSpeed, 1), "FFF", "RRR", "FFF", 'F', focusMatrix, 'R', Items.redstone));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(moduleCapacity, 2), "FCF", 'F', focusMatrix, 'C', UniversalRecipe.BATTERY.get()));

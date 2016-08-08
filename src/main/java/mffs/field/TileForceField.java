@@ -13,7 +13,7 @@ import mffs.ModularForceFieldSystem;
 import mffs.Reference;
 import mffs.api.machine.IForceField;
 import mffs.api.machine.IProjector;
-import mffs.api.modules.IModule;
+import mffs.api.modules.ICardModule;
 import mffs.security.MFFSPermissions;
 import mffs.security.TileBiometricIdentifier;
 import net.minecraft.block.material.Material;
@@ -77,7 +77,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
 
         if (projector != null)
         {
-            return projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((IModule) stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), player, stack));
+            return projector.getModuleStacks(projector.getModuleSlots()).stream().allMatch(stack -> ((ICardModule) stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), player, stack));
         }
         return true;
     }
@@ -119,7 +119,7 @@ public class TileForceField extends Tile implements IPacketIDReceiver, IForceFie
 
         if (projector != null)
         {
-            if (!projector.getModuleStacks(projector.MODULE_SLOTS).stream().allMatch(stack -> ((IModule) stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), entity, stack)))
+            if (!projector.getModuleStacks(projector.MODULE_SLOTS).stream().allMatch(stack -> ((ICardModule) stack.getItem()).onCollideWithForceField(world(), xi(), yi(), zi(), entity, stack)))
             {
                 return;
             }

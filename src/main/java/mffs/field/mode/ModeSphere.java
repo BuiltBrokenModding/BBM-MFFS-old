@@ -7,16 +7,18 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mffs.ModularForceFieldSystem;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IProjector;
+import mffs.api.modules.IProjectorMode;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemModeSphere extends ItemMode
+public class ModeSphere implements IProjectorMode
 {
     @Override
-    public List<Pos> getExteriorPoints(IFieldMatrix projector)
+    public List<Pos> getExteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
         List<Pos> fieldBlocks = new ArrayList();
         int radius = projector.getModuleCount(ModularForceFieldSystem.moduleScale);
@@ -37,7 +39,7 @@ public class ItemModeSphere extends ItemMode
     }
 
     @Override
-    public List<Pos> getInteriorPoints(IFieldMatrix projector)
+    public List<Pos> getInteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
         List<Pos> fieldBlocks = new ArrayList();
         Pos translation = projector.getTranslation();
@@ -50,7 +52,7 @@ public class ItemModeSphere extends ItemMode
                 for (int z = -radius; z <= radius; z++)
                 {
                     Pos position = new Pos(x, y, z);
-                    if (isInField(projector, position.add(new Pos((TileEntity) projector)).add(translation)))
+                    if (isInField(stack, projector, position.add(new Pos((TileEntity) projector)).add(translation)))
                     {
                         fieldBlocks.add(position);
                     }
@@ -61,14 +63,14 @@ public class ItemModeSphere extends ItemMode
     }
 
     @Override
-    public boolean isInField(IFieldMatrix projector, Pos position)
+    public boolean isInField(ItemStack stack, IFieldMatrix projector, Pos position)
     {
         return new Pos((TileEntity) projector).add(projector.getTranslation()).distance(position) < projector.getModuleCount(ModularForceFieldSystem.moduleScale);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void render(IProjector projector, double x1, double y1, double z1, float f, long ticks)
+    public void render(ItemStack stack, IProjector projector, double x1, double y1, double z1, float f, long ticks)
     {
         //TODO cache shape to improve FPS
         float scale = 0.2f;
@@ -89,5 +91,11 @@ public class ItemModeSphere extends ItemMode
                 GL11.glTranslated(-vector.x(), -vector.y(), -vector.z());
             }
         }
+    }
+
+    @Override
+    public float getFortronCost(ItemStack stack, float amplifier)
+    {
+        return -1;
     }
 }

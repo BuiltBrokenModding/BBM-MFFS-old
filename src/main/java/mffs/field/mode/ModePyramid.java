@@ -7,19 +7,21 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IProjector;
+import mffs.api.modules.IProjectorMode;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemModePyramid extends ItemMode
+public class ModePyramid implements IProjectorMode
 {
     private int step = 1;
 
     @Override
-    public List<Pos> getExteriorPoints(IFieldMatrix projector)
+    public List<Pos> getExteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
         List<Pos> fieldBlocks = new ArrayList();
 
@@ -66,7 +68,7 @@ public class ItemModePyramid extends ItemMode
     }
 
     @Override
-    public List<Pos> getInteriorPoints(IFieldMatrix projector)
+    public List<Pos> getInteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
         List<Pos> fieldBlocks = new ArrayList();
         Pos posScale = projector.getPositiveScale();
@@ -84,7 +86,7 @@ public class ItemModePyramid extends ItemMode
                 {
                     Pos position = new Pos(x, y, z).add(translation);
 
-                    if (isInField(projector, position.add(new Pos((TileEntity) projector))))
+                    if (isInField(stack, projector, position.add(new Pos((TileEntity) projector))))
                     {
                         fieldBlocks.add(position);
                     }
@@ -96,7 +98,7 @@ public class ItemModePyramid extends ItemMode
     }
 
     @Override
-    public boolean isInField(IFieldMatrix projector, Pos position)
+    public boolean isInField(ItemStack stack, IFieldMatrix projector, Pos position)
     {
         Pos posScale = projector.getPositiveScale().clone();
         Pos negScale = projector.getNegativeScale().clone();
@@ -123,7 +125,7 @@ public class ItemModePyramid extends ItemMode
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void render(IProjector projector, double x, double y, double z, float f, long ticks)
+    public void render(ItemStack stack, IProjector projector, double x, double y, double z, float f, long ticks)
     {
         Tessellator tessellator = Tessellator.instance;
         GL11.glPushMatrix();
@@ -143,5 +145,11 @@ public class ItemModePyramid extends ItemMode
         tessellator.addVertexWithUV(-width + translation.x(), height + translation.y(), -width + translation.z(), -uvMaxX, -uvMaxY);
         tessellator.draw();
         GL11.glPopMatrix();
+    }
+
+    @Override
+    public float getFortronCost(ItemStack stack, float amplifier)
+    {
+        return -1;
     }
 }

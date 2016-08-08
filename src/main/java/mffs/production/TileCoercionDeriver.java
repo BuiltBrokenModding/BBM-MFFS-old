@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 import mffs.ModularForceFieldSystem;
 import mffs.Settings;
 import mffs.api.card.IItemFrequency;
-import mffs.api.modules.IModule;
+import mffs.api.modules.ICardModule;
 import mffs.base.TileModuleAcceptor;
 import mffs.util.FortronUtility;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -162,7 +162,7 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
         {
             if (slotID >= startModuleIndex)
             {
-                return itemStack.getItem() instanceof IModule;
+                return itemStack.getItem() instanceof ICardModule;
             }
             switch (slotID)
             {

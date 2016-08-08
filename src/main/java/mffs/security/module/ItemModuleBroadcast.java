@@ -5,6 +5,7 @@ import mffs.api.machine.IProjector;
 import mffs.security.MFFSPermissions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
 
 import java.util.List;
@@ -12,9 +13,9 @@ import java.util.List;
 public class ItemModuleBroadcast extends ItemModuleDefense
 {
     @Override
-    public boolean onProject(IProjector projector, List<Pos> fields)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> fields)
     {
-        List<Entity> entities = getEntitiesInField(projector);
+        List<Entity> entities = getEntitiesInField(stack, projector);
 
         //TODO: Add custom broadcast messages
         entities.stream()

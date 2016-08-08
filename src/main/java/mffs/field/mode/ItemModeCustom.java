@@ -10,7 +10,6 @@ import mffs.ModularForceFieldSystem;
 import mffs.Settings;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IProjector;
-import mffs.api.modules.IProjectorMode;
 import mffs.util.TCache;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
@@ -19,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
@@ -40,8 +38,6 @@ public class ItemModeCustom extends ItemMode implements TCache
     private final String NBT_FIELD_BLOCK_METADATA = "blockMetadata";
     private final String NBT_FIELD_SIZE = "fieldSize";
     private final String NBT_FILE_SAVE_PREFIX = "custom_mode_";
-
-    IProjectorMode[] modes = new IProjectorMode[]{ModularForceFieldSystem.modeCube, ModularForceFieldSystem.modeSphere, ModularForceFieldSystem.modeTube, ModularForceFieldSystem.modePyramid};
 
     private Map<String, Object> cache = new HashMap();
 
@@ -229,13 +225,13 @@ public class ItemModeCustom extends ItemMode implements TCache
     }
 
     @Override
-    public List<Pos> getInteriorPoints(IFieldMatrix projector)
+    public List<Pos> getInteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
-        return this.getExteriorPoints(projector);
+        return this.getExteriorPoints(stack, projector);
     }
 
     @Override
-    public List<Pos> getExteriorPoints(IFieldMatrix projector)
+    public List<Pos> getExteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
         return this.getFieldBlocks(projector, projector.getModeStack());
     }
@@ -304,21 +300,21 @@ public class ItemModeCustom extends ItemMode implements TCache
     }
 
     @Override
-    public boolean isInField(IFieldMatrix projector, Pos position)
+    public boolean isInField(ItemStack stack, IFieldMatrix projector, Pos position)
     {
         return false; //TODO implement?
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void render(IProjector projector, double x, double y, double z, float f, long ticks)
+    public void render(ItemStack stack, IProjector projector, double x, double y, double z, float f, long ticks)
     {
-        modes[(((TileEntity) projector).getWorldObj().rand.nextInt(modes.length - 1))].render(projector, x, y, z, f, ticks);
+        //modes[(((TileEntity) projector).getWorldObj().rand.nextInt(modes.length - 1))].render(projector, x, y, z, f, ticks);
     }
 
     @Override
-    public float getFortronCost(float amplifier)
+    public float getFortronCost(ItemStack stack, float amplifier)
     {
-        return super.getFortronCost(amplifier) * amplifier;
+        return super.getFortronCost(stack, amplifier) * amplifier;
     }
 }

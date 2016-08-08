@@ -21,7 +21,7 @@ public class ItemModuleSponge extends ItemModule
     }
 
     @Override
-    public boolean onProject(IProjector projector, List<Pos> fields)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> fields)
     {
         if (projector.getTicks() % 60 == 0)
         {
@@ -41,7 +41,7 @@ public class ItemModuleSponge extends ItemModule
             }
         }
 
-        return super.onProject(projector, fields);
+        return super.onProject(stack, projector, fields);
     }
 
     @Override

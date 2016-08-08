@@ -34,14 +34,14 @@ public class ItemModuleDisintegration extends ItemModule
     }
 
     @Override
-    public boolean onProject(IProjector projector, List<Pos> fields)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> fields)
     {
         this.blockCount = 0;
         return false;
     }
 
     @Override
-    public int onProject(IProjector projector, Pos position)
+    public int onProject(ItemStack stack, IProjector projector, Pos position)
     {
         TileElectromagneticProjector proj = (TileElectromagneticProjector) projector;
         World world = proj.world();
@@ -92,9 +92,9 @@ public class ItemModuleDisintegration extends ItemModule
     }
 
     @Override
-    public float getFortronCost(float amplifier)
+    public float getFortronCost(ItemStack stack, float amplifier)
     {
-        return super.getFortronCost(amplifier) + (super.getFortronCost(amplifier) * amplifier);
+        return super.getFortronCost(stack, amplifier) + (super.getFortronCost(stack, amplifier) * amplifier);
     }
 
 }

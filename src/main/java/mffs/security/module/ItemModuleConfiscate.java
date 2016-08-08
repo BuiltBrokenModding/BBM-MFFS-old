@@ -17,10 +17,10 @@ import java.util.List;
 public class ItemModuleConfiscate extends ItemModuleDefense
 {
     @Override
-    public boolean onProject(IProjector projector, List<Pos> fields)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> fields)
     {
         TileElectromagneticProjector proj = (TileElectromagneticProjector) projector;
-        List<Entity> entities = getEntitiesInField(projector);
+        List<Entity> entities = getEntitiesInField(stack, projector);
 
         entities.stream()
                 .filter(e -> e instanceof EntityPlayer)

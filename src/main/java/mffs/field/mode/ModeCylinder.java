@@ -7,6 +7,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IProjector;
+import mffs.api.modules.IProjectorMode;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 
@@ -18,13 +20,13 @@ import java.util.List;
  *
  * @author Calclavia, Thutmose
  */
-public class ItemModeCylinder extends ItemMode
+public class ModeCylinder implements IProjectorMode
 {
     private int step = 1;
     private int radiusExpansion = 0;
 
     @Override
-    public List<Pos> getExteriorPoints(IFieldMatrix projector)
+    public List<Pos> getExteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
         List<Pos> fieldBlocks = new ArrayList();
         Pos posScale = projector.getPositiveScale();
@@ -55,7 +57,7 @@ public class ItemModeCylinder extends ItemMode
     }
 
     @Override
-    public List<Pos> getInteriorPoints(IFieldMatrix projector)
+    public List<Pos> getInteriorPoints(ItemStack stack, IFieldMatrix projector)
     {
         Pos translation = projector.getTranslation();
         List<Pos> fieldBlocks = new ArrayList();
@@ -72,7 +74,7 @@ public class ItemModeCylinder extends ItemMode
                 {
                     Pos position = new Pos(x, y, z);
 
-                    if (isInField(projector, position.add(new Pos((TileEntity) projector).add(translation))))
+                    if (isInField(stack, projector, position.add(new Pos((TileEntity) projector).add(translation))))
                     {
                         fieldBlocks.add(position);
                     }
@@ -84,7 +86,7 @@ public class ItemModeCylinder extends ItemMode
     }
 
     @Override
-    public boolean isInField(IFieldMatrix projector, Pos position)
+    public boolean isInField(ItemStack stack, IFieldMatrix projector, Pos position)
     {
         Pos posScale = projector.getPositiveScale();
         Pos negScale = projector.getNegativeScale();
@@ -101,7 +103,7 @@ public class ItemModeCylinder extends ItemMode
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void render(IProjector projector, double x, double y, double z, float f, long ticks)
+    public void render(ItemStack stack, IProjector projector, double x, double y, double z, float f, long ticks)
     {
         float scale = 0.15f;
         float detail = 0.5f;
@@ -134,5 +136,11 @@ public class ItemModeCylinder extends ItemMode
                 }
             }
         }
+    }
+
+    @Override
+    public float getFortronCost(ItemStack stack, float amplifier)
+    {
+        return -1;
     }
 }

@@ -8,15 +8,16 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
 public class ItemModuleAntiFriendly extends ItemModuleDefense
 {
     @Override
-    public boolean onProject(IProjector projector, List<Pos> fields)
+    public boolean onProject(ItemStack stack, IProjector projector, List<Pos> fields)
     {
-        List<Entity> entities = getEntitiesInField(projector);
+        List<Entity> entities = getEntitiesInField(stack, projector);
         entities.stream().filter(entity -> entity instanceof EntityLivingBase && !(entity instanceof IMob || entity instanceof INpc || entity instanceof EntityPlayer)).forEach(entity1 -> entity1.attackEntityFrom(DamageSources.ELECTRIC.getSource(), 100));
         return false;
     }

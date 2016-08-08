@@ -7,7 +7,7 @@ import com.builtbroken.mc.lib.transform.vector.Pos;
 import mffs.ModularForceFieldSystem;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IPermissionProvider;
-import mffs.api.modules.IModule;
+import mffs.api.modules.ICardModule;
 import mffs.api.modules.IProjectorMode;
 import mffs.field.mobilize.event.DelayedEvent;
 import mffs.field.mobilize.event.IDelayedEventHandler;
@@ -71,10 +71,10 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
             return itemStack.getItem() instanceof IProjectorMode;
         }
 
-        return itemStack.getItem() instanceof IModule;
+        return itemStack.getItem() instanceof ICardModule;
     }
 
-    public int getSidedModuleCount(IModule module, ForgeDirection... directions)
+    public int getSidedModuleCount(ICardModule module, ForgeDirection... directions)
     {
         ForgeDirection[] actualDirs = directions;
 
@@ -230,7 +230,7 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
             ((TCache) getModeStack().getItem()).clearCache();
         }
 
-        List<Pos> newField = getMode().getInteriorPoints(this);
+        List<Pos> newField = getMode().getInteriorPoints(getModeStack(), this);
 
         //Data to use to move field
         final Pos translation = getTranslation();
@@ -261,14 +261,20 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
 
         if (getModuleCount(ModularForceFieldSystem.moduleInvert) > 0)
         {
-            newField = getMode().getInteriorPoints(this);
+            newField = getMode().getInteriorPoints(getModeStack(), this);
         }
         else
         {
-            newField = getMode().getExteriorPoints(this);
+            newField = getMode().getExteriorPoints(getModeStack(), this);
         }
 
-        getModules().forEach(m -> m.onPreCalculate(this, newField));
+        for (ItemStack stack : getModuleStacks(getModuleSlots()))
+        {
+            if (stack != null && stack.getItem() instanceof ICardModule)
+            {
+                ((ICardModule) stack.getItem()).onPreCalculate(stack, this, newField);
+            }
+        }
 
         Pos translation = getTranslation();
         int rotationYaw = getRotationYaw();
@@ -290,7 +296,13 @@ public abstract class TileFieldMatrix extends TileModuleAcceptor implements IFie
         }
         newField.clear(); //faster memory cleanup, at least in theory?
 
-        getModules().forEach(m -> m.onPostCalculate(this, field));
+        for (ItemStack stack : getModuleStacks(getModuleSlots()))
+        {
+            if (stack != null && stack.getItem() instanceof ICardModule)
+            {
+                ((ICardModule) stack.getItem()).onPostCalculate(stack, this, newField);
+            }
+        }
 
         return field;
     }
