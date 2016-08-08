@@ -162,10 +162,10 @@ public class GuiElectromagneticProjector extends GuiMFFS<TileElectromagneticProj
             Pos pos;
             switch (id)
             {
-                case 15:
+                case 18:
                     pos = tile.translation.sub(1, 0, 0);
                     break;
-                case 16:
+                case 19:
                     pos = tile.translation.sub(0, 1, 0);
                     break;
                 default:

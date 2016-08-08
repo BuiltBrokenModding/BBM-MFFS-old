@@ -359,7 +359,7 @@ public class TileElectromagneticProjector extends TileModuleAcceptor implements 
         {
             List<Pos> potentialField = calculatedField;
 
-            boolean flag1 = true;
+            boolean flag1 = false;
             for(ItemStack stack : getModuleStacks(getModuleSlots()))
             {
                 if(stack != null && stack.getItem() instanceof ICardModule)

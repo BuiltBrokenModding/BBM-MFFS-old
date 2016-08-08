@@ -5,10 +5,14 @@ import com.builtbroken.mc.lib.transform.vector.Pos;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mffs.ModularForceFieldSystem;
+import mffs.Reference;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IProjector;
 import mffs.api.modules.IProjectorMode;
 import mffs.base.ItemMFFS;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.IIcon;
@@ -67,6 +71,40 @@ public class ItemMode extends ItemMFFS implements IProjectorMode, IRecipeContain
         recipes.add(newShapedRecipe(Modes.CYLINDER.toStack(), "S", "S", "S", 'S', Modes.SPHERE.toStack()));
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubItems(Item items, CreativeTabs tab, List list)
+    {
+        for (Modes m : Modes.values())
+        {
+            list.add(m.toStack());
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister reg)
+    {
+        for (Modes m : Modes.values())
+        {
+            m.icon = reg.registerIcon(Reference.prefix + m.name);
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIconFromDamage(int meta)
+    {
+        return Modes.get(meta).icon;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getUnlocalizedName(ItemStack stack)
+    {
+        return "item." + Reference.prefix + Modes.get(stack).name;
+    }
+
     /** Internal enum for mods created by MFFS directly, implement {@link IProjectorMode} for custom types */
     public enum Modes
     {
@@ -98,6 +136,15 @@ public class ItemMode extends ItemMFFS implements IProjectorMode, IRecipeContain
             if (stack != null && stack.getItemDamage() >= 0 && stack.getItemDamage() < values().length)
             {
                 return values()[stack.getItemDamage()];
+            }
+            return CUBE;
+        }
+
+        public static Modes get(int meta)
+        {
+            if (meta >= 0 && meta < values().length)
+            {
+                return values()[meta];
             }
             return CUBE;
         }

@@ -10,10 +10,12 @@ import mffs.ModularForceFieldSystem;
 import mffs.Settings;
 import mffs.api.machine.IFieldMatrix;
 import mffs.api.machine.IProjector;
+import mffs.api.modules.IProjectorMode;
 import mffs.util.TCache;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -27,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ItemModeCustom extends ItemMode implements TCache
+public class ItemModeCustom extends Item implements TCache, IProjectorMode
 {
     private final String NBT_ID = "id";
     private final String NBT_MODE = "mode";
@@ -40,6 +42,11 @@ public class ItemModeCustom extends ItemMode implements TCache
     private final String NBT_FILE_SAVE_PREFIX = "custom_mode_";
 
     private Map<String, Object> cache = new HashMap();
+
+    public ItemModeCustom()
+    {
+        this.setMaxStackSize(1);
+    }
 
     @Override
     public Map<String, Object> cache()
@@ -206,7 +213,6 @@ public class ItemModeCustom extends ItemMode implements TCache
         return true;
     }
 
-
     public Map<Pos, Pair<Block, Integer>> getFieldBlockMap(IFieldMatrix projector, ItemStack itemStack)
     {
         final String cacheID = "itemStack_" + itemStack.hashCode();
@@ -315,6 +321,6 @@ public class ItemModeCustom extends ItemMode implements TCache
     @Override
     public float getFortronCost(ItemStack stack, float amplifier)
     {
-        return super.getFortronCost(stack, amplifier) * amplifier;
+        return 8 * amplifier;
     }
 }

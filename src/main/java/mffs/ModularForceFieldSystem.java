@@ -79,7 +79,7 @@ public class ModularForceFieldSystem extends AbstractMod
      * Modes
      */
     public static ItemMode modeCard;
-    public static ItemMode modeCustom;
+    public static ItemModeCustom modeCustom;
     public static ItemModule moduleTranslate;
     public static ItemModule moduleScale;
     public static ItemModule moduleSpeed;
