@@ -1,7 +1,11 @@
 package mffs.production;
 
+import com.builtbroken.mc.api.InjectTemplate;
+import com.builtbroken.mc.api.energy.IEnergyBuffer;
+import com.builtbroken.mc.api.energy.IEnergyBufferProvider;
 import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.prefab.energy.EnergyBuffer;
 import com.builtbroken.mc.prefab.inventory.InventoryUtility;
 import com.builtbroken.mc.prefab.tile.Tile;
 import cpw.mods.fml.relauncher.Side;
@@ -18,8 +22,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
+@InjectTemplate(integration = "RF-IEnergyHandler")
+public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile, IEnergyBufferProvider
 {
     /**
      * The amount of power (watts) this machine uses.
@@ -45,7 +51,7 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     //Client
     float animationTween = 0f;
 
-    int energy = 0;
+    private EnergyBuffer buffer;
 
     public TileCoercionDeriver()
     {
@@ -81,7 +87,7 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
                     ItemStack stack = getStackInSlot(TileCoercionDeriver.SLOT_FUEL);
                     if( /* TODO !Settings.enableElectricity && */ isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, stack))
                     {
-                        energy += getPower(); //TODO balance
+                        buffer.addEnergyToStorage((int) getPower(), true); //TODO balance
                         if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, stack))
                         {
                             decrStackSize(TileCoercionDeriver.SLOT_FUEL, 1);
@@ -104,10 +110,10 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
                     }
 
                     //Create fortron fluid
-                    if (energy >= getPower())
+                    if (buffer.getEnergyStored() >= getPower())
                     {
                         fortronTank.fill(FortronUtility.getFortron(getProductionRate()), true);
-                        energy -= getPower();
+                        buffer.removeEnergyFromStorage((int) getPower(), true);
                     }
                 }
             }
@@ -249,5 +255,15 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile
     public Object getClientGuiElement(int ID, EntityPlayer player)
     {
         return new GuiCoercionDeriver(player, this);
+    }
+
+    @Override
+    public IEnergyBuffer getEnergyBuffer(ForgeDirection side)
+    {
+        if(buffer == null)
+        {
+            buffer = new EnergyBuffer(POWER * 10); //TODO save
+        }
+        return buffer;
     }
 }
