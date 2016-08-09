@@ -87,7 +87,7 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile,
                     ItemStack stack = getStackInSlot(TileCoercionDeriver.SLOT_FUEL);
                     if( /* TODO !Settings.enableElectricity && */ isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, stack))
                     {
-                        buffer.addEnergyToStorage((int) getPower(), true); //TODO balance
+                        getEnergyBuffer(null).addEnergyToStorage((int) getPower(), true); //TODO balance
                         if (processTime == 0 && isItemValidForSlot(TileCoercionDeriver.SLOT_FUEL, stack))
                         {
                             decrStackSize(TileCoercionDeriver.SLOT_FUEL, 1);
@@ -110,10 +110,10 @@ public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile,
                     }
 
                     //Create fortron fluid
-                    if (buffer.getEnergyStored() >= getPower())
+                    if (getEnergyBuffer(null).getEnergyStored() >= getPower())
                     {
                         fortronTank.fill(FortronUtility.getFortron(getProductionRate()), true);
-                        buffer.removeEnergyFromStorage((int) getPower(), true);
+                        getEnergyBuffer(null).removeEnergyFromStorage((int) getPower(), true);
                     }
                 }
             }
