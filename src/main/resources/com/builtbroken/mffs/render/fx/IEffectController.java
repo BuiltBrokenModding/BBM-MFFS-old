@@ -1,0 +1,11 @@
+package com.builtbroken.mffs.render.fx;
+
+/**
+ * A class that controls the behaviour of an EntityFx.
+ *
+ * @author Calclavia
+ */
+public interface IEffectController
+{
+    boolean canContinueEffect();
+}
