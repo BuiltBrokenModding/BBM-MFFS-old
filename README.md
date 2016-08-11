@@ -26,10 +26,23 @@ The mod can be found and downloaded at: http://calclavia.com/mffs/
 Please submit a pull request if you would be willing to translate this mod into another language.
 
 ### Contact
-Join *#mffs* or *#calclavia* on EsperNet (irc.esper.net:5555). Remember to follow the rules and respect others as with any other channel.
+Join *#BuiltBrokenModding* on EsperNet (irc.esper.net:5555). Remember to follow the rules and respect others as with any other channel.
 
-### License
-Modular Force Field System is licensed under Calclavia's Educational Public License (http://calclavia.com/educational-public-license/).
-By using or interacting with this software in any way shape or form, you agree to the license of this software.
 
-The original Modular Force Field System 2.0 is licensed under GPL v3.0. Because MFFS 3.0 is a complete rewrite and not a derived work, it is permitted to be under a different license.
+##license
+* Free to install
+* Free to modify for personal use
+* Free to contribute to project
+* Request to redistribute files
+* Can only use code for educational use
+
+Read license.md for full lisense
+ 
+##Warranty
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
