@@ -175,6 +175,7 @@ public abstract class TileMFFS extends TileMachine implements ICamouflageMateria
         if (this instanceof IGuiTile)
         {
             openGui(player, ModularForceFieldSystem.instance);
+            return true; //return so that blocks are not placed.
         }
         return super.onPlayerActivated(player, side, hit);
     }
