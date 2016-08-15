@@ -36,9 +36,9 @@ public class CommonProxy extends AbstractProxy
         return false;
     }
 
-    public void renderBeam(World world, Pos position, Pos target, FieldColor color, int age) //TODO: This is broken
+    public void renderBeam(World world, Pos position, Pos target, FieldColor color, int age)
     {
-        renderBeam(world, position, target, new float[]{color.r / 255f, color.g / 255f, color.b / 255f}, age);
+        renderBeam(world, position, target, color.array, age);
     }
 
     public void renderBeam(World world, Pos position, Pos target, Color color, int age)

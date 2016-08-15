@@ -129,7 +129,7 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
                 Pos orig = toPos().add(0.5);
                 Pos dest = new Pos(buf).add(0.5);
                 //TODO: Adjust lifespan & make sure its aligned with a timer!
-                ModularForceFieldSystem.proxy.renderBeam(getWorldObj(), (inverse ? dest : orig), (inverse ? orig : dest), FieldColor.BLUE.array, 20);
+                ModularForceFieldSystem.proxy.renderBeam(getWorldObj(), (inverse ? dest : orig), (inverse ? orig : dest), FieldColor.BLUE, 20);
             }
             return false;
         }
