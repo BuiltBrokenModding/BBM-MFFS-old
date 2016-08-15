@@ -4,6 +4,7 @@ import com.builtbroken.mc.api.tile.IGuiTile;
 import com.builtbroken.mc.core.network.packet.PacketType;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mc.prefab.tile.Tile;
+import com.builtbroken.mffs.render.FieldColor;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
@@ -17,6 +18,7 @@ import com.builtbroken.mffs.util.FortronUtility;
 import com.builtbroken.mffs.util.TransferMode;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
@@ -122,6 +124,12 @@ public class TileFortronCapacitor extends TileModuleAcceptor implements IFortron
             {
                 transferMode = transferMode.toggle();
                 return true;
+            } else if(id == TilePacketType.effect.ordinal()) {
+                boolean inverse = buf.readBoolean(); // 0 is forward, 1 is reverse
+                Pos orig = toPos().add(0.5);
+                Pos dest = new Pos(buf).add(0.5);
+                //TODO: Adjust lifespan & make sure its aligned with a timer!
+                ModularForceFieldSystem.proxy.renderBeam(getWorldObj(), (inverse ? dest : orig), (inverse ? orig : dest), FieldColor.BLUE.array, 20);
             }
             return false;
         }

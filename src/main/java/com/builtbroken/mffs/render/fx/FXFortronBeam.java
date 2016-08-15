@@ -13,9 +13,11 @@ import net.minecraft.world.World;
 
 public class FXFortronBeam extends FXBeam
 {
+    private static final ResourceLocation FXBEAM = new ResourceLocation(Reference.domain, Reference.blockDirectory + "fortron.png");
+
     public FXFortronBeam(World world, Pos position, Pos target, float red, float green, float blue, int age)
     {
-        super(new ResourceLocation(Reference.domain, Reference.blockDirectory + "fortron.png"), world, position, target, red, green, blue, age);
+        super(FXBEAM, world, position, target, red, green, blue, age);
         noClip = true;
     }
 }

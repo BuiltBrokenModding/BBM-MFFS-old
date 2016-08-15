@@ -1,10 +1,13 @@
 package com.builtbroken.mffs.util;
 
+import com.builtbroken.mc.core.Engine;
+import com.builtbroken.mc.core.network.packet.PacketTile;
 import com.builtbroken.mc.lib.transform.vector.Pos;
 import com.builtbroken.mffs.ModularForceFieldSystem;
 import com.builtbroken.mffs.Settings;
 import com.builtbroken.mffs.api.fortron.IFortronFrequency;
 import com.builtbroken.mffs.api.modules.IModuleProvider;
+import com.builtbroken.mffs.base.TilePacketType;
 import com.builtbroken.mffs.render.FieldColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -141,36 +144,24 @@ public class FortronUtility
     {
         if (transferer != null && receiver != null)
         {
-            TileEntity tileEntity = (TileEntity) transferer;
-            World world = tileEntity.getWorldObj();
-            boolean isCamo = false;
+            TileEntity tileTrans = (TileEntity) transferer;
+            TileEntity tileRec = (TileEntity) receiver;
+            //World world = tileTrans.getWorldObj();
+            boolean isCamo = (transferer instanceof IModuleProvider && ((IModuleProvider) transferer).getModuleCount(ModularForceFieldSystem.moduleCamouflage) > 0);
 
-            if (transferer instanceof IModuleProvider)
-            {
-                isCamo = ((IModuleProvider) transferer).getModuleCount(ModularForceFieldSystem.moduleCamouflage) > 0;
+            if (joules < 0) { //we switch the frequencies! Means they have less than the receiver
+                IFortronFrequency dummy = transferer;
+                transferer = receiver;
+                receiver = dummy;
             }
 
-            if (joules > 0)
-            {
-                int transferEnergy = Math.min(joules, limit);
-                int toBeInjected = receiver.provideFortron(transferer.requestFortron(transferEnergy, false), false);
-                toBeInjected = transferer.requestFortron(receiver.provideFortron(toBeInjected, true), true);
-                if (world.isRemote && toBeInjected > 0 && !isCamo)
-                {
-                    ModularForceFieldSystem.proxy.renderBeam(world, new Pos(tileEntity).add(0.5), new Pos((TileEntity) receiver).add(0.5), FieldColor.BLUE, 20);
-                }
-            }
-            else
-            {
-                int transferEnergy = Math.min(Math.abs(joules), limit);
-                int toBeEjected = transferer.provideFortron(receiver.requestFortron(transferEnergy, false), false);
-                toBeEjected = receiver.requestFortron(transferer.provideFortron(toBeEjected, true), true);
-                if (world.isRemote && toBeEjected > 0 && !isCamo)
-                {
-                    ModularForceFieldSystem.proxy.renderBeam(world, new Pos((TileEntity) receiver).add(0.5), new Pos(tileEntity).add(0.5), FieldColor.BLUE, 20);
-                }
+            boolean inverse = joules < 0;
+            joules = Math.min(inverse ? Math.abs(joules) : joules, limit);
+            int toBeInject = receiver.provideFortron(transferer.requestFortron(joules, false), false);
+            toBeInject = transferer.requestFortron(receiver.provideFortron(toBeInject, true), true);
 
-            }
+            if(toBeInject > 0 && !isCamo)
+                Engine.instance.packetHandler.sendToAllAround(new PacketTile(tileTrans, TilePacketType.effect.ordinal(), inverse, new Pos(tileRec)), tileRec);
         }
     }
 }
