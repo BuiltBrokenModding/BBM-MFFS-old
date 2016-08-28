@@ -23,7 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
-@InjectTemplate(integration = "RF-IEnergyHandler")
+@InjectTemplate(integration = "RF-IEnergyHandler;IC-IEnergySink")
 public class TileCoercionDeriver extends TileModuleAcceptor implements IGuiTile, IEnergyBufferProvider
 {
     /** The amount of power (watts) this machine uses */
