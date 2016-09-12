@@ -12,7 +12,7 @@ Modular Force Field System v3 is an original complete ground up rewrite of Modul
 This mod is therefore _not_ derived work of MFFS v2, but is simply a mod that used some ideas from the original MFFS.
 
 ### Website & Download
-The mod can be found and downloaded at: http://calclavia.com/mffs/
+The mod can be found and downloaded at: https://minecraft.curseforge.com/projects/modular-force-field-systems-mffs//
 
 ### Developement
 **Developer** - Calclavia
