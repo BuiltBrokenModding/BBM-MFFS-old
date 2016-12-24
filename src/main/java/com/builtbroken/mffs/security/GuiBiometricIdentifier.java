@@ -1,8 +1,8 @@
 package com.builtbroken.mffs.security;
 
-import com.builtbroken.mc.core.References;
-import com.mojang.realmsclient.gui.ChatFormatting;
+import com.builtbroken.mc.client.SharedAssets;
 import com.builtbroken.mffs.base.GuiMFFS;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class GuiBiometricIdentifier extends GuiMFFS<TileBiometricIdentifier>
@@ -10,7 +10,7 @@ public class GuiBiometricIdentifier extends GuiMFFS<TileBiometricIdentifier>
     public GuiBiometricIdentifier(EntityPlayer player, TileBiometricIdentifier tile)
     {
         super(new ContainerBiometricIdentifier(player, tile), tile);
-        this.baseTexture = References.GUI_BASE;
+        this.baseTexture = SharedAssets.GUI_BASE;
     }
 
     @Override

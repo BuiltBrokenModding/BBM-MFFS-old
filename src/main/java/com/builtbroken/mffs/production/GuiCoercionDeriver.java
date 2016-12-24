@@ -1,10 +1,10 @@
 package com.builtbroken.mffs.production;
 
 import com.builtbroken.jlib.data.science.units.UnitDisplay;
-import com.builtbroken.mc.core.References;
+import com.builtbroken.mc.client.SharedAssets;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import com.builtbroken.mffs.base.GuiMFFS;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
@@ -13,7 +13,7 @@ public class GuiCoercionDeriver extends GuiMFFS<TileCoercionDeriver>
     public GuiCoercionDeriver(EntityPlayer player, TileCoercionDeriver tile)
     {
         super(new ContainerCoercionDeriver(player, tile), tile);
-        this.baseTexture = References.GUI_BASE;
+        this.baseTexture = SharedAssets.GUI_BASE;
     }
 
     @Override

@@ -1,11 +1,11 @@
 package com.builtbroken.mffs.field.gui;
 
-import com.builtbroken.mc.core.References;
+import com.builtbroken.mc.client.SharedAssets;
 import com.builtbroken.mc.lib.transform.region.Rectangle;
 import com.builtbroken.mc.lib.transform.vector.Point;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import com.builtbroken.mffs.base.GuiMFFS;
 import com.builtbroken.mffs.base.TileFieldMatrix;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 /**
  * Anything that has a field matrix within it.
@@ -22,7 +22,7 @@ public abstract class GuiMatrix<T extends TileFieldMatrix> extends GuiMFFS<T>
     {
         super(matrix, tile);
         this.center = matrix.matrixCenter;
-        this.baseTexture = References.GUI_BASE;
+        this.baseTexture = SharedAssets.GUI_BASE;
     }
 
     public void setupTooltips()
