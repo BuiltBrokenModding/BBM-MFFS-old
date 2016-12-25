@@ -14,7 +14,7 @@ public final class Reference
     /**
      * General Variable Definition
      */
-    public static final String id = "mffs";
+    public static final String id = "mffs-bbm";
     public static final String name = "Modular Force Field System";
     public static final Logger logger = LogManager.getLogger(name);
     public static final String domain = "mffs";
